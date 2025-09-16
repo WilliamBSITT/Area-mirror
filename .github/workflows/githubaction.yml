@@ -20,7 +20,7 @@ jobs:
 
   push_to_mirror:
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.repository != 'git@github.com:EpitechPGE3-2025/G-DEV-500-NCY-5-1-area-2.git'
+    if: github.event_name == 'push' && github.repository != 'EpitechPGE3-2025/G-DEV-500-NCY-5-1-area-2'
     steps:
       - uses: actions/checkout@v4
         with:
