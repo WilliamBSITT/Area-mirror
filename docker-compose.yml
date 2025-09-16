@@ -1,0 +1,70 @@
+services:
+  server:
+    build: ./server
+    container_name: server
+    env_file:
+      - .env
+    ports:
+      - "${SERVER_PORT}:8080"
+    environment:
+      - MARIA_HOST=db
+      - MARIA_PORT=3306
+    depends_on:
+      - db
+    restart: unless-stopped
+    networks:
+      - back-tier
+
+  client_web:
+    build:
+      context: ./area
+      dockerfile: apps/next/Dockerfile
+    container_name: client_web
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+    networks:
+      - back-tier
+
+  client_mobile:
+    build:
+      context: ./area
+      dockerfile: apps/mobile/Dockerfile
+    container_name: client_mobile
+    restart: unless-stopped
+    ports:
+      - "19000:19000"
+      - "8081:8081"
+    networks:
+      - back-tier
+
+  db:
+    image: mariadb:12
+    container_name: db
+    env_file:
+      - .env
+    ports:
+      - "3306:3306"
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    restart: unless-stopped
+    networks:
+      - back-tier
+
+  adminer:
+    image: adminer
+    container_name: adminer
+    restart: unless-stopped
+    ports:
+      - "8082:8080"
+    depends_on:
+      - db
+    networks:
+      - back-tier
+
+volumes:
+  mariadb_data:
+  common:
+
+networks:
+  back-tier:
