@@ -1,0 +1,33 @@
+name: Automated Testing
+run-name: ${{ github.actor }} is eating a monkey.
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+env:
+  MIRROR_URL: git@github.com:EpitechPGE3-2025/G-DEV-500-NCY-5-1-area-2.git
+
+jobs:
+
+  push_to_mirror:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.repository != 'git@github.com:EpitechPGE3-2025/G-DEV-500-NCY-5-1-area-2.git'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: pixta-dev/repository-mirroring-action@v1
+        with:
+          target_repo_url:
+            ${{ env.MIRROR_URL }}
+          ssh_private_key:
+            ${{ secrets.GIT_SSH_PRIVATE_KEY }}
