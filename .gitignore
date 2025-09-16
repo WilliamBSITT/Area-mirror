@@ -51,3 +51,4 @@ thumbs.db
 **/.turbo/*
 
 /area/.*
+.env
