@@ -1,5 +1,4 @@
-# Use official Node LTS image
-FROM node:20-bullseye
+FROM node:20.19.4
 
 RUN apt-get update && apt-get install -y \
     git \
