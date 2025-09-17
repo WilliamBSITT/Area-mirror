@@ -92,3 +92,4 @@ app-example
 # generated native folders
 mobile/ios
 mobile/android
+.env
