@@ -17,8 +17,8 @@ services:
 
   client_web:
     build:
-      context: ./area
-      dockerfile: apps/next/Dockerfile
+      context: ./web
+      dockerfile: Dockerfile
     container_name: client_web
     ports:
       - "3000:3000"
@@ -28,8 +28,8 @@ services:
 
   client_mobile:
     build:
-      context: ./area
-      dockerfile: apps/mobile/Dockerfile
+      context: ./mobile
+      dockerfile: Dockerfile
     container_name: client_mobile
     restart: unless-stopped
     ports:
