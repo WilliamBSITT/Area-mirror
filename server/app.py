@@ -1,4 +1,5 @@
 from flask import Flask
+from flask_cors import CORS
 from extensions import db, migrate, jwt
 from config import Config
 from wait_db import wait_for_db
@@ -11,6 +12,8 @@ def create_app():
     db.init_app(app)
     migrate.init_app(app)
     jwt.init_app(app)
+
+    CORS(app)
 
     register_routes(app)
 
