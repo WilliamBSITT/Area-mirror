@@ -23,3 +23,20 @@ def register():
     db.session.commit()
 
     return jsonify({"message": "Inscription réussie"}), 201
+
+
+@bp.route("/login", methods=["POST"])
+def login():
+    data = request.get_json()
+    email = data.get("email")
+    password = data.get("password")
+
+    if not email or not password:
+        return jsonify({"error": "Email et mot de passe requis"}), 400
+
+    user = User.query.filter_by(email=email).first()
+    if not user or not user.check_password(password):
+        return jsonify({"error": "Identifiants invalides"}), 401
+
+    access_token = create_access_token(identity=user.id)
+    return jsonify({"access_token": access_token}), 200
