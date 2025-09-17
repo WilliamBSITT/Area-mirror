@@ -1,40 +1,26 @@
-from flask import Flask, jsonify
-import os
-import pymysql
-from dotenv import load_dotenv
-from pathlib import Path
+from flask import Flask
+from extensions import db, migrate, jwt
+from config import Config
+from wait_db import wait_for_db
+from routes import register_routes
 
-env_path = Path(__file__).resolve().parents[1] / '.env'
-load_dotenv(dotenv_path=env_path)
+def create_app():
+    app = Flask(__name__)
+    app.config.from_object(Config)
 
-app = Flask(__name__)
+    db.init_app(app)
+    migrate.init_app(app)
+    jwt.init_app(app)
 
-@app.route("/")
-def home():
-    return "Hello World from Flask!"
+    register_routes(app)
 
-@app.route("/db")
-def test_db():
-    try:
-        connection = pymysql.connect(
-            host=os.getenv("MARIADB_HOST"),
-            port=int(os.getenv("MARIADB_PORT", 3306)),
-            user=os.getenv("MARIADB_USER"),
-            password=os.getenv("MARIADB_PASSWORD"),
-            database=os.getenv("MARIADB_DATABASE")
-        )
-        with connection.cursor() as cursor:
-            cursor.execute("SELECT NOW();")
-            result = cursor.fetchone()
-        connection.close()
-        return jsonify({"status": "ok", "db_time": str(result[0])})
-    except Exception as e:
-        return jsonify({"status": "error", "message": str(e)}), 500
+    wait_for_db(app)
+    with app.app_context():
+        db.create_all()
+
+    return app
+
 
 if __name__ == "__main__":
-    app.run(
-        host="0.0.0.0",
-        port=int(os.getenv("SERVER_PORT", 8080)),
-        debug=True
-    )
-
+    app = create_app()
+    app.run(host="0.0.0.0", port=8080, debug=True)
