@@ -12,6 +12,9 @@ services:
     depends_on:
       - db
     restart: unless-stopped
+    volumes:
+      - ./server:/app
+      - common:/shared
     networks:
       - back-tier
 
@@ -21,8 +24,14 @@ services:
       dockerfile: Dockerfile
     container_name: client_web
     ports:
-      - "3000:3000"
+      - "8081:3000"
     restart: unless-stopped
+    depends_on:
+      - server
+      - client_mobile
+    volumes:
+      - ./web:/app
+      - common:/shared
     networks:
       - back-tier
 
@@ -32,6 +41,8 @@ services:
       dockerfile: Dockerfile
     container_name: client_mobile
     restart: unless-stopped
+    volumes:
+      - common:/shared
     environment:
     - EXPO_ROUTER_APP_ROOT=app
     ports:

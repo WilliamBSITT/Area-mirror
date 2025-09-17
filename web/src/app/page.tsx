@@ -1,9 +1,14 @@
+'use client';
 import Footer from "@/components/Footer";
-import React from "react";
 import Particles from "@/components/background";
 import Navbar from "@/components/Navbar";
+// c'est pour test
+// import { useFetchBack } from "./test";
 
 export default function Home() {
+  // le test du back/front
+  // const { data, loading, error, handleClick } = useFetchBack();
+
   return (
     <div className="relative min-h-screen flex flex-col overflow-hidden">
       <Navbar />
@@ -38,7 +43,15 @@ export default function Home() {
             style={{ maxWidth: "1000px" }}
           />
         </div>
-
+        {/* <button
+          onClick={handleClick}
+          className="bg-red-600 text-white rounded-full px-6 py-2 font-semibold shadow hover:bg-red-700 transition-colors"
+        >
+          Demander une info au backend
+        </button>
+        {loading && <p>Chargement...</p>}
+        {error && <p style={{ color: "red" }}>{error}</p>}
+        {data && <pre>{JSON.stringify(data, null, 2)}</pre>} */}
         <h1 className="mt-10 text-4xl font-semibold underline-on-hover">Ready to explore?</h1>
         <a
           href="/login"
