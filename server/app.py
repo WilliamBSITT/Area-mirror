@@ -1,9 +1,10 @@
-from flask import Flask
+from flask import Flask, jsonify, redirect, request
 from flask_cors import CORS
 from extensions import db, migrate, jwt
 from config import Config
 from wait_db import wait_for_db
 from routes import register_routes
+import requests
 
 def create_app():
     app = Flask(__name__)
