@@ -3,15 +3,20 @@ import os
 import pymysql
 from dotenv import load_dotenv
 from pathlib import Path
+from flask_cors import CORS
+
 
 env_path = Path(__file__).resolve().parents[1] / '.env'
 load_dotenv(dotenv_path=env_path)
 
 app = Flask(__name__)
+CORS(app)
 
 @app.route("/")
 def home():
     return "Hello World from Flask!"
+
+import traceback
 
 @app.route("/db")
 def test_db():
@@ -29,7 +34,12 @@ def test_db():
         connection.close()
         return jsonify({"status": "ok", "db_time": str(result[0])})
     except Exception as e:
-        return jsonify({"status": "error", "message": str(e)}), 500
+        return jsonify({
+            "status": "error",
+            "message": str(e),
+            "traceback": traceback.format_exc()  # full stack trace
+        }), 500
+
 
 if __name__ == "__main__":
     app.run(
