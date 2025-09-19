@@ -1,8 +1,13 @@
-from flask import jsonify, request, redirect
-from app import app
+from flask import jsonify, request, redirect, Blueprint
 import requests
+import os
 
-@app.route("/github/login")
+GITHUB_CLIENT_ID = os.getenv("GITHUB_CLIENT_ID")
+GITHUB_CLIENT_SECRET = os.getenv("GITHUB_CLIENT_SECRET")
+
+bp = Blueprint("github", __name__)
+
+@bp.route("/login")
 def github_login():
     github_auth_url = (
         "https://github.com/login/oauth/authorize"
@@ -10,7 +15,7 @@ def github_login():
     )
     return redirect(github_auth_url)
  
-@app.route("/github/callback")
+@bp.route("/github/callback")
 def github_callback():
     code = request.args.get("code")
     token_url = "https://github.com/login/oauth/access_token"

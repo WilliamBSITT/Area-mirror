@@ -21,7 +21,7 @@ export default function CardDemo() {
 						Enter your email below to login to your account
 					</CardDescription>
 					<CardAction>
-						<Button variant="link">Sign Up</Button>
+						<Button variant="link" onClick={() => window.location.href = "/signup"}>Sign Up</Button>
 					</CardAction>
 				</CardHeader>
 				<CardContent>
