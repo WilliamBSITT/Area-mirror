@@ -93,3 +93,4 @@ app-example
 mobile/ios
 mobile/android
 .env
+__pycache__
