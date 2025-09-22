@@ -11,6 +11,7 @@ export default function CardDemo() {
 	const [email, setEmail] = React.useState("");
 	const [password, setPassword] = React.useState("");
 	const { data, loading, error, handleClick } = send_login_forms(email, password);
+	const [showError, setShowError] = React.useState(false);
 
 	return (
 		<main className="flex items-center justify-center min-h-screen">
@@ -65,9 +66,26 @@ export default function CardDemo() {
 					<hr className="flex-grow border-t border-gray-300 max-w-[30%]" />
 				</div>
 				<CardFooter className="flex-col gap-2">
-					<Button onClick={handleClick} disabled={loading} className="w-full rounded-full">
+					<Button
+						onClick={async () => {
+							setShowError(false);
+							await handleClick();
+							setTimeout(() => {
+								if (!data && !loading) {
+									setShowError(true);
+								}
+							}, 500);
+						}}
+						disabled={loading}
+						className="w-full rounded-full"
+					>
 						{loading ? "Loading..." : "Login"}
 					</Button>
+					{showError && (
+						<div style={{ color: "red", marginTop: "0.5rem", textAlign: "center" }}>
+							Les informations sont incorrectes
+						</div>
+					)}
 					<Button
 						variant="outline"
 						className="w-full rounded-full flex items-center justify-center gap-2"
