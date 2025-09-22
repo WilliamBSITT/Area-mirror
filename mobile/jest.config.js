@@ -10,6 +10,7 @@ module.exports = {
       "|react-clone-referenced-element" +
       "|@expo-google-fonts/.*" +
       "|expo-image" +
+      "|expo-winter" +
       "))"
   ],
   setupFilesAfterEnv: [

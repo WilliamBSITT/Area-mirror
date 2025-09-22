@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react-native';
 import Index from '../app/(tabs)/index';
 
-test('renders welcome text', () => {
+test('renders login button', () => {
   render(<Index />);
-  expect(screen.getByText(/click/i)).toBeOnTheScreen();
+  expect(screen.getByText(/login/i)).toBeOnTheScreen();
 });
