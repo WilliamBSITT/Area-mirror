@@ -1,5 +1,5 @@
 import { Text, View } from "react-native";
-import { Button, ButtonText } from '@/components/ui/button';
+import React from 'react'
 
 export default function Index() {
   return (

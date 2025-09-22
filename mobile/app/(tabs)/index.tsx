@@ -1,5 +1,5 @@
-import { Text, View } from "react-native";
-import { Button, ButtonText } from '@/components/ui/button';
+import React from "react";
+import { Button, View } from "react-native";
 
 export default function Index() {
 
@@ -28,8 +28,7 @@ export default function Index() {
         alignItems: "center",
       }}
     >
-      <Button variant="solid" size="lg" action="primary" className="bg-red-400" onPress={handleCallDB}>
-        <ButtonText>Click me</ButtonText>
+      <Button title="click me" onPress={handleCallDB}>
       </Button>
     </View>
   );
