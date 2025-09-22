@@ -5,7 +5,7 @@ export default function Footer() {
   return (
     <footer className="bg-[#EFFF] text-gray-300 py-16">
       <div className="max-w-7xl mx-auto px-6">
-        <div className="grid md:grid-cols-4 gap-10 justify-items-center text-center">
+        <div className="grid md:grid-cols-3 gap-10 justify-items-center text-center">
           {/* Mission & Vision */}
           <div className="max-w-xs">
             <h3 className="text-black text-xl font-bold mb-4">Mission & Vision</h3>
