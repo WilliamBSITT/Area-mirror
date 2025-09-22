@@ -7,7 +7,7 @@ def wait_for_db(app, retries=10, delay=3):
     with app.app_context():
         for i in range(retries):
             try:
-                db.session.execute(text("SELECT 1"))  # <-- utiliser text()
+                db.session.execute(text("SELECT 1"))
                 print("DB ready!")
                 return
             except OperationalError:

@@ -1,4 +1,5 @@
 from flask import Flask, jsonify, redirect, request
+from flasgger import Swagger
 from flask_cors import CORS
 from extensions import db, migrate, jwt
 from config import Config
@@ -8,6 +9,7 @@ import requests
 
 def create_app():
     app = Flask(__name__)
+    swagger = Swagger(app)
     app.config.from_object(Config)
 
     db.init_app(app)

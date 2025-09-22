@@ -7,6 +7,51 @@ bp = Blueprint("auth", __name__)
 
 @bp.route("/register", methods=["POST"])
 def register():
+    """
+    Inscrire un nouvel utilisateur
+    ---
+    tags:
+      - Authentification
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - email
+              - password
+            properties:
+              email:
+                type: string
+                format: email
+                example: test@mail.com
+              password:
+                type: string
+                format: password
+                example: secret123
+    responses:
+      201:
+        description: Inscription réussie
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: Inscription réussie
+      400:
+        description: Email ou mot de passe manquant / utilisateur déjà existant
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                error:
+                  type: string
+                  example: Utilisateur déjà existant
+    """
     data = request.get_json()
     email = data.get("email")
     password = data.get("password")
@@ -27,6 +72,61 @@ def register():
 
 @bp.route("/login", methods=["POST"])
 def login():
+    """
+    Connexion d'un utilisateur
+    ---
+    tags:
+      - Authentification
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - email
+              - password
+            properties:
+              email:
+                type: string
+                format: email
+                example: test@mail.com
+              password:
+                type: string
+                format: password
+                example: secret123
+    responses:
+      200:
+        description: Connexion réussie (JWT généré)
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                access_token:
+                  type: string
+                  example: eyJhbGciOiJIUzI1NiIsInR...
+      400:
+        description: Email ou mot de passe manquant
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                error:
+                  type: string
+                  example: Email et mot de passe requis
+      401:
+        description: Identifiants invalides
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                error:
+                  type: string
+                  example: Identifiants invalides
+    """
     data = request.get_json()
     email = data.get("email")
     password = data.get("password")
