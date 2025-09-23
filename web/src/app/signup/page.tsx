@@ -5,25 +5,22 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, 
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
-import { send_login_forms } from "./log"
+import { send_signup_forms } from "./signup"
+
 
 export default function CardDemo() {
 	const [email, setEmail] = React.useState("");
 	const [password, setPassword] = React.useState("");
-	const { data, loading, error, handleClick } = send_login_forms(email, password);
-	const [showError, setShowError] = React.useState(false);
+	const { data, loading, error, handleClick } = send_signup_forms(email, password);
 
 	return (
 		<main className="flex items-center justify-center min-h-screen">
 			<Card className="w-full max-w-sm mx-auto">
 				<CardHeader>
-					<CardTitle>Login to your account</CardTitle>
+					<CardTitle>Signup to TriggerHub</CardTitle>
 					<CardDescription>
-						Enter your email below to login to your account
+						Enter your informations below to create an account
 					</CardDescription>
-					<CardAction>
-						<Button variant="link" onClick={() => window.location.href = "/signup"}>Sign Up</Button>
-					</CardAction>
 				</CardHeader>
 				<CardContent>
 					<form>
@@ -42,12 +39,6 @@ export default function CardDemo() {
 							<div className="grid gap-2">
 								<div className="flex items-center">
 									<Label htmlFor="password">Password</Label>
-									<a
-										href="#"
-										className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
-									>
-										Forgot your password?
-									</a>
 								</div>
 								<Input
 									id="password"
@@ -66,26 +57,9 @@ export default function CardDemo() {
 					<hr className="flex-grow border-t border-gray-300 max-w-[30%]" />
 				</div>
 				<CardFooter className="flex-col gap-2">
-					<Button
-						onClick={async () => {
-							setShowError(false);
-							await handleClick();
-							setTimeout(() => {
-								if (!data && !loading) {
-									setShowError(true);
-								}
-							}, 500);
-						}}
-						disabled={loading}
-						className="w-full rounded-full"
-					>
-						{loading ? "Loading..." : "Login"}
+					<Button className="w-full rounded-full" onClick={handleClick} disabled={loading}>
+						{"Continue"}
 					</Button>
-					{showError && (
-						<div style={{ color: "red", marginTop: "0.5rem", textAlign: "center" }}>
-							Les informations sont incorrectes
-						</div>
-					)}
 					<Button
 						variant="outline"
 						className="w-full rounded-full flex items-center justify-center gap-2"

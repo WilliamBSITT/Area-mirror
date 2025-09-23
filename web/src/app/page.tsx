@@ -54,7 +54,7 @@ export default function Home() {
         {data && <pre>{JSON.stringify(data, null, 2)}</pre>} */}
         <h1 className="mt-10 text-4xl font-semibold underline-on-hover">Ready to explore?</h1>
         <a
-          href="/login"
+          href="/signup"
           className="mt-4 inline-block text-[#483f94] max-w-2xl text-2xl font-bold transition-colors"
         >
           Start using TriggerHub for free today
