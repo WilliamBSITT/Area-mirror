@@ -1,13 +1,11 @@
 import React from "react";
-import { Text, View, Pressable, Button, TextInput } from "react-native";
-import axios from 'axios'
+import { Text, View, Pressable, Image, TextInput } from "react-native";
 import { useState } from "react";
-import { Link } from "expo-router";
 
 export default function Index() {
   const handleCallDB = async () => {
     try {
-    const res = await fetch(`http://10.18.207.184:8080/${mode}`, {
+    const res = await fetch(`http://10.18.207.184:8080/auth/${mode}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -43,9 +41,10 @@ export default function Index() {
         alignItems: "center",
       }}
     >
-      <TextInput className="border-2 border-solid rounded-full w-1/2 mb-5 p-4" placeholder="email" onChange={newText => setMail(newText)} defaultValue={mail}/>
-      <TextInput className="border-2 border-solid rounded-full w-1/2 mb-5 p-4" placeholder="Password" onChange={newPass => setPassword(newPass)} defaultValue={password}/>
-      {mode == 'register' && <TextInput className="border-2 border-solid rounded-full w-1/2 mb-5" placeholder="Confirm your password" onChange={newPass => setConfirmPwd(newPass)} defaultValue={confirmPwd}/>}
+      <Image source={require('../../images/logo.png')} className="w-1/2 h-1/4"/>
+      <TextInput className="border-2 border-solid rounded-full w-1/2 mb-5 p-4" placeholder="email" onChangeText={setMail} defaultValue={mail}/>
+      <TextInput secureTextEntry className="border-2 border-solid rounded-full w-1/2 mb-5 p-4" placeholder="Password" onChangeText={setPassword} defaultValue={password}/>
+      {mode == 'register' && <TextInput secureTextEntry className="border-2 border-solid rounded-full w-1/2 mb-5 p-4" placeholder="Confirm your password" onChangeText={setConfirmPwd} defaultValue={confirmPwd}/>}
       <Pressable className="bg-slate-400 rounded-full p-4 mb-30" onPress={handleCallDB}>
         <Text className="text-black">
           {mode == 'register' ? 'Register' : 'Login'}
@@ -53,10 +52,9 @@ export default function Index() {
       </Pressable>
       <Pressable className="rounded-full p-4 mt-40" onPress={() => {mode == 'register' ? setMode('login') : setMode('register')}}>
         <Text className="text-black">
-          {mode == 'register' ? 'Login' : "I don't have an account"}
+          {mode == 'register' ? 'Or login' : "I don't have an account"}
         </Text>
       </Pressable>
-      {/* <Button title="click" onPress={handleCallDB}></Button> */}
     </View>
   );
 }
