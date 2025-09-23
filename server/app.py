@@ -7,9 +7,6 @@ from wait_db import wait_for_db
 from routes import register_routes
 import requests
 
-env_path = Path(__file__).resolve().parents[1] / '.env'
-load_dotenv(dotenv_path=env_path)
-
 def create_app():
     app = Flask(__name__)
     swagger = Swagger(app)
