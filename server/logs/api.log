@@ -1979,3 +1979,245 @@
 2025-09-24 14:38:22,805 [INFO] werkzeug: 172.21.0.1 - - [24/Sep/2025 14:38:22] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
 2025-09-24 14:38:27,502 [INFO] werkzeug: 172.21.0.1 - - [24/Sep/2025 14:38:27] "GET /users/1 HTTP/1.1" 200 -
 2025-09-24 14:38:27,523 [INFO] werkzeug: 172.21.0.1 - - [24/Sep/2025 14:38:27] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2025-09-25 06:46:51,297 [DEBUG] tzlocal: /etc/localtime found
+2025-09-25 06:46:51,298 [DEBUG] tzlocal: 1 found:
+ {'/etc/localtime is a symlink to': 'Etc/UTC'}
+2025-09-25 06:46:51,299 [INFO] apscheduler.scheduler: Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-09-25 06:46:51,300 [INFO] apscheduler.scheduler: Added job "create_app.<locals>.<lambda>" to job store "default"
+2025-09-25 06:46:51,300 [INFO] apscheduler.scheduler: Scheduler started
+2025-09-25 06:46:51,301 [DEBUG] apscheduler.scheduler: Looking for jobs to run
+2025-09-25 06:46:51,301 [DEBUG] apscheduler.scheduler: Next wakeup is due at 2025-09-25 06:47:51.299581+00:00 (in 59.998150 seconds)
+2025-09-25 06:46:51,301 [INFO] AREA-API: FLASK successfully running
+2025-09-25 06:46:51,316 [INFO] werkzeug: [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8080
+ * Running on http://172.21.0.5:8080
+2025-09-25 06:46:51,316 [INFO] werkzeug: [33mPress CTRL+C to quit[0m
+2025-09-25 06:46:51,317 [INFO] werkzeug:  * Restarting with stat
+2025-09-25 06:46:52,060 [DEBUG] tzlocal: /etc/localtime found
+2025-09-25 06:46:52,062 [DEBUG] tzlocal: 1 found:
+ {'/etc/localtime is a symlink to': 'Etc/UTC'}
+2025-09-25 06:46:52,063 [INFO] apscheduler.scheduler: Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-09-25 06:46:52,064 [INFO] apscheduler.scheduler: Added job "create_app.<locals>.<lambda>" to job store "default"
+2025-09-25 06:46:52,064 [INFO] apscheduler.scheduler: Scheduler started
+2025-09-25 06:46:52,065 [DEBUG] apscheduler.scheduler: Looking for jobs to run
+2025-09-25 06:46:52,065 [INFO] AREA-API: FLASK successfully running
+2025-09-25 06:46:52,065 [DEBUG] apscheduler.scheduler: Next wakeup is due at 2025-09-25 06:47:52.063458+00:00 (in 59.997850 seconds)
+2025-09-25 06:46:52,076 [WARNING] werkzeug:  * Debugger is active!
+2025-09-25 06:46:52,076 [INFO] werkzeug:  * Debugger PIN: 103-266-723
+2025-09-25 06:47:51,300 [DEBUG] apscheduler.scheduler: Looking for jobs to run
+2025-09-25 06:47:51,301 [INFO] apscheduler.executors.default: Running job "create_app.<locals>.<lambda> (trigger: interval[0:01:00], next run at: 2025-09-25 06:47:51 UTC)" (scheduled at 2025-09-25 06:47:51.299581+00:00)
+2025-09-25 06:47:51,302 [INFO] AREA-API: [check_hooks] starting to check AREA'S. . .
+2025-09-25 06:47:51,302 [DEBUG] apscheduler.scheduler: Next wakeup is due at 2025-09-25 06:48:51.299581+00:00 (in 59.997275 seconds)
+2025-09-25 06:47:51,308 [WARNING] AREA-API: [check_hooks] no active area found
+2025-09-25 06:47:51,309 [INFO] apscheduler.executors.default: Job "create_app.<locals>.<lambda> (trigger: interval[0:01:00], next run at: 2025-09-25 06:48:51 UTC)" executed successfully
+2025-09-25 06:47:52,064 [DEBUG] apscheduler.scheduler: Looking for jobs to run
+2025-09-25 06:47:52,065 [INFO] apscheduler.executors.default: Running job "create_app.<locals>.<lambda> (trigger: interval[0:01:00], next run at: 2025-09-25 06:47:52 UTC)" (scheduled at 2025-09-25 06:47:52.063458+00:00)
+2025-09-25 06:47:52,066 [INFO] AREA-API: [check_hooks] starting to check AREA'S. . .
+2025-09-25 06:47:52,070 [DEBUG] apscheduler.scheduler: Next wakeup is due at 2025-09-25 06:48:52.063458+00:00 (in 59.993405 seconds)
+2025-09-25 06:47:52,071 [WARNING] AREA-API: [check_hooks] no active area found
+2025-09-25 06:47:52,072 [INFO] apscheduler.executors.default: Job "create_app.<locals>.<lambda> (trigger: interval[0:01:00], next run at: 2025-09-25 06:48:52 UTC)" executed successfully
+2025-09-25 06:48:51,304 [DEBUG] apscheduler.scheduler: Looking for jobs to run
+2025-09-25 06:48:51,305 [DEBUG] apscheduler.scheduler: Next wakeup is due at 2025-09-25 06:49:51.299581+00:00 (in 59.993912 seconds)
+2025-09-25 06:48:51,306 [INFO] apscheduler.executors.default: Running job "create_app.<locals>.<lambda> (trigger: interval[0:01:00], next run at: 2025-09-25 06:49:51 UTC)" (scheduled at 2025-09-25 06:48:51.299581+00:00)
+2025-09-25 06:48:51,307 [INFO] AREA-API: [check_hooks] starting to check AREA'S. . .
+2025-09-25 06:48:51,310 [WARNING] AREA-API: [check_hooks] no active area found
+2025-09-25 06:48:51,311 [INFO] apscheduler.executors.default: Job "create_app.<locals>.<lambda> (trigger: interval[0:01:00], next run at: 2025-09-25 06:49:51 UTC)" executed successfully
+2025-09-25 06:48:52,064 [DEBUG] apscheduler.scheduler: Looking for jobs to run
+2025-09-25 06:48:52,064 [DEBUG] apscheduler.scheduler: Next wakeup is due at 2025-09-25 06:49:52.063458+00:00 (in 59.998882 seconds)
+2025-09-25 06:48:52,064 [INFO] apscheduler.executors.default: Running job "create_app.<locals>.<lambda> (trigger: interval[0:01:00], next run at: 2025-09-25 06:49:52 UTC)" (scheduled at 2025-09-25 06:48:52.063458+00:00)
+2025-09-25 06:48:52,065 [INFO] AREA-API: [check_hooks] starting to check AREA'S. . .
+2025-09-25 06:48:52,067 [WARNING] AREA-API: [check_hooks] no active area found
+2025-09-25 06:48:52,068 [INFO] apscheduler.executors.default: Job "create_app.<locals>.<lambda> (trigger: interval[0:01:00], next run at: 2025-09-25 06:49:52 UTC)" executed successfully
+2025-09-25 06:49:51,300 [DEBUG] apscheduler.scheduler: Looking for jobs to run
+2025-09-25 06:49:51,301 [DEBUG] apscheduler.scheduler: Next wakeup is due at 2025-09-25 06:50:51.299581+00:00 (in 59.997893 seconds)
+2025-09-25 06:49:51,302 [INFO] apscheduler.executors.default: Running job "create_app.<locals>.<lambda> (trigger: interval[0:01:00], next run at: 2025-09-25 06:50:51 UTC)" (scheduled at 2025-09-25 06:49:51.299581+00:00)
+2025-09-25 06:49:51,302 [INFO] AREA-API: [check_hooks] starting to check AREA'S. . .
+2025-09-25 06:49:51,306 [WARNING] AREA-API: [check_hooks] no active area found
+2025-09-25 06:49:51,307 [INFO] apscheduler.executors.default: Job "create_app.<locals>.<lambda> (trigger: interval[0:01:00], next run at: 2025-09-25 06:50:51 UTC)" executed successfully
+2025-09-25 06:49:52,063 [DEBUG] apscheduler.scheduler: Looking for jobs to run
+2025-09-25 06:49:52,065 [DEBUG] apscheduler.scheduler: Next wakeup is due at 2025-09-25 06:50:52.063458+00:00 (in 59.998517 seconds)
+2025-09-25 06:49:52,065 [INFO] apscheduler.executors.default: Running job "create_app.<locals>.<lambda> (trigger: interval[0:01:00], next run at: 2025-09-25 06:50:52 UTC)" (scheduled at 2025-09-25 06:49:52.063458+00:00)
+2025-09-25 06:49:52,065 [INFO] AREA-API: [check_hooks] starting to check AREA'S. . .
+2025-09-25 06:49:52,068 [WARNING] AREA-API: [check_hooks] no active area found
+2025-09-25 06:49:52,069 [INFO] apscheduler.executors.default: Job "create_app.<locals>.<lambda> (trigger: interval[0:01:00], next run at: 2025-09-25 06:50:52 UTC)" executed successfully
+2025-09-25 06:50:51,300 [DEBUG] apscheduler.scheduler: Looking for jobs to run
+2025-09-25 06:50:51,300 [DEBUG] apscheduler.scheduler: Next wakeup is due at 2025-09-25 06:51:51.299581+00:00 (in 59.998723 seconds)
+2025-09-25 06:50:51,301 [INFO] apscheduler.executors.default: Running job "create_app.<locals>.<lambda> (trigger: interval[0:01:00], next run at: 2025-09-25 06:51:51 UTC)" (scheduled at 2025-09-25 06:50:51.299581+00:00)
+2025-09-25 06:50:51,301 [INFO] AREA-API: [check_hooks] starting to check AREA'S. . .
+2025-09-25 06:50:51,304 [WARNING] AREA-API: [check_hooks] no active area found
+2025-09-25 06:50:51,306 [INFO] apscheduler.executors.default: Job "create_app.<locals>.<lambda> (trigger: interval[0:01:00], next run at: 2025-09-25 06:51:51 UTC)" executed successfully
+2025-09-25 06:50:52,064 [DEBUG] apscheduler.scheduler: Looking for jobs to run
+2025-09-25 06:50:52,064 [DEBUG] apscheduler.scheduler: Next wakeup is due at 2025-09-25 06:51:52.063458+00:00 (in 59.998653 seconds)
+2025-09-25 06:50:52,065 [INFO] apscheduler.executors.default: Running job "create_app.<locals>.<lambda> (trigger: interval[0:01:00], next run at: 2025-09-25 06:51:52 UTC)" (scheduled at 2025-09-25 06:50:52.063458+00:00)
+2025-09-25 06:50:52,065 [INFO] AREA-API: [check_hooks] starting to check AREA'S. . .
+2025-09-25 06:50:52,068 [WARNING] AREA-API: [check_hooks] no active area found
+2025-09-25 06:50:52,070 [INFO] apscheduler.executors.default: Job "create_app.<locals>.<lambda> (trigger: interval[0:01:00], next run at: 2025-09-25 06:51:52 UTC)" executed successfully
+2025-09-25 06:51:51,300 [DEBUG] apscheduler.scheduler: Looking for jobs to run
+2025-09-25 06:51:51,300 [DEBUG] apscheduler.scheduler: Next wakeup is due at 2025-09-25 06:52:51.299581+00:00 (in 59.998629 seconds)
+2025-09-25 06:51:51,301 [INFO] apscheduler.executors.default: Running job "create_app.<locals>.<lambda> (trigger: interval[0:01:00], next run at: 2025-09-25 06:52:51 UTC)" (scheduled at 2025-09-25 06:51:51.299581+00:00)
+2025-09-25 06:51:51,301 [INFO] AREA-API: [check_hooks] starting to check AREA'S. . .
+2025-09-25 06:51:51,304 [WARNING] AREA-API: [check_hooks] no active area found
+2025-09-25 06:51:51,305 [INFO] apscheduler.executors.default: Job "create_app.<locals>.<lambda> (trigger: interval[0:01:00], next run at: 2025-09-25 06:52:51 UTC)" executed successfully
+2025-09-25 06:51:52,063 [DEBUG] apscheduler.scheduler: Looking for jobs to run
+2025-09-25 06:51:52,064 [DEBUG] apscheduler.scheduler: Next wakeup is due at 2025-09-25 06:52:52.063458+00:00 (in 59.999153 seconds)
+2025-09-25 06:51:52,064 [INFO] apscheduler.executors.default: Running job "create_app.<locals>.<lambda> (trigger: interval[0:01:00], next run at: 2025-09-25 06:52:52 UTC)" (scheduled at 2025-09-25 06:51:52.063458+00:00)
+2025-09-25 06:51:52,064 [INFO] AREA-API: [check_hooks] starting to check AREA'S. . .
+2025-09-25 06:51:52,067 [WARNING] AREA-API: [check_hooks] no active area found
+2025-09-25 06:51:52,068 [INFO] apscheduler.executors.default: Job "create_app.<locals>.<lambda> (trigger: interval[0:01:00], next run at: 2025-09-25 06:52:52 UTC)" executed successfully
+2025-09-25 06:52:51,300 [DEBUG] apscheduler.scheduler: Looking for jobs to run
+2025-09-25 06:52:51,301 [DEBUG] apscheduler.scheduler: Next wakeup is due at 2025-09-25 06:53:51.299581+00:00 (in 59.998057 seconds)
+2025-09-25 06:52:51,301 [INFO] apscheduler.executors.default: Running job "create_app.<locals>.<lambda> (trigger: interval[0:01:00], next run at: 2025-09-25 06:53:51 UTC)" (scheduled at 2025-09-25 06:52:51.299581+00:00)
+2025-09-25 06:52:51,302 [INFO] AREA-API: [check_hooks] starting to check AREA'S. . .
+2025-09-25 06:52:51,304 [WARNING] AREA-API: [check_hooks] no active area found
+2025-09-25 06:52:51,305 [INFO] apscheduler.executors.default: Job "create_app.<locals>.<lambda> (trigger: interval[0:01:00], next run at: 2025-09-25 06:53:51 UTC)" executed successfully
+2025-09-25 06:52:52,063 [DEBUG] apscheduler.scheduler: Looking for jobs to run
+2025-09-25 06:52:52,064 [DEBUG] apscheduler.scheduler: Next wakeup is due at 2025-09-25 06:53:52.063458+00:00 (in 59.999009 seconds)
+2025-09-25 06:52:52,064 [INFO] apscheduler.executors.default: Running job "create_app.<locals>.<lambda> (trigger: interval[0:01:00], next run at: 2025-09-25 06:53:52 UTC)" (scheduled at 2025-09-25 06:52:52.063458+00:00)
+2025-09-25 06:52:52,064 [INFO] AREA-API: [check_hooks] starting to check AREA'S. . .
+2025-09-25 06:52:52,067 [WARNING] AREA-API: [check_hooks] no active area found
+2025-09-25 06:52:52,068 [INFO] apscheduler.executors.default: Job "create_app.<locals>.<lambda> (trigger: interval[0:01:00], next run at: 2025-09-25 06:53:52 UTC)" executed successfully
+2025-09-25 06:53:51,300 [DEBUG] apscheduler.scheduler: Looking for jobs to run
+2025-09-25 06:53:51,301 [DEBUG] apscheduler.scheduler: Next wakeup is due at 2025-09-25 06:54:51.299581+00:00 (in 59.998340 seconds)
+2025-09-25 06:53:51,301 [INFO] apscheduler.executors.default: Running job "create_app.<locals>.<lambda> (trigger: interval[0:01:00], next run at: 2025-09-25 06:54:51 UTC)" (scheduled at 2025-09-25 06:53:51.299581+00:00)
+2025-09-25 06:53:51,302 [INFO] AREA-API: [check_hooks] starting to check AREA'S. . .
+2025-09-25 06:53:51,304 [WARNING] AREA-API: [check_hooks] no active area found
+2025-09-25 06:53:51,305 [INFO] apscheduler.executors.default: Job "create_app.<locals>.<lambda> (trigger: interval[0:01:00], next run at: 2025-09-25 06:54:51 UTC)" executed successfully
+2025-09-25 06:53:52,063 [DEBUG] apscheduler.scheduler: Looking for jobs to run
+2025-09-25 06:53:52,064 [DEBUG] apscheduler.scheduler: Next wakeup is due at 2025-09-25 06:54:52.063458+00:00 (in 59.999075 seconds)
+2025-09-25 06:53:52,064 [INFO] apscheduler.executors.default: Running job "create_app.<locals>.<lambda> (trigger: interval[0:01:00], next run at: 2025-09-25 06:54:52 UTC)" (scheduled at 2025-09-25 06:53:52.063458+00:00)
+2025-09-25 06:53:52,064 [INFO] AREA-API: [check_hooks] starting to check AREA'S. . .
+2025-09-25 06:53:52,067 [WARNING] AREA-API: [check_hooks] no active area found
+2025-09-25 06:53:52,068 [INFO] apscheduler.executors.default: Job "create_app.<locals>.<lambda> (trigger: interval[0:01:00], next run at: 2025-09-25 06:54:52 UTC)" executed successfully
+2025-09-25 06:54:51,300 [DEBUG] apscheduler.scheduler: Looking for jobs to run
+2025-09-25 06:54:51,301 [DEBUG] apscheduler.scheduler: Next wakeup is due at 2025-09-25 06:55:51.299581+00:00 (in 59.998266 seconds)
+2025-09-25 06:54:51,301 [INFO] apscheduler.executors.default: Running job "create_app.<locals>.<lambda> (trigger: interval[0:01:00], next run at: 2025-09-25 06:55:51 UTC)" (scheduled at 2025-09-25 06:54:51.299581+00:00)
+2025-09-25 06:54:51,302 [INFO] AREA-API: [check_hooks] starting to check AREA'S. . .
+2025-09-25 06:54:51,306 [WARNING] AREA-API: [check_hooks] no active area found
+2025-09-25 06:54:51,308 [INFO] apscheduler.executors.default: Job "create_app.<locals>.<lambda> (trigger: interval[0:01:00], next run at: 2025-09-25 06:55:51 UTC)" executed successfully
+2025-09-25 06:54:52,063 [DEBUG] apscheduler.scheduler: Looking for jobs to run
+2025-09-25 06:54:52,064 [DEBUG] apscheduler.scheduler: Next wakeup is due at 2025-09-25 06:55:52.063458+00:00 (in 59.998694 seconds)
+2025-09-25 06:54:52,065 [INFO] apscheduler.executors.default: Running job "create_app.<locals>.<lambda> (trigger: interval[0:01:00], next run at: 2025-09-25 06:55:52 UTC)" (scheduled at 2025-09-25 06:54:52.063458+00:00)
+2025-09-25 06:54:52,065 [INFO] AREA-API: [check_hooks] starting to check AREA'S. . .
+2025-09-25 06:54:52,068 [WARNING] AREA-API: [check_hooks] no active area found
+2025-09-25 06:54:52,069 [INFO] apscheduler.executors.default: Job "create_app.<locals>.<lambda> (trigger: interval[0:01:00], next run at: 2025-09-25 06:55:52 UTC)" executed successfully
+2025-09-25 06:55:51,300 [DEBUG] apscheduler.scheduler: Looking for jobs to run
+2025-09-25 06:55:51,300 [DEBUG] apscheduler.scheduler: Next wakeup is due at 2025-09-25 06:56:51.299581+00:00 (in 59.998792 seconds)
+2025-09-25 06:55:51,301 [INFO] apscheduler.executors.default: Running job "create_app.<locals>.<lambda> (trigger: interval[0:01:00], next run at: 2025-09-25 06:56:51 UTC)" (scheduled at 2025-09-25 06:55:51.299581+00:00)
+2025-09-25 06:55:51,301 [INFO] AREA-API: [check_hooks] starting to check AREA'S. . .
+2025-09-25 06:55:51,304 [WARNING] AREA-API: [check_hooks] no active area found
+2025-09-25 06:55:51,305 [INFO] apscheduler.executors.default: Job "create_app.<locals>.<lambda> (trigger: interval[0:01:00], next run at: 2025-09-25 06:56:51 UTC)" executed successfully
+2025-09-25 06:55:52,064 [DEBUG] apscheduler.scheduler: Looking for jobs to run
+2025-09-25 06:55:52,064 [DEBUG] apscheduler.scheduler: Next wakeup is due at 2025-09-25 06:56:52.063458+00:00 (in 59.998717 seconds)
+2025-09-25 06:55:52,065 [INFO] apscheduler.executors.default: Running job "create_app.<locals>.<lambda> (trigger: interval[0:01:00], next run at: 2025-09-25 06:56:52 UTC)" (scheduled at 2025-09-25 06:55:52.063458+00:00)
+2025-09-25 06:55:52,065 [INFO] AREA-API: [check_hooks] starting to check AREA'S. . .
+2025-09-25 06:55:52,068 [WARNING] AREA-API: [check_hooks] no active area found
+2025-09-25 06:55:52,069 [INFO] apscheduler.executors.default: Job "create_app.<locals>.<lambda> (trigger: interval[0:01:00], next run at: 2025-09-25 06:56:52 UTC)" executed successfully
+2025-09-25 06:56:51,300 [DEBUG] apscheduler.scheduler: Looking for jobs to run
+2025-09-25 06:56:51,300 [DEBUG] apscheduler.scheduler: Next wakeup is due at 2025-09-25 06:57:51.299581+00:00 (in 59.998728 seconds)
+2025-09-25 06:56:51,301 [INFO] apscheduler.executors.default: Running job "create_app.<locals>.<lambda> (trigger: interval[0:01:00], next run at: 2025-09-25 06:57:51 UTC)" (scheduled at 2025-09-25 06:56:51.299581+00:00)
+2025-09-25 06:56:51,301 [INFO] AREA-API: [check_hooks] starting to check AREA'S. . .
+2025-09-25 06:56:51,304 [WARNING] AREA-API: [check_hooks] no active area found
+2025-09-25 06:56:51,306 [INFO] apscheduler.executors.default: Job "create_app.<locals>.<lambda> (trigger: interval[0:01:00], next run at: 2025-09-25 06:57:51 UTC)" executed successfully
+2025-09-25 06:56:52,063 [DEBUG] apscheduler.scheduler: Looking for jobs to run
+2025-09-25 06:56:52,064 [DEBUG] apscheduler.scheduler: Next wakeup is due at 2025-09-25 06:57:52.063458+00:00 (in 59.998751 seconds)
+2025-09-25 06:56:52,065 [INFO] apscheduler.executors.default: Running job "create_app.<locals>.<lambda> (trigger: interval[0:01:00], next run at: 2025-09-25 06:57:52 UTC)" (scheduled at 2025-09-25 06:56:52.063458+00:00)
+2025-09-25 06:56:52,065 [INFO] AREA-API: [check_hooks] starting to check AREA'S. . .
+2025-09-25 06:56:52,068 [WARNING] AREA-API: [check_hooks] no active area found
+2025-09-25 06:56:52,070 [INFO] apscheduler.executors.default: Job "create_app.<locals>.<lambda> (trigger: interval[0:01:00], next run at: 2025-09-25 06:57:52 UTC)" executed successfully
+2025-09-25 06:57:51,300 [DEBUG] apscheduler.scheduler: Looking for jobs to run
+2025-09-25 06:57:51,300 [DEBUG] apscheduler.scheduler: Next wakeup is due at 2025-09-25 06:58:51.299581+00:00 (in 59.999029 seconds)
+2025-09-25 06:57:51,300 [INFO] apscheduler.executors.default: Running job "create_app.<locals>.<lambda> (trigger: interval[0:01:00], next run at: 2025-09-25 06:58:51 UTC)" (scheduled at 2025-09-25 06:57:51.299581+00:00)
+2025-09-25 06:57:51,300 [INFO] AREA-API: [check_hooks] starting to check AREA'S. . .
+2025-09-25 06:57:51,303 [WARNING] AREA-API: [check_hooks] no active area found
+2025-09-25 06:57:51,304 [INFO] apscheduler.executors.default: Job "create_app.<locals>.<lambda> (trigger: interval[0:01:00], next run at: 2025-09-25 06:58:51 UTC)" executed successfully
+2025-09-25 06:57:52,063 [DEBUG] apscheduler.scheduler: Looking for jobs to run
+2025-09-25 06:57:52,064 [DEBUG] apscheduler.scheduler: Next wakeup is due at 2025-09-25 06:58:52.063458+00:00 (in 59.998740 seconds)
+2025-09-25 06:57:52,065 [INFO] apscheduler.executors.default: Running job "create_app.<locals>.<lambda> (trigger: interval[0:01:00], next run at: 2025-09-25 06:58:52 UTC)" (scheduled at 2025-09-25 06:57:52.063458+00:00)
+2025-09-25 06:57:52,065 [INFO] AREA-API: [check_hooks] starting to check AREA'S. . .
+2025-09-25 06:57:52,068 [WARNING] AREA-API: [check_hooks] no active area found
+2025-09-25 06:57:52,070 [INFO] apscheduler.executors.default: Job "create_app.<locals>.<lambda> (trigger: interval[0:01:00], next run at: 2025-09-25 06:58:52 UTC)" executed successfully
+2025-09-25 06:58:51,300 [DEBUG] apscheduler.scheduler: Looking for jobs to run
+2025-09-25 06:58:51,300 [DEBUG] apscheduler.scheduler: Next wakeup is due at 2025-09-25 06:59:51.299581+00:00 (in 59.998805 seconds)
+2025-09-25 06:58:51,301 [INFO] apscheduler.executors.default: Running job "create_app.<locals>.<lambda> (trigger: interval[0:01:00], next run at: 2025-09-25 06:59:51 UTC)" (scheduled at 2025-09-25 06:58:51.299581+00:00)
+2025-09-25 06:58:51,301 [INFO] AREA-API: [check_hooks] starting to check AREA'S. . .
+2025-09-25 06:58:51,304 [WARNING] AREA-API: [check_hooks] no active area found
+2025-09-25 06:58:51,306 [INFO] apscheduler.executors.default: Job "create_app.<locals>.<lambda> (trigger: interval[0:01:00], next run at: 2025-09-25 06:59:51 UTC)" executed successfully
+2025-09-25 06:58:52,064 [DEBUG] apscheduler.scheduler: Looking for jobs to run
+2025-09-25 06:58:52,064 [DEBUG] apscheduler.scheduler: Next wakeup is due at 2025-09-25 06:59:52.063458+00:00 (in 59.998731 seconds)
+2025-09-25 06:58:52,065 [INFO] apscheduler.executors.default: Running job "create_app.<locals>.<lambda> (trigger: interval[0:01:00], next run at: 2025-09-25 06:59:52 UTC)" (scheduled at 2025-09-25 06:58:52.063458+00:00)
+2025-09-25 06:58:52,065 [INFO] AREA-API: [check_hooks] starting to check AREA'S. . .
+2025-09-25 06:58:52,067 [WARNING] AREA-API: [check_hooks] no active area found
+2025-09-25 06:58:52,068 [INFO] apscheduler.executors.default: Job "create_app.<locals>.<lambda> (trigger: interval[0:01:00], next run at: 2025-09-25 06:59:52 UTC)" executed successfully
+2025-09-25 06:59:51,300 [DEBUG] apscheduler.scheduler: Looking for jobs to run
+2025-09-25 06:59:51,300 [DEBUG] apscheduler.scheduler: Next wakeup is due at 2025-09-25 07:00:51.299581+00:00 (in 59.998980 seconds)
+2025-09-25 06:59:51,300 [INFO] apscheduler.executors.default: Running job "create_app.<locals>.<lambda> (trigger: interval[0:01:00], next run at: 2025-09-25 07:00:51 UTC)" (scheduled at 2025-09-25 06:59:51.299581+00:00)
+2025-09-25 06:59:51,301 [INFO] AREA-API: [check_hooks] starting to check AREA'S. . .
+2025-09-25 06:59:51,303 [WARNING] AREA-API: [check_hooks] no active area found
+2025-09-25 06:59:51,304 [INFO] apscheduler.executors.default: Job "create_app.<locals>.<lambda> (trigger: interval[0:01:00], next run at: 2025-09-25 07:00:51 UTC)" executed successfully
+2025-09-25 06:59:52,064 [DEBUG] apscheduler.scheduler: Looking for jobs to run
+2025-09-25 06:59:52,064 [DEBUG] apscheduler.scheduler: Next wakeup is due at 2025-09-25 07:00:52.063458+00:00 (in 59.998687 seconds)
+2025-09-25 06:59:52,065 [INFO] apscheduler.executors.default: Running job "create_app.<locals>.<lambda> (trigger: interval[0:01:00], next run at: 2025-09-25 07:00:52 UTC)" (scheduled at 2025-09-25 06:59:52.063458+00:00)
+2025-09-25 06:59:52,065 [INFO] AREA-API: [check_hooks] starting to check AREA'S. . .
+2025-09-25 06:59:52,068 [WARNING] AREA-API: [check_hooks] no active area found
+2025-09-25 06:59:52,069 [INFO] apscheduler.executors.default: Job "create_app.<locals>.<lambda> (trigger: interval[0:01:00], next run at: 2025-09-25 07:00:52 UTC)" executed successfully
+2025-09-25 07:00:51,300 [DEBUG] apscheduler.scheduler: Looking for jobs to run
+2025-09-25 07:00:51,300 [DEBUG] apscheduler.scheduler: Next wakeup is due at 2025-09-25 07:01:51.299581+00:00 (in 59.998893 seconds)
+2025-09-25 07:00:51,301 [INFO] apscheduler.executors.default: Running job "create_app.<locals>.<lambda> (trigger: interval[0:01:00], next run at: 2025-09-25 07:01:51 UTC)" (scheduled at 2025-09-25 07:00:51.299581+00:00)
+2025-09-25 07:00:51,301 [INFO] AREA-API: [check_hooks] starting to check AREA'S. . .
+2025-09-25 07:00:51,304 [WARNING] AREA-API: [check_hooks] no active area found
+2025-09-25 07:00:51,305 [INFO] apscheduler.executors.default: Job "create_app.<locals>.<lambda> (trigger: interval[0:01:00], next run at: 2025-09-25 07:01:51 UTC)" executed successfully
+2025-09-25 07:00:52,064 [DEBUG] apscheduler.scheduler: Looking for jobs to run
+2025-09-25 07:00:52,064 [DEBUG] apscheduler.scheduler: Next wakeup is due at 2025-09-25 07:01:52.063458+00:00 (in 59.998819 seconds)
+2025-09-25 07:00:52,065 [INFO] apscheduler.executors.default: Running job "create_app.<locals>.<lambda> (trigger: interval[0:01:00], next run at: 2025-09-25 07:01:52 UTC)" (scheduled at 2025-09-25 07:00:52.063458+00:00)
+2025-09-25 07:00:52,065 [INFO] AREA-API: [check_hooks] starting to check AREA'S. . .
+2025-09-25 07:00:52,067 [WARNING] AREA-API: [check_hooks] no active area found
+2025-09-25 07:00:52,068 [INFO] apscheduler.executors.default: Job "create_app.<locals>.<lambda> (trigger: interval[0:01:00], next run at: 2025-09-25 07:01:52 UTC)" executed successfully
+2025-09-25 07:01:51,300 [DEBUG] apscheduler.scheduler: Looking for jobs to run
+2025-09-25 07:01:51,300 [DEBUG] apscheduler.scheduler: Next wakeup is due at 2025-09-25 07:02:51.299581+00:00 (in 59.998793 seconds)
+2025-09-25 07:01:51,301 [INFO] apscheduler.executors.default: Running job "create_app.<locals>.<lambda> (trigger: interval[0:01:00], next run at: 2025-09-25 07:02:51 UTC)" (scheduled at 2025-09-25 07:01:51.299581+00:00)
+2025-09-25 07:01:51,301 [INFO] AREA-API: [check_hooks] starting to check AREA'S. . .
+2025-09-25 07:01:51,304 [WARNING] AREA-API: [check_hooks] no active area found
+2025-09-25 07:01:51,305 [INFO] apscheduler.executors.default: Job "create_app.<locals>.<lambda> (trigger: interval[0:01:00], next run at: 2025-09-25 07:02:51 UTC)" executed successfully
+2025-09-25 07:01:52,063 [DEBUG] apscheduler.scheduler: Looking for jobs to run
+2025-09-25 07:01:52,064 [DEBUG] apscheduler.scheduler: Next wakeup is due at 2025-09-25 07:02:52.063458+00:00 (in 59.998841 seconds)
+2025-09-25 07:01:52,064 [INFO] apscheduler.executors.default: Running job "create_app.<locals>.<lambda> (trigger: interval[0:01:00], next run at: 2025-09-25 07:02:52 UTC)" (scheduled at 2025-09-25 07:01:52.063458+00:00)
+2025-09-25 07:01:52,065 [INFO] AREA-API: [check_hooks] starting to check AREA'S. . .
+2025-09-25 07:01:52,067 [WARNING] AREA-API: [check_hooks] no active area found
+2025-09-25 07:01:52,068 [INFO] apscheduler.executors.default: Job "create_app.<locals>.<lambda> (trigger: interval[0:01:00], next run at: 2025-09-25 07:02:52 UTC)" executed successfully
+2025-09-25 07:02:51,300 [DEBUG] apscheduler.scheduler: Looking for jobs to run
+2025-09-25 07:02:51,300 [DEBUG] apscheduler.scheduler: Next wakeup is due at 2025-09-25 07:03:51.299581+00:00 (in 59.999017 seconds)
+2025-09-25 07:02:51,300 [INFO] apscheduler.executors.default: Running job "create_app.<locals>.<lambda> (trigger: interval[0:01:00], next run at: 2025-09-25 07:03:51 UTC)" (scheduled at 2025-09-25 07:02:51.299581+00:00)
+2025-09-25 07:02:51,300 [INFO] AREA-API: [check_hooks] starting to check AREA'S. . .
+2025-09-25 07:02:51,303 [WARNING] AREA-API: [check_hooks] no active area found
+2025-09-25 07:02:51,304 [INFO] apscheduler.executors.default: Job "create_app.<locals>.<lambda> (trigger: interval[0:01:00], next run at: 2025-09-25 07:03:51 UTC)" executed successfully
+2025-09-25 07:02:52,064 [DEBUG] apscheduler.scheduler: Looking for jobs to run
+2025-09-25 07:02:52,064 [DEBUG] apscheduler.scheduler: Next wakeup is due at 2025-09-25 07:03:52.063458+00:00 (in 59.998772 seconds)
+2025-09-25 07:02:52,065 [INFO] apscheduler.executors.default: Running job "create_app.<locals>.<lambda> (trigger: interval[0:01:00], next run at: 2025-09-25 07:03:52 UTC)" (scheduled at 2025-09-25 07:02:52.063458+00:00)
+2025-09-25 07:02:52,065 [INFO] AREA-API: [check_hooks] starting to check AREA'S. . .
+2025-09-25 07:02:52,067 [WARNING] AREA-API: [check_hooks] no active area found
+2025-09-25 07:02:52,068 [INFO] apscheduler.executors.default: Job "create_app.<locals>.<lambda> (trigger: interval[0:01:00], next run at: 2025-09-25 07:03:52 UTC)" executed successfully
+2025-09-25 07:03:51,299 [DEBUG] apscheduler.scheduler: Looking for jobs to run
+2025-09-25 07:03:51,300 [DEBUG] apscheduler.scheduler: Next wakeup is due at 2025-09-25 07:04:51.299581+00:00 (in 59.998979 seconds)
+2025-09-25 07:03:51,300 [INFO] apscheduler.executors.default: Running job "create_app.<locals>.<lambda> (trigger: interval[0:01:00], next run at: 2025-09-25 07:04:51 UTC)" (scheduled at 2025-09-25 07:03:51.299581+00:00)
+2025-09-25 07:03:51,301 [INFO] AREA-API: [check_hooks] starting to check AREA'S. . .
+2025-09-25 07:03:51,303 [WARNING] AREA-API: [check_hooks] no active area found
+2025-09-25 07:03:51,305 [INFO] apscheduler.executors.default: Job "create_app.<locals>.<lambda> (trigger: interval[0:01:00], next run at: 2025-09-25 07:04:51 UTC)" executed successfully
+2025-09-25 07:03:52,064 [DEBUG] apscheduler.scheduler: Looking for jobs to run
+2025-09-25 07:03:52,064 [DEBUG] apscheduler.scheduler: Next wakeup is due at 2025-09-25 07:04:52.063458+00:00 (in 59.998932 seconds)
+2025-09-25 07:03:52,064 [INFO] apscheduler.executors.default: Running job "create_app.<locals>.<lambda> (trigger: interval[0:01:00], next run at: 2025-09-25 07:04:52 UTC)" (scheduled at 2025-09-25 07:03:52.063458+00:00)
+2025-09-25 07:03:52,065 [INFO] AREA-API: [check_hooks] starting to check AREA'S. . .
+2025-09-25 07:03:52,067 [WARNING] AREA-API: [check_hooks] no active area found
+2025-09-25 07:03:52,069 [INFO] apscheduler.executors.default: Job "create_app.<locals>.<lambda> (trigger: interval[0:01:00], next run at: 2025-09-25 07:04:52 UTC)" executed successfully
+2025-09-25 07:04:51,300 [DEBUG] apscheduler.scheduler: Looking for jobs to run
+2025-09-25 07:04:51,300 [DEBUG] apscheduler.scheduler: Next wakeup is due at 2025-09-25 07:05:51.299581+00:00 (in 59.998673 seconds)
+2025-09-25 07:04:51,301 [INFO] apscheduler.executors.default: Running job "create_app.<locals>.<lambda> (trigger: interval[0:01:00], next run at: 2025-09-25 07:05:51 UTC)" (scheduled at 2025-09-25 07:04:51.299581+00:00)
+2025-09-25 07:04:51,301 [INFO] AREA-API: [check_hooks] starting to check AREA'S. . .
+2025-09-25 07:04:51,304 [WARNING] AREA-API: [check_hooks] no active area found
+2025-09-25 07:04:51,306 [INFO] apscheduler.executors.default: Job "create_app.<locals>.<lambda> (trigger: interval[0:01:00], next run at: 2025-09-25 07:05:51 UTC)" executed successfully
+2025-09-25 07:04:52,064 [DEBUG] apscheduler.scheduler: Looking for jobs to run
+2025-09-25 07:04:52,064 [DEBUG] apscheduler.scheduler: Next wakeup is due at 2025-09-25 07:05:52.063458+00:00 (in 59.998790 seconds)
+2025-09-25 07:04:52,065 [INFO] apscheduler.executors.default: Running job "create_app.<locals>.<lambda> (trigger: interval[0:01:00], next run at: 2025-09-25 07:05:52 UTC)" (scheduled at 2025-09-25 07:04:52.063458+00:00)
+2025-09-25 07:04:52,065 [INFO] AREA-API: [check_hooks] starting to check AREA'S. . .
+2025-09-25 07:04:52,068 [WARNING] AREA-API: [check_hooks] no active area found
+2025-09-25 07:04:52,069 [INFO] apscheduler.executors.default: Job "create_app.<locals>.<lambda> (trigger: interval[0:01:00], next run at: 2025-09-25 07:05:52 UTC)" executed successfully

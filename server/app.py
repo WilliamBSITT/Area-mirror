@@ -8,6 +8,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from core.hook_engine import check_hooks
 from routes import register_routes
 import requests
+from models.service import seed_services
 
 logger = setup_logger()
 
@@ -27,6 +28,7 @@ def create_app():
     wait_for_db(app)
     with app.app_context():
         db.create_all()
+        seed_services()
 
     scheduler = BackgroundScheduler()
     scheduler.add_job(lambda: check_hooks(app), "interval", seconds=app.config["SCHEDULER_INTERVAL"], id="check_hooks_job")

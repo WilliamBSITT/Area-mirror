@@ -94,3 +94,4 @@ mobile/ios
 mobile/android
 .env
 __pycache__/
+server/logs/*.log
