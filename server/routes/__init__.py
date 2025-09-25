@@ -1,6 +1,8 @@
 from .users import bp as users_bp
 from .github import bp as github_bp
+from .auth import bp as auth_bp
 
 def register_routes(app):
     app.register_blueprint(users_bp)
-    app.register_blueprint(github_bp, url_prefix="/github")
+    app.register_blueprint(github_bp)
+    app.register_blueprint(auth_bp)
