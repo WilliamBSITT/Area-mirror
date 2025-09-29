@@ -75,7 +75,7 @@ def login():
 
     # JWT identity doit être une string
     access_token = create_access_token(identity=str(user.id))
-    return jsonify({"access_token": access_token}), 200
+    return jsonify({"access_token": access_token, "id": user.id}), 200
 
 
 @bp.route("/token", methods=["GET"])
