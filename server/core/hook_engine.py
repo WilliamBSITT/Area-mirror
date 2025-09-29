@@ -1,48 +1,50 @@
 import logging
+from extensions import db
+from datetime import datetime, timezone, timedelta
 from flask import current_app
 from models.area import Area
-from .reaction_executor import reaction_executor
 from services import get_all_services
+from core.reaction_executor import reaction_executor
 
-logger = logging.getLogger("AREA-API")
+logger = logging.getLogger("AREA-App")
 
 def check_hooks(app=None):
-    
     ctx = app.app_context() if app else current_app.app_context()
-        
     with ctx:
-        logger.info(f"[check_hooks] starting to check AREA'S. . .")
+        logger.info("[check_hooks] checking AREAs...")
         services_map = {s.name: s for s in get_all_services()}
-        
         areas = Area.query.filter_by(enabled=True).all()
-        if not areas:
-            logger.warning(f"[check_hooks] no active area found")
-            return
-        
+
+        now = datetime.now(timezone.utc)
+
         for area in areas:
             try:
                 user = area.user
                 if not user:
-                    logger.warning(f"[check_hooks] AREA {area.id} without user link. skip")
                     continue
-                
-                service = services_map.get(area.service)
-                if not service:
-                    logging.info(f"[check_hooks] service {area.service} not register for AREA {area.id}")
+
+                act_srv = services_map.get(area.action_service)
+                rea_srv = services_map.get(area.reaction_service)
+                if not act_srv or not rea_srv:
                     continue
-                
+
+                if area.last_run:
+                    last_run = area.last_run.replace(tzinfo=timezone.utc)
+                    if (now - last_run) < timedelta(seconds=area.frequency):
+                        continue
+
                 params = area.params or {}
-                triggered = service.check_action(user, area.action, params=params)
-                
-                if triggered:
-                    logger.info(
-                        f"[check_hooks] AREA {area.id} started"
-                        f"({area.service}:{area.action} -> {area.reaction}) for {user.email}"
-                    )
-                    ok, err = reaction_executor(user, service, area.reaction, params)
-                    if not ok:
-                        logger.error(f"[check_hooks] execution error for AREA {area.id}: {err}")
-                else:
-                    logger.debug(f"[check_hooks] AREA {area.id} not running ({area.action})")
+                data = act_srv.check_action(user, area.action, params=params)
+
+                if data:
+                    logger.info(f"[check_hooks] AREA {area.id} triggered")
+                    area.last_run = now
+                    db.session.commit()
+                    
+                    reaction_executor(user, rea_srv, area.reaction, params=params, data=data)
+
             except Exception as e:
-                logger.exception(f"[check_hooks] Exception raised during the treatment of the AREA {area.id}: {e}")
+                logger.exception(f"[check_hooks] Error AREA {area.id}: {e}")
+
+
+

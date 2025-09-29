@@ -1,9 +1,9 @@
-from .timer_service import TimerService
-from .weather_service import WeatherService
+from .weather_service import OpenWeatherService
+from .discord_service import DiscordService
 
 registered_services = [
-    TimerService(),
-    WeatherService(),
+    OpenWeatherService(),
+    DiscordService()
 ]
 
 def get_all_services():

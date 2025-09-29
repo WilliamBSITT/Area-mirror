@@ -123,7 +123,7 @@ def create_user():
     db.session.commit()
     
     access_token = create_access_token(
-        identity=user.id, 
+        identity=str(user.id), 
     )
 
     response = user.to_dict()
