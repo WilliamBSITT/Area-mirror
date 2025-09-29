@@ -19,7 +19,20 @@ template = {
     },
     "host": "127.0.0.1:8080",
     "basePath": "/",
-    "schemes": ["http", "https"]
+    "schemes": ["http", "https"],
+    "securityDefinitions": {
+        "Bearer": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header",
+            "description": "JWT Authorization header using the Bearer scheme. Example: \"Bearer {token}\""
+        }
+    },
+    "security": [
+        {
+            "Bearer": []
+        }
+    ]
 }
 
 swagger_config = {
