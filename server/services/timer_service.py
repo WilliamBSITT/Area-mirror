@@ -1,4 +1,4 @@
-from base_service import BaseService
+from .base_service import BaseService
 import time
 
 class TimerService(BaseService):
