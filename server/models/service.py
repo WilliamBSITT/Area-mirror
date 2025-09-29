@@ -9,6 +9,9 @@ class Service(db.Model):
     description = db.Column(db.Text, nullable=True)
     image = db.Column(db.LargeBinary(length=(2**24)-1), nullable=True)  # Specify max length for binary data
 
+    def to_dict(self):
+        return {"id": self.id, "name": self.name, "description": self.description, "image": binascii.b2a_base64(self.image).decode('utf-8') if self.image else None}
+
 def image_to_binary(filename):
     base_dir = os.path.dirname(os.path.abspath(__file__))
     file_path = os.path.join(base_dir, 'logo', f'{filename}.png')
