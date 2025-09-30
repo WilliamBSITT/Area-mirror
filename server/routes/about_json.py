@@ -1,5 +1,8 @@
-from flask import Blueprint, jsonify
+from flask import Blueprint, Response
 from services import get_all_services
+import json
+import time
+from collections import OrderedDict
 
 bp = Blueprint("about", __name__)
 
@@ -61,18 +64,23 @@ def about():
     """
     services = []
     for service in get_all_services():
-        services.append({
-            "name": service.name,
-            "actions": service.get_actions(),
-            "reactions": service.get_reactions()
-        })
-        
-    return jsonify({
-        "client": {
-            "host": "localhost:8081"
-        },
-        "server": {
-            "current_time": __import__("time").time(),
-            "services": services
-        }
-    })
+        services.append(OrderedDict([
+            ("name", service.name),
+            ("actions", service.get_actions()),
+            ("reactions", service.get_reactions())
+        ]))
+
+    data = OrderedDict([
+        ("client", OrderedDict([
+            ("host", "localhost:8081")
+        ])),
+        ("server", OrderedDict([
+            ("current_time", int(time.time())),
+            ("services", services)
+        ]))
+    ])
+
+    return Response(
+        json.dumps(data, ensure_ascii=False, indent=2),
+        mimetype="application/json"
+    )
