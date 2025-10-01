@@ -8,6 +8,10 @@ class Service(db.Model):
     name = db.Column(db.String(100), unique=True, nullable=False)
     description = db.Column(db.Text, nullable=True)
     image = db.Column(db.LargeBinary(length=(2**24)-1), nullable=True)  # Specify max length for binary data
+    auth_url = db.Column(db.String(255), nullable=True)
+
+    def to_dict(self):
+        return {"id": self.id, "name": self.name, "description": self.description, "image": binascii.b2a_base64(self.image).decode('utf-8') if self.image else None}
 
 def image_to_binary(filename):
     base_dir = os.path.dirname(os.path.abspath(__file__))
@@ -48,10 +52,16 @@ def seed_services():
             "description": "Space and science data",
             "image": image_to_binary("nasa"),
         },
+        {
+            "name": "Discord",
+            "description": "Chat and communication platform",
+            "image": image_to_binary("discord"),
+            "auth_url": "https://discord.com/oauth2/authorize?client_id=1192094310749970472"
+        }
     ]
     for s in services:
         if not Service.query.filter_by(name=s["name"]).first():
-            service = Service(name=s["name"], description=s["description"], image=s["image"])
+            service = Service(name=s["name"], description=s["description"], image=s["image"], auth_url=s.get("auth_url"))
             db.session.add(service)
     db.session.commit()
 

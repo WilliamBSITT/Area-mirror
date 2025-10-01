@@ -1,44 +1,46 @@
-import base_service
+from .base_service import BaseService
+from utils.crypto_manager import crypto
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import re
+import os
 
-class GmailService(base_service.BaseService):
+
+class GmailService(BaseService):
     name = "gmail"
-
+    
     def __init__(self):
         self.smtp_server = "smtp.gmail.com"
         self.smtp_port = 587
-        self.email_address = "sender_email@gmail.com"  # le mail du sender
-        self.email_password = 'your_app_password' # le mot de passe de l'application
-        self.email_recver = 'receiver_email@gmail.com'  # le mail du receiver
-        self.subject = "Notification from Area"
-        self.content = "This is a notification from Area service."
-        pass
-
-    def validate_email(email):
+        
+    def validate_email(self, email):
         email_regex = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
         return re.match(email_regex, email) is not None
     
-    def create_email(self, to_address, subject, content):
+    def create_email(self, from_address, to_address, subject, content):
         msg = MIMEMultipart()
-        msg['From'] = self.email_address
+        
+        msg['From'] = from_address
         msg['To'] = to_address
         msg['Subject'] = subject
         msg.attach(MIMEText(content, 'plain'))
+        
         return msg
     
-    def send_email(self, msg, to_address):
+    def send_email(self, from_address, password, to_address, msg):
         try:
             server = smtplib.SMTP(self.smtp_server, self.smtp_port)
             server.starttls()
-            server.login(self.email_address, self.email_password)
-            server.sendmail(self.email_address, to_address, msg.as_string())
+            server.login(from_address, password)
+            server.sendmail(from_address, to_address, msg.as_string())
             server.quit()
-        except Exception as e:
+            return True
+        except:
             print(f'Error sending email to {to_address}: {str(e)}')
-
+            return False
+        
+    
     def get_actions(self):
         return []
 
@@ -48,18 +50,34 @@ class GmailService(base_service.BaseService):
         ]
 
     def check_action(self, user, action, params=None):
-        # Gmail service does not have actions
         raise NotImplementedError("gmail service does not support actions.")
 
     def execute_reaction(self, user, reaction, params=None, data=None):
         if reaction == "send_email":
-            if self.validate_email(self.email_recver):
-                msg = self.create_email(self.email_recver, self.subject, self.content)
-                self.send_email(msg, self.email_recver)
-                return True
-            else:
-                print(f"Adresse email invalide: {self.email_recver}")
+            # On récupère les paramètres depuis le workflow
+            from_address = params.get("from")
+            password_enc = params.get("password")
+            to_address = params.get("to")
+            subject = params.get("subject", "Notification from Area")
+            content = params.get("content", "This is a notification from Area service.")
+
+            if not (from_address and password_enc and to_address):
+                print("[GmailService] Paramètres manquants")
                 return False
+
+            try:
+                password = crypto.decrypt(password_enc)
+            except Exception as e:
+                print(f"[GmailService] Erreur de déchiffrement: {e}")
+                return False
+
+            if not self.validate_email(to_address):
+                print(f"[GmailService] Adresse email invalide: {to_address}")
+                return False
+
+            msg = self.create_email(from_address, to_address, subject, content)
+            return self.send_email(from_address, password, to_address, msg)
+
         else:
-            print(f"Réaction inconnue: {reaction}")
+            print(f"[GmailService] Réaction inconnue: {reaction}")
             return False

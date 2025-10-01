@@ -121,8 +121,17 @@ def create_user():
     user.set_password(password)
     db.session.add(user)
     db.session.commit()
-    return jsonify(user.to_dict()), 201
+    
+    access_token = create_access_token(
+        identity=str(user.id), 
+    )
+
+    response = user.to_dict()
+    response["access_token"] = access_token
+
+    return jsonify(response), 201
   
+
   
 @bp.route("/<int:user_id>", methods=["PUT"])
 @jwt_required()

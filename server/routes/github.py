@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, redirect
 import requests
 import os
 
@@ -30,7 +30,7 @@ def github_login():
         "https://github.com/login/oauth/authorize"
         f"?client_id={GITHUB_CLIENT_ID}&scope=read:user user:email"
     )
-    return jsonify({"auth_url": github_auth_url}), 200
+    return redirect(github_auth_url)
 
 
 @bp.route("/token", methods=["POST"])
