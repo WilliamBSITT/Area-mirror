@@ -44,7 +44,7 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="workflow"
         options={{
-          href: null, // prevents showing in TabBar
+          href: null,
           headerShown: false,
         }}
       />

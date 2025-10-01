@@ -20,7 +20,8 @@ function RootLayoutNav() {
   return (
     <Stack screenOptions={{ headerShown: false }}>
       {auth.user ? (
-        <Stack.Screen name="main" />
+        <Stack.Screen name="main" options={{animationTypeForReplace: 'push',
+                                            animation:'slide_from_right'}}/>
       ) : (
         <Stack.Screen name="auth" />
       )}

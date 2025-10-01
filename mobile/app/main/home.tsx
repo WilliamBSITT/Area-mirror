@@ -21,18 +21,18 @@ function Card({name, path, id}: {name:string, path:any, id:number} ) {
       <Link
         href={{
           pathname: '/main/services/[id]',
-          params: { id: id.toString() },
+          params: { id: name },
         }}
         className='bg-slate-400 rounded-2xl p-1 w-1/3 justify-end flex text-center mr-2 mb-2'
       >
-        Show
+        Details
       </Link>
       </View>
     </View>
   );
 }
 
-interface service {
+export interface service {
     name: string
     id: number
     image: string
@@ -66,6 +66,13 @@ export default function Home() {
 
         const resJson = await res.json();
         setData(resJson);
+        resJson.map( async (service: service) => {
+          try {
+            await AsyncStorage.setItem(`icon_${service.image}`, service.image);
+          } catch (error) {
+            console.log("error", error)
+          }
+        })
       } catch (err) {
         console.error("failed to load services", err);
       }
@@ -73,7 +80,6 @@ export default function Home() {
 
     fetchServices();
   }, [Ip]);
-
   return (
     <View className="bg-white flex-1 ">
       <Image
