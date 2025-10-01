@@ -32,6 +32,8 @@ services:
     volumes:
       - ./web:/app
       - common:/shared
+    environment:
+      - BACKEND_URL=http://server:8080
     networks:
       - back-tier
 

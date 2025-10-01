@@ -1,13 +1,11 @@
 import React from "react";
 import { Text, View, Pressable, Image, TextInput } from "react-native";
 import { useState } from "react";
-import { router } from "expo-router";
 
-export default function Login() {
-  const [success, setSuccess] = useState(false);
+export default function Index() {
   const handleCallDB = async () => {
     try {
-    const res = await fetch(`http://10.18.208.12:8080/auth/${mode}`, {
+    const res = await fetch(`http://10.18.207.184:8080/auth/${mode}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -20,15 +18,11 @@ export default function Login() {
     })
       
     if (!res.ok) {
-      throw new Error(`Server error: ${res.status}`);
+    throw new Error(`Server error: ${res.status}`);
     }
 
     const data = await res.json();
-    console.log('response', data);
-    {mode == 'login' ? router.push('/main/workflows') :
-      setMode('login');
-      setSuccess(true);
-    }
+    console.log("response data:", data);
 
     } catch(err) {
       console.log("error", err)

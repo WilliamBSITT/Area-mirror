@@ -1,79 +1,14 @@
 from flask import Blueprint, request, jsonify
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from extensions import db
 from models.user import User
 
-bp = Blueprint("auth", __name__)
+bp = Blueprint("auth", __name__, url_prefix="/auth")
 
-@bp.route("/register", methods=["POST"])
-def register():
-    """
-    Inscrire un nouvel utilisateur
-    ---
-    tags:
-      - Authentification
-    requestBody:
-      required: true
-      content:
-        application/json:
-          schema:
-            type: object
-            required:
-              - email
-              - password
-            properties:
-              email:
-                type: string
-                format: email
-                example: test@mail.com
-              password:
-                type: string
-                format: password
-                example: secret123
-    responses:
-      201:
-        description: Inscription réussie
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                message:
-                  type: string
-                  example: Inscription réussie
-      400:
-        description: Email ou mot de passe manquant / utilisateur déjà existant
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                error:
-                  type: string
-                  example: Utilisateur déjà existant
-    """
-    data = request.get_json()
-    email = data.get("email")
-    password = data.get("password")
-
-    if not email or not password:
-        return jsonify({"error": "Email et mot de passe requis"}), 400
-
-    if User.query.filter_by(email=email).first():
-        return jsonify({"error": "Utilisateur déjà existant"}), 400
-    
-    user = User(email=email)
-    user.set_password(password)
-    db.session.add(user)
-    db.session.commit()
-
-    return jsonify({"message": "Inscription réussie"}), 201
-
-
-@bp.route("/login", methods=["POST"])
+@bp.route("/token", methods=["POST"])
 def login():
     """
-    Connexion d'un utilisateur
+    Génère un JWT (login)
     ---
     tags:
       - Authentification
@@ -105,7 +40,7 @@ def login():
               properties:
                 access_token:
                   type: string
-                  example: eyJhbGciOiJIUzI1NiIsInR...
+                  example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
       400:
         description: Email ou mot de passe manquant
         content:
@@ -138,5 +73,43 @@ def login():
     if not user or not user.check_password(password):
         return jsonify({"error": "Identifiants invalides"}), 401
 
-    access_token = create_access_token(identity=user.id)
+    # JWT identity doit être une string
+    access_token = create_access_token(identity=str(user.id))
     return jsonify({"access_token": access_token}), 200
+
+
+@bp.route("/token", methods=["GET"])
+@jwt_required()
+def verify_token():
+    """
+    Vérifie si le JWT est toujours valide
+    ---
+    tags:
+      - Authentification
+    responses:
+      200:
+        description: Token valide
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                valid:
+                  type: boolean
+                  example: true
+                user_id:
+                  type: integer
+                  example: 1
+      401:
+        description: Token invalide ou expiré
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                error:
+                  type: string
+                  example: Token invalide ou expiré
+    """
+    current_user_id = get_jwt_identity()
+    return jsonify({"valid": True, "user_id": int(current_user_id)}), 200

@@ -1,15 +1,20 @@
 from flask import Flask, jsonify, redirect, request
 from flasgger import Swagger
 from flask_cors import CORS
-from extensions import db, migrate, jwt
-from config import Config
+from extensions import db, migrate, jwt, setup_logger
+from config import Config, swagger_config, template
 from wait_db import wait_for_db
+from apscheduler.schedulers.background import BackgroundScheduler
+from core.hook_engine import check_hooks
 from routes import register_routes
 import requests
+from models.service import seed_services
+
+logger = setup_logger()
 
 def create_app():
     app = Flask(__name__)
-    swagger = Swagger(app)
+    swagger = Swagger(app, config=swagger_config, template=template)
     app.config.from_object(Config)
 
     db.init_app(app)
@@ -23,7 +28,13 @@ def create_app():
     wait_for_db(app)
     with app.app_context():
         db.create_all()
+        seed_services()
 
+    scheduler = BackgroundScheduler()
+    scheduler.add_job(lambda: check_hooks(app), "interval", seconds=app.config["SCHEDULER_INTERVAL"], id="check_hooks_job")
+    scheduler.start()
+    
+    logger.info("FLASK successfully running")
     return app
 
 
