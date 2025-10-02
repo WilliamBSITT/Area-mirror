@@ -41,13 +41,6 @@ export default function TabsLayout() {
             href: null
         }} 
       />
-      <Tabs.Screen
-        name="workflow"
-        options={{
-          href: null,
-          headerShown: false,
-        }}
-      />
     </Tabs>
   );
 }
