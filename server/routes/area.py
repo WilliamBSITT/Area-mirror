@@ -200,58 +200,58 @@ def delete_area(area_id):
 @jwt_required()
 def update_area(area_id):
   """
-  Met à jour un AREA
-  ---
-  tags:
-    - Areas
-  security:
-    - BearerAuth: []
-  consumes:
-    - application/json
-  parameters:
-    - in: header
-    name: Authorization
-    type: string
-    required: true
-    description: "JWT token au format: Bearer <access_token>"
-    - in: path
-    name: area_id
-    type: integer
-    required: true
-    description: ID de l’AREA à mettre à jour
-    - in: body
-    name: body
-    required: true
-    schema:
-      type: object
-      properties:
-      enabled:
-        type: boolean
-        example: true
-      name:
+    Met à jour un AREA
+    ---
+    tags:
+      - Areas
+    security:
+      - BearerAuth: []
+    consumes:
+      - application/json
+    parameters:
+      - in: header
+        name: Authorization
         type: string
-        example: "Météo to Discord"
-      action_service:
-        type: string
-        example: "openweather"
-      action:
-        type: string
-        example: "get_weather"
-      reaction_service:
-        type: string
-        example: "discord"
-      reaction:
-        type: string
-        example: "send_message"
-      params:
-        type: object
-        example: { "city": "Nancy", "message": "🌦️ Météo" }
-  responses:
-    200:
-    description: AREA mis à jour
-    404:
-    description: AREA introuvable
-  """
+        required: true
+        description: "JWT token au format: Bearer <access_token>"
+      - in: path
+        name: area_id
+        type: integer
+        required: true
+        description: ID de l’AREA à mettre à jour
+      - in: body
+        name: body
+        required: true
+        schema:
+          type: object
+          properties:
+            enabled:
+              type: boolean
+              example: true
+            name:
+              type: string
+              example: "Météo to Discord"
+            action_service:
+              type: string
+              example: "openweather"
+            action:
+              type: string
+              example: "get_weather"
+            reaction_service:
+              type: string
+              example: "discord"
+            reaction:
+              type: string
+              example: "send_message"
+            params:
+              type: object
+              example: { "city": "Nancy", "message": "🌦️ Météo" }
+    responses:
+      200:
+        description: AREA mis à jour
+      404:
+        description: AREA introuvable
+    """
   area = Area.query.get_or_404(area_id)
   data = request.get_json()
 
