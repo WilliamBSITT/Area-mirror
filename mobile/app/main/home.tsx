@@ -25,7 +25,7 @@ function Card({name, path, id}: {name:string, path:any, id:number} ) {
         }}
         className='bg-slate-400 rounded-2xl p-1 w-1/3 justify-end flex text-center mr-2 mb-2'
       >
-        Details
+        See more
       </Link>
       </View>
     </View>
@@ -68,7 +68,7 @@ export default function Home() {
         setData(resJson);
         resJson.map( async (service: service) => {
           try {
-            await AsyncStorage.setItem(`icon_${service.image}`, service.image);
+            await AsyncStorage.setItem(`icon_${service.name}`, service.image);
           } catch (error) {
             console.log("error", error)
           }

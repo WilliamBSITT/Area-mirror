@@ -4,12 +4,14 @@ import { useRoute } from '@react-navigation/native';
 import { useLocalSearchParams } from 'expo-router';
 import { service } from "../home";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getItemAsync } from "expo-secure-store";
 
 
 export default function ServiceScreen() {
   const { id } = useLocalSearchParams();
   const [data, setData] = useState<service | null >(null);
   const [Ip, setIp] = useState<string | null>(null)
+  const [icon, setIcon] = useState<string | null>(null)
 
   useEffect(() => {
     const loadIp = async () => {
@@ -33,6 +35,12 @@ export default function ServiceScreen() {
 
         const resJson = await res.json();
         setData(resJson);
+        try {
+            let icon = await AsyncStorage.getItem(`icon_${id}`);
+            setIcon(icon);
+        } catch (error) {
+            console.log("error", error)
+        }
       } catch (err) {
         console.error("failed to load services", err);
       }
@@ -44,9 +52,14 @@ export default function ServiceScreen() {
   return (
     <View className="bg-[#F4FBFB] rounded-2xl flex">
           <Text className="text-black font-bold ml-4 mt-2 justify-start">{data?.name}</Text>
+           <View className='items-center'>
+                  <Image
+                    source={{uri: `data:image/png;base64,${icon}`}}
+                    className="w-40 h-40"
+                    resizeMode="contain"
+                  />
+                </View>
           <Text className="text-black font-bold ml-4 mt-2 justify-start"> {data?.description}</Text>
     </View>
-
-
   );
 }
