@@ -1,6 +1,8 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from core import area_manager
+from models.area import Area
+from extensions import db
 
 bp = Blueprint("areas", __name__, url_prefix="/areas")
 
@@ -194,53 +196,79 @@ def delete_area(area_id):
     return jsonify({"status": "deleted"}), 200
 
 
-@bp.route("/<int:area_id>/toggle", methods=["PATCH"])
+@bp.route("/<int:area_id>", methods=["PUT"])
 @jwt_required()
-def toggle_area(area_id):
-    """
-    Active/désactive un AREA
-    ---
-    tags:
-      - Areas
-    security:
-      - BearerAuth: []
-    consumes:
-      - application/json
-    parameters:
-      - in: header
-        name: Authorization
+def update_area(area_id):
+  """
+  Met à jour un AREA
+  ---
+  tags:
+    - Areas
+  security:
+    - BearerAuth: []
+  consumes:
+    - application/json
+  parameters:
+    - in: header
+    name: Authorization
+    type: string
+    required: true
+    description: "JWT token au format: Bearer <access_token>"
+    - in: path
+    name: area_id
+    type: integer
+    required: true
+    description: ID de l’AREA à mettre à jour
+    - in: body
+    name: body
+    required: true
+    schema:
+      type: object
+      properties:
+      enabled:
+        type: boolean
+        example: true
+      name:
         type: string
-        required: true
-        description: "JWT token au format: Bearer <access_token>"
-      - in: path
-        name: area_id
-        type: integer
-        required: true
-        description: ID de l’AREA à activer/désactiver
-      - in: body
-        name: body
-        required: true
-        schema:
-          type: object
-          properties:
-            enabled:
-              type: boolean
-              example: true
-    responses:
-      200:
-        description: AREA mis à jour
-      404:
-        description: AREA introuvable
-    """
-    user_id = get_jwt_identity()
-    data = request.get_json()
-    enabled = data.get("enabled", True)
+        example: "Météo to Discord"
+      action_service:
+        type: string
+        example: "openweather"
+      action:
+        type: string
+        example: "get_weather"
+      reaction_service:
+        type: string
+        example: "discord"
+      reaction:
+        type: string
+        example: "send_message"
+      params:
+        type: object
+        example: { "city": "Nancy", "message": "🌦️ Météo" }
+  responses:
+    200:
+    description: AREA mis à jour
+    404:
+    description: AREA introuvable
+  """
+  area = Area.query.get_or_404(area_id)
+  data = request.get_json()
 
-    area, err = area_manager.toggle_area(area_id, enabled=enabled, user_id=user_id)
-    if not area:
-        return jsonify({"error": err}), 404
+  if "enabled" in data:
+    area.enabled = data["enabled"]
+  if "name" in data:
+    area.name = data["name"]
+  if "action_service" in data:
+    area.action_service = data["action_service"]
+  if "action" in data:
+    area.action = data["action"]
+  if "reaction_service" in data:
+    area.reaction_service = data["reaction_service"]
+  if "reaction" in data:
+    area.reaction = data["reaction"]
+  if "params" in data:
+    area.params = data["params"]
 
-    return jsonify({
-        "id": area.id,
-        "enabled": area.enabled
-    }), 200
+  db.session.commit()
+  return jsonify("success"), 200
