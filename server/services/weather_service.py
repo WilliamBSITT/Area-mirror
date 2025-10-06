@@ -22,25 +22,21 @@ class OpenWeatherService(BaseService):
         if action != "get_weather":
             return None
 
-        # intervalle minimal entre deux envois
-        interval = 3600  # 1 heure
+        interval = 3600
 
         last = params.get("last_triggered_at")
         if last:
-            # Si c’est stocké en string (JSON), il faut parser
             if isinstance(last, str):
                 last = datetime.fromisoformat(last)
 
-            # comparaison avec maintenant (UTC aware)
             if datetime.now(timezone.utc) - last < timedelta(seconds=interval):
-                return None  # trop tôt → pas de trigger
+                return None
 
         city = (params or {}).get("city", "Paris")
         weather = self.fetch_weather(city)
         if not weather:
             return None
 
-        # mise à jour du dernier trigger (ISO string pour stockage JSON)
         params["last_triggered_at"] = datetime.now(timezone.utc).isoformat()
 
         return {
