@@ -28,7 +28,10 @@ export function useLogin() {
                 let msg = `Erreur ${res.status}`
                 try { const j = JSON.parse(txt); msg = (j?.error ?? j?.message ?? txt) || msg } catch { msg = txt || msg }
                 throw new Error(msg || "Identifiants invalides")
-            }
+            }/* else {
+                const data = await res.json();
+                console.log("Réponse JSON:", data);
+            }*/
 
             await refresh()
             router.push("/")

@@ -1,63 +1,66 @@
-import { Button } from "@/components/ui/button"
+"use client";
+
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 import {
     Card,
-    CardAction,
     CardContent,
-    CardDescription,
     CardFooter,
     CardHeader,
     CardTitle,
-} from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+} from "@/components/ui/card";
+import type { Services } from "@/hooks/useServices";
+import Image, { type StaticImageData } from "next/image";
+import fallbackImg from "../../public/landing.jpg";
 
-export function cardServices() {
+function toImageSrc(image?: string | null): string | StaticImageData {
+    if (!image) return fallbackImg;
+
+    const raw = image.trim();
+    if (!raw) return fallbackImg;
+
+    if (raw.startsWith("data:")) {
+        const cleaned = raw.replace(/\s+$/g, "");
+        return cleaned.includes(",") ? cleaned : fallbackImg;
+    }
+
+    if (/^https?:\/\//i.test(raw)) return raw;
+
+    const b64 = raw.replace(/\s/g, "");
+    return `data:image/png;base64,${b64}`;
+}
+
+type Props = {
+    id: number;
+    service?: Services | null;
+};
+
+export function CardServices({ id, service }: Props) {
+    const src = toImageSrc(service?.image);
+
     return (
         <Card className="w-full max-w-sm">
-            <CardHeader>
-                <CardTitle>Login to your account</CardTitle>
-                <CardDescription>
-                    Enter your email below to login to your account
-                </CardDescription>
-                <CardAction>
-                    <Button variant="link">Sign Up</Button>
-                </CardAction>
+            <CardHeader className="pb-2">
+                <CardTitle className="font-bold text-left">
+                    {service?.name ?? `Service #${id}`}
+                </CardTitle>
             </CardHeader>
-            <CardContent>
-                <form>
-                    <div className="flex flex-col gap-6">
-                        <div className="grid gap-2">
-                            <Label htmlFor="email">Email</Label>
-                            <Input
-                                id="email"
-                                type="email"
-                                placeholder="m@example.com"
-                                required
-                            />
-                        </div>
-                        <div className="grid gap-2">
-                            <div className="flex items-center">
-                                <Label htmlFor="password">Password</Label>
-                                <a
-                                    href="#"
-                                    className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
-                                >
-                                    Forgot your password?
-                                </a>
-                            </div>
-                            <Input id="password" type="password" required />
-                        </div>
-                    </div>
-                </form>
+
+            <CardContent className="flex items-center justify-center">
+                <Image
+                    src={src}
+                    alt="landingpageImage"
+                    width={400}
+                    height={300}
+                    priority
+                />
             </CardContent>
-            <CardFooter className="flex-col gap-2">
-                <Button type="submit" className="w-full">
-                    Login
-                </Button>
-                <Button variant="outline" className="w-full">
-                    Login with Google
+
+            <CardFooter className="justify-end">
+                <Button asChild className="ml-auto">
+                    <Link href={`/services/${service?.id ?? id}`}>See more</Link>
                 </Button>
             </CardFooter>
         </Card>
-    )
+    );
 }
