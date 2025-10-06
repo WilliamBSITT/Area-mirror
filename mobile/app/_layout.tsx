@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import { Stack } from "expo-router";
 import { AuthProvider, AuthContext } from "../utils/AuthProvider";
 import { ActivityIndicator, View } from "react-native";
-import '@/global.css';
+import '@/global.css';  
 
 function RootLayoutNav() {
   const auth = useContext(AuthContext);
@@ -19,12 +19,13 @@ function RootLayoutNav() {
 
   return (
     <Stack screenOptions={{ headerShown: false }}>
-      {auth.user ? (
+      <Stack.Protected guard={auth.isAuthenticated}>
         <Stack.Screen name="main" options={{animationTypeForReplace: 'push',
                                             animation:'slide_from_right'}}/>
-      ) : (
+      </Stack.Protected>
+      <Stack.Protected guard={!auth.isAuthenticated}>
         <Stack.Screen name="auth" />
-      )}
+      </Stack.Protected>
     </Stack>
   );
 }

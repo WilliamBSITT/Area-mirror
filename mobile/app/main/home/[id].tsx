@@ -2,13 +2,14 @@ import { Text, Image, Pressable, View } from "react-native";
 import React, { useEffect, useState } from 'react';
 import { useRoute } from '@react-navigation/native';
 import { useLocalSearchParams } from 'expo-router';
-import { service } from "../home";
+import { service } from ".";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getItemAsync } from "expo-secure-store";
 
 
 export default function ServiceScreen() {
   const { id } = useLocalSearchParams();
+  console.log("Service ID:", id);
   const [data, setData] = useState<service | null >(null);
   const [Ip, setIp] = useState<string | null>(null)
   const [icon, setIcon] = useState<string | null>(null)

@@ -83,7 +83,7 @@ export default function Home() {
   return (
     <View className="bg-white flex-1 ">
       <Image
-        source={require('../../images/logo.png')}
+        source={require('../../../images/logo.png')}
         className="w-[200px] h-[120px] ml-5 mt-5"
         resizeMode="contain"
       />
