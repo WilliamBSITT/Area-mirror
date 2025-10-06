@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
-import { Text, Image, View } from 'react-native';
+import { Text, Image, View, ScrollView } from 'react-native';
 import {Link} from 'expo-router'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -20,7 +20,7 @@ function Card({name, path, id}: {name:string, path:any, id:number} ) {
       <View className="items-end">
       <Link
         href={{
-          pathname: '/main/services/[id]',
+          pathname: '/main/home/[id]',
           params: { id: name },
         }}
         className='bg-slate-400 rounded-2xl p-1 w-1/3 justify-end flex text-center mr-2 mb-2'
@@ -81,6 +81,7 @@ export default function Home() {
     fetchServices();
   }, [Ip]);
   return (
+    <ScrollView>
     <View className="bg-white flex-1 ">
       <Image
         source={require('../../../images/logo.png')}
@@ -98,5 +99,6 @@ export default function Home() {
         }
       </View>
     </View>
+    </ScrollView>
   );
 }

@@ -69,20 +69,25 @@ export default function NewWorkflow() {
                     setOpen={setActionOpen}
                     setValue={setValueAction}
                     setItems={setAction}
-                    style={{width: '60%', margin: 'auto'}}
+                    dropDownContainerStyle={{ width: 200, alignSelf: 'center', zIndex: 1 }}
+                    style={{ width: 200, alignSelf: 'center' }}
+                    zIndex={1}
                 />
             </View>
-            <View className="flex flex-row mt-10 mb-5 justify-center">
-                <Text className="text-2xl font-semibold mt-4">Then:</Text>
+            <View className="flex flex-row mt-10 mb-5 justify-center items-center">
+              <Text className="text-2xl font-semibold mt-4 mr-4">Then:</Text>
+              <View style={{ flex: 1, alignItems: 'center' }}>
                 <DropDownPicker
-                    open={reactionOpen}
-                    value={valueReaction}
-                    items={reaction}
-                    setOpen={setReactionOpen}
-                    setValue={setValueReaction}
-                    setItems={setReaction}
-                    style={{width: '60%', margin: 'auto'}}
+                  open={reactionOpen}
+                  value={valueReaction}
+                  items={reaction}
+                  setOpen={setReactionOpen}
+                  setValue={setValueReaction}
+                  setItems={setReaction}
+                  dropDownContainerStyle={{ width: 200, alignSelf: 'center', zIndex: 1 }}
+                  style={{ width: 200, alignSelf: 'center'}}
                 />
+              </View>
             </View>
             <Pressable className="bg-blue-900 rounded-full p-4 w-1/4 m-auto bottom-1" onPress={save}>
                 <Text className="text-white text-center">Save</Text>

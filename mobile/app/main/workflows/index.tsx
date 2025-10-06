@@ -73,8 +73,8 @@ export default function Index() {
       {data?.map((area: workflowProps) => (
         <WorkflowTile title={area.name} id={area.id} key={area.id}/>
       ))}
-      <Pressable className="absolute bottom-52 right-14 bg-slate-400 w-16 h-16 rounded-2xl" onPress={() => router.push('/main/workflows/newWorkflow')}>
-        <Image source={require("../../../images/plus.png")} className="w-10 h-10 m-auto"/>
+      <Pressable className="absolute bottom-52 right-14 bg-blue-900 w-16 h-16 rounded-full" onPress={() => router.push('/main/workflows/newWorkflow')}>
+        <Image source={require("../../../images/plus-white.png")} className="w-10 h-10 m-auto"/>
       </Pressable>
     </View>
   );

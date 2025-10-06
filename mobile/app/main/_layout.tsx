@@ -35,12 +35,6 @@ export default function TabsLayout() {
           ),
         }}
       />
-      <Tabs.Screen
-        name="services/[id]"
-        options={{
-            href: null
-        }} 
-      />
     </Tabs>
   );
 }

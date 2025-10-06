@@ -7,7 +7,6 @@ import * as SecureStore from "expo-secure-store";
 
 export default function Profile() {
     const auth = useContext(AuthContext);
-    const mail = auth?.user?.email;
     const [newEmail, setNewEmail] = useState("")
     const [newPwd, setNewPwd] = useState("")
     const [oldPwd, setOldPwd] = useState("")
@@ -73,6 +72,7 @@ export default function Profile() {
 
     const logout = () => {
         deleteToken();
+        auth?.logout();
         console.log("successfully logged out")
         router.push("/auth/login");
     }
