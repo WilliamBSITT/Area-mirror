@@ -54,12 +54,11 @@ class GmailService(BaseService):
 
     def execute_reaction(self, user, reaction, params=None, data=None):
         if reaction == "send_email":
-            # On récupère les paramètres depuis le workflow
             from_address = params.get("from")
             password_enc = params.get("password")
             to_address = params.get("to")
             subject = params.get("subject", "Notification from Area")
-            content = params.get("content", "This is a notification from Area service.")
+            content_template = params.get("content", "This is a notification from Area service.")
 
             if not (from_address and password_enc and to_address):
                 print("[GmailService] Paramètres manquants")
@@ -74,6 +73,19 @@ class GmailService(BaseService):
             if not self.validate_email(to_address):
                 print(f"[GmailService] Adresse email invalide: {to_address}")
                 return False
+
+            # On fusionne params + data pour le formattage
+            context = {}
+            if params:
+                context.update(params)
+            if data:
+                context.update(data)
+
+            try:
+                content = content_template.format(**context)
+            except KeyError as e:
+                print(f"[GmailService] Variable manquante dans le message : {e}")
+                content = content_template
 
             msg = self.create_email(from_address, to_address, subject, content)
             return self.send_email(from_address, password, to_address, msg)
