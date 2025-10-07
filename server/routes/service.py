@@ -51,6 +51,7 @@ def service_fetch_by_name(service_name):
             description: Erreur interne du serveur
     """
     try:
+        service_name = service_name.lower()
         services = {s.name: s for s in get_all_services()}
         service = services.get(service_name)
 
