@@ -9,6 +9,7 @@ class OpenWeatherService(BaseService):
     def __init__(self):
         self.api_key = os.getenv("OPENWEATHER_API_KEY")
         self.base_url = "https://api.openweathermap.org/data/2.5/weather"
+
         
     def get_actions(self):
         return [
@@ -62,3 +63,22 @@ class OpenWeatherService(BaseService):
         if resp.status_code != 200:
             return None
         return resp.json()
+    
+    def get_actions_params(self, action_name):
+        if action_name == "get_weather":
+            return [
+                {"name": "city", "type": "String", "required": False, "description": "Nom de la ville pour la météo (défaut: Paris)"}
+            ]
+        return []
+
+    def get_reactions_params(self, reaction_name):
+        return []
+    
+    def get_actions_outputs(self, action_name):
+        if action_name == "get_weather":
+            return [
+                {"name": "{temp}", "type": "String", "description": "Le temperature"},
+                {"name": "{desc}", "type": "String", "description": "Etat du temps"},
+                {"name": "{city}", "type": "String", "description": "La ville"},
+            ]
+        return []

@@ -9,6 +9,84 @@ import binascii
 
 bp = Blueprint("services", __name__, url_prefix="/services")
 
+@bp.route("/<string:service_name>/reactions/<string:reaction_name>/params", methods=["GET"])
+def find_reactions(service_name, reaction_name):
+    """
+    Retourne les paramètres requis pour une réaction donnée
+    ---
+    tags:
+      - Services
+    parameters:
+      - name: service_name
+        in: path
+        type: string
+        required: true
+        description: Nom du service
+      - name: reaction_name
+        in: path
+        type: string
+        required: true
+        description: Nom de la réaction
+    responses:
+      200:
+        description: Liste des paramètres requis
+      404:
+        description: Service non trouvé
+      500:
+        description: Erreur interne du serveur
+    """
+    services = {s.name: s for s in get_all_services()}
+    service = services.get(service_name.lower())
+    if not service:
+        return jsonify({"error": "Service not found"}), 404
+    
+    try:
+        params = service.get_reactions_params(reaction_name)
+        return jsonify({
+            "service": service_name,
+            "reaction": reaction_name,
+            "params": params
+        }), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@bp.route("/<string:service_name>/actions/<string:action_name>/params", methods=["GET"])
+def find_actions(service_name, action_name):
+    services = {s.name: s for s in get_all_services()}
+    service = services.get(service_name.lower())
+
+    if not service:
+        return jsonify({"error": "Service not found"}), 404
+    
+    try:
+        params = service.get_actions_params(action_name)
+        return jsonify({
+            "service": service_name,
+            "action": action_name,
+            "params": params
+        }), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
+@bp.route("/<string:service_name>/actions/<string:action_name>/outputs", methods=["GET"])
+def find_actions_outputs(service_name, action_name):
+    services = {s.name: s for s in get_all_services()}
+    service = services.get(service_name.lower())
+
+    if not service:
+        return jsonify({"error": "Service not found"}), 404
+    
+    try:
+        outputs = service.get_actions_outputs(action_name)
+        return jsonify({
+            "service": service_name,
+            "action": action_name,
+            "outputs": outputs
+        }), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 @bp.route("/", methods=["GET"])
 def service_fetch():
     """

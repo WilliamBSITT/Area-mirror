@@ -22,3 +22,13 @@ class BaseService:
  
     def execute_reaction(self, user, reaction, params=None, data=None):
         raise NotImplementedError
+
+    def get_reactions_params(self, reaction_name):
+        return []
+
+    def get_actions_params(self, action_name):
+        return []
+    
+    def get_actions_output(self, action_name):
+        return []
+    
