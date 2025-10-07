@@ -4,7 +4,8 @@ import { useRoute } from '@react-navigation/native';
 import { useLocalSearchParams } from 'expo-router';
 import { service } from ".";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { getItemAsync } from "expo-secure-store";
+import { router } from "expo-router";
+
 
 
 export default function ServiceScreen() {
@@ -51,8 +52,8 @@ export default function ServiceScreen() {
   }, [Ip]);
 
   return (
-    <View className="bg-[#F4FBFB] rounded-2xl flex">
-          <Text className="text-black font-bold ml-4 mt-2 justify-start">{data?.name}</Text>
+    <View className="bg-[#F4FBFB] rounded-2xl flex h-full w-full">
+          <Text className="text-black font-bold ml-4 mt-10 justify-start">{data?.name}</Text>
            <View className='items-center'>
                   <Image
                     source={{uri: `data:image/png;base64,${icon}`}}
@@ -61,6 +62,9 @@ export default function ServiceScreen() {
                   />
                 </View>
           <Text className="text-black font-bold ml-4 mt-2 justify-start"> {data?.description}</Text>
+          <Pressable className="absolute bottom-40 right-14 bg-blue-900 w-16 h-16 rounded-full" onPress={() => router.push('/main/workflows/newWorkflow')}>
+                  <Image source={require("../../../images/plus-white.png")} className="w-10 h-10 m-auto"/>
+          </Pressable>
     </View>
   );
 }
