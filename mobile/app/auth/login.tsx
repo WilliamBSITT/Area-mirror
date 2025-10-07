@@ -1,14 +1,77 @@
 import React, { useContext} from "react";
 import { Text, View, Pressable, Image, TextInput } from "react-native";
 import { useState } from "react";
-import { router } from "expo-router";
+import { Redirect, router } from "expo-router";
 import { AuthContext } from "@/utils/AuthProvider";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useEffect } from 'react';
+import * as WebBrowser from 'expo-web-browser';
+import * as AuthSession from "expo-auth-session";
+
+WebBrowser.maybeCompleteAuthSession();
+
+// Endpoint
+const discovery = {
+  authorizationEndpoint: 'https://github.com/login/oauth/authorize',
+  tokenEndpoint: 'https://github.com/login/oauth/access_token',
+  revocationEndpoint: 'https://github.com/settings/connections/applications/Ov23liSvunSD8xhDGxUs',
+};
 
 export default function Login() {
   const [success, setSuccess] = useState(false);
   const [Ip, setIp] = useState(process.env.EXPO_PUBLIC_IP || "don't work");
   const { login } = useContext(AuthContext)!;
+  console.log(AuthSession.makeRedirectUri());
+  const [request, response, promptAsync] = AuthSession.useAuthRequest(
+    {
+      clientId: 'Ov23liSvunSD8xhDGxUs',
+      scopes: ['identity', 'read:user', 'user:email'],
+      extraParams: { prompt: 'consent' },
+      redirectUri: `http://10.18.207.252:8080/auth/github/callback`,
+    },
+    discovery
+  );
+
+  useEffect(() => {
+
+    const handleLoginGithub = async (code?: string) => {
+      try {
+        const res = await fetch(`http://10.18.207.252:8080/auth/github/token`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(
+          {
+            "code": code
+          })
+        })
+          
+        if (!res.ok) {
+          throw new Error(`Server error: ${res.status}`);
+        }
+
+        const data = await res.json();
+        console.log('response', data);
+        {mode == 'login' ? router.push('/main/home') :
+          setMode('login');
+          setSuccess(true);
+          storeData()
+          login(data.access_token, 2)
+        }
+
+      } catch(err) {
+        console.log("error", err)
+      }
+    }
+
+    if (response?.type === 'success') {
+      const { code } = response.params;
+      console.log("code", code)
+      console.log("response", response)
+      handleLoginGithub(code)
+    }
+  }, [response]);
 
   const handleCallDB = async () => {
     try {
@@ -85,6 +148,10 @@ export default function Login() {
         <Text className="text-black text-xl">
           {mode == 'register' ? 'Or login' : "I don't have an account"}
         </Text>
+      </Pressable>
+      <Pressable onPress={() => {promptAsync()}} className="bg-black rounded-full p-2 flex flex-row">
+        <Text className="text-white text-xl m-2">Login</Text>
+        <Image source={require('../../images/github-white-icon.png')} className="w-10 h-10 m-auto"/>
       </Pressable>
       <View>
       </View>

@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Text, Image, View, ScrollView } from 'react-native';
 import {Link} from 'expo-router'
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import api from '@/utils/api';
 
 function Card({name, path, id}: {name:string, path:any, id:number} ) {
   return (
@@ -42,30 +43,14 @@ export interface service {
 
 export default function Home() {
   const [data, setData] = useState([]);
-  const [Ip, setIp] = useState<string | null>(null)
 
   useEffect(() => {
-    const loadIp = async () => {
-      const storedIp = await AsyncStorage.getItem("ip");
-      setIp(storedIp);
-    };
-    loadIp();
-  }, []);
-
-  useEffect(() => {
-    if (!Ip) return; // wait until Ip is set
-
     const fetchServices = async () => {
       try {
-        const res = await fetch(`http://${Ip}:8080/services`, {
-          method: "GET",
-          headers: { "Content-Type": "application/json" },
-        });
-
-        if (!res.ok) throw new Error("Failed to fetch services");
-
-        const resJson = await res.json();
+        const res = await api.get(`/services`);
+        const resJson = await res.data;
         setData(resJson);
+
         resJson.map( async (service: service) => {
           try {
             await AsyncStorage.setItem(`icon_${service.name}`, service.image);
@@ -79,7 +64,7 @@ export default function Home() {
     };
 
     fetchServices();
-  }, [Ip]);
+  }, []);
   return (
     <ScrollView>
     <View className="bg-white flex-1 ">

@@ -4,6 +4,7 @@ import { router } from "expo-router";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as SecureStore from "expo-secure-store";
 import { workflowProps } from "./[id]";
+import api from "@/utils/api.js";
 
 function WorkflowTile({title, id}: {title: string, id: number}) {
   const [isEnabled, setIsEnabled] = useState(false);
@@ -29,44 +30,21 @@ function WorkflowTile({title, id}: {title: string, id: number}) {
 }
 
 export default function Index() {
-  const [Ip, setIp] = useState<string | null>(null);
-  const [token, setToken] = useState<string | null>(null);
   const [data, setData] = useState<workflowProps[] | null>(null)
 
   useEffect(() => {
-    const loadIp = async () => {
-      const storedIp = await AsyncStorage.getItem("ip");
-      setIp(storedIp);
-    };
-    loadIp();
-  }, []);
-
-  useEffect(() => {
     const fetchAREA = async () => {
-      try {
-        const token = await SecureStore.getItemAsync("jwt")
-        const res = await fetch(`http://${Ip}:8080/areas`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`
-          }
-        })
-          
-        if (!res.ok) {
-          throw new Error(`Server error: ${res.status}`);
-        }
-    
-        const data = await res.json();
-        console.log('response', data);
-        setData(data);
-      } catch(err) {
-        console.log("error fetching areas", err)
+      const res = await api.get(`/areas`).catch((error: any) => {
+        console.log("Error fetching areas:", error);
+      });
+      if (res && res.data) {
+        console.log('response', res.data);
+        setData(res.data);
       }
     }
 
     fetchAREA()
-  }, [Ip])
+  }, [])
 
   return (
     <View className="mt-20 w-full h-full">

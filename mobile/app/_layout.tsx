@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import { Stack } from "expo-router";
 import { AuthProvider, AuthContext } from "../utils/AuthProvider";
 import { ActivityIndicator, View } from "react-native";
-import '@/global.css';  
+import '@/global.css';
 
 function RootLayoutNav() {
   const auth = useContext(AuthContext);

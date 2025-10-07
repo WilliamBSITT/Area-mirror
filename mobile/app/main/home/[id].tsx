@@ -1,41 +1,23 @@
 import { Text, Image, Pressable, View } from "react-native";
 import React, { useEffect, useState } from 'react';
-import { useRoute } from '@react-navigation/native';
 import { useLocalSearchParams } from 'expo-router';
 import { service } from ".";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router } from "expo-router";
-
-
+import api from "@/utils/api";
 
 export default function ServiceScreen() {
   const { id } = useLocalSearchParams();
-  console.log("Service ID:", id);
   const [data, setData] = useState<service | null >(null);
-  const [Ip, setIp] = useState<string | null>(null)
   const [icon, setIcon] = useState<string | null>(null)
 
   useEffect(() => {
-    const loadIp = async () => {
-      const storedIp = await AsyncStorage.getItem("ip");
-      setIp(storedIp);
-    };
-    loadIp();
-  }, []);
-
-  useEffect(() => {
-    if (!Ip) return; // wait until Ip is set
 
     const fetchServices = async () => {
       try {
-        const res = await fetch(`http://${Ip}:8080/services/${id}`, {
-          method: "GET",
-          headers: { "Content-Type": "application/json" },
-        });
+        const res = await api.get(`/services/${id}`);
 
-        if (!res.ok) throw new Error("Failed to fetch services");
-
-        const resJson = await res.json();
+        const resJson = await res.data;
         setData(resJson);
         try {
             let icon = await AsyncStorage.getItem(`icon_${id}`);
@@ -49,7 +31,7 @@ export default function ServiceScreen() {
     };
 
     fetchServices();
-  }, [Ip]);
+  }, []);
 
   return (
     <View className="bg-[#F4FBFB] rounded-2xl flex h-full w-full">
