@@ -1,17 +1,36 @@
 import { Text, View, Switch, Pressable, Image } from "react-native";
 import React, { useEffect, useState } from 'react'
 import { router } from "expo-router";
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import * as SecureStore from "expo-secure-store";
 import { workflowProps } from "./[id]";
 import api from "@/utils/api.js";
 
-function WorkflowTile({title, id}: {title: string, id: number}) {
-  const [isEnabled, setIsEnabled] = useState(false);
-  const toggleSwitch = () => setIsEnabled(previousState => !previousState);
+function WorkflowTile({title, id, data, setData}: {title: string, id: number, data: workflowProps[] | null, setData: React.Dispatch<React.SetStateAction<workflowProps[] | null>>}) {
+  const [isEnabled, setIsEnabled] = useState(data?.find((area) => area.id === id)?.enabled || false);
+  const toggleSwitch = async () => {
+    setIsEnabled(previousState => !previousState)
+    const res = await api.put(`/areas/${id}`, {
+        enabled: !isEnabled
+    }).catch((error: any) => {
+      console.log("Error editing workflow:", error);
+    });
+    if (res && res.status === 200) {
+      console.log("Workflow updated successfully");
+      setData(data?.map((area) => area.id === id ? { ...area, enabled: !area.enabled } : area) || null);
+    }
+  };
 
-  const handleDelete = () => {
-    console.log("it will delete the workflow");
+  const handleDelete = async () => {
+    try {
+      const res = await api.delete(`/areas/${id}`);
+      if (res.status === 200) {
+        console.log("Workflow deleted successfully");
+        setData(data?.filter((area) => area.id !== id) || null);
+      } else {
+        console.log("Failed to delete workflow");
+      }
+    } catch (error) {
+      console.log("Error deleting workflow:", error);
+    }
   }
 
   return (
@@ -49,7 +68,7 @@ export default function Index() {
   return (
     <View className="mt-20 w-full h-full">
       {data?.map((area: workflowProps) => (
-        <WorkflowTile title={area.name} id={area.id} key={area.id}/>
+        <WorkflowTile title={area.name} id={area.id} key={area.id} data={data} setData={setData}/>
       ))}
       <Pressable className="absolute bottom-52 right-14 bg-blue-900 w-16 h-16 rounded-full" onPress={() => router.push('/main/workflows/newWorkflow')}>
         <Image source={require("../../../images/plus-white.png")} className="w-10 h-10 m-auto"/>

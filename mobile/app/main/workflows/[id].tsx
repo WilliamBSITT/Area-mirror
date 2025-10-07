@@ -5,6 +5,7 @@ import * as SecureStore from "expo-secure-store";
 import { useLocalSearchParams } from "expo-router";
 import DropDownPicker from 'react-native-dropdown-picker';
 import { router } from "expo-router";
+import api from "@/utils/api";
 export interface workflowProps {
     "action": string,
     "action_service": string,
@@ -33,30 +34,17 @@ export default function Workflow() {
 
 
   useEffect(() => {
-    const loadIp = async () => {
-      const storedIp = await AsyncStorage.getItem("ip");
-      setIp(storedIp);
-    };
-    loadIp();
-  }, []);
-
-  useEffect(() => {
     const fetchAREA = async () => {
       try {
-        const token = await SecureStore.getItemAsync("jwt")
-        const res = await fetch(`http://${Ip}:8080/areas/${id}`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`
-          }
-        })
-          
-        if (!res.ok) {
-          throw new Error(`Server error: ${res.status}`);
+        const res = await api.get(`/areas/${id}`).catch((error: any) => {
+          console.log("Error fetching areas:", error);
+        });
+        
+        if (!res || res.status !== 200) {
+          throw new Error(`Server error: ${res ? res.status : 'No response'}`);
         }
     
-        const data = await res.json();
+        const data = await res.data;
         console.log("data, ", data);
         setData(data);
         setTitle(data.name);
@@ -68,32 +56,22 @@ export default function Workflow() {
     }
 
         fetchAREA()
-    }, [Ip])
+    }, [])
 
     const save = async () => {
-        try {
-        const token = await SecureStore.getItemAsync("jwt")
-        const res = await fetch(`http://${Ip}:8080/areas/${id}`, {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`
-          },
-          body: data
-        })
-          
-        if (!res.ok) {
-          throw new Error(`Server error: ${res.status}`);
-        }
-    
-        const data = await res.json();
-        console.log('response', data);
-        setData(data);
-        setTitle(data.name);
-      } catch(err) {
-        console.log("error fetching areas", err)
+      const res = await api.patch(`/areas/${id}`, {
+        data
+      })
+        
+      if (!res.status || res.status !== 200) {
+        throw new Error(`Server error: ${res.status}`);
       }
-    }
+  
+      const newData = await res.data;
+      console.log('response', data);
+      setData(newData);
+      setTitle(newData.name);
+  }
 
     return (
         <View className="mt-20 ml-10">

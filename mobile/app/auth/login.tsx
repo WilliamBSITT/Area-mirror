@@ -1,12 +1,13 @@
 import React, { useContext} from "react";
 import { Text, View, Pressable, Image, TextInput } from "react-native";
 import { useState } from "react";
-import { Redirect, router } from "expo-router";
+import { router } from "expo-router";
 import { AuthContext } from "@/utils/AuthProvider";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useEffect } from 'react';
 import * as WebBrowser from 'expo-web-browser';
 import * as AuthSession from "expo-auth-session";
+import api from "@/utils/api";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -21,13 +22,13 @@ export default function Login() {
   const [success, setSuccess] = useState(false);
   const [Ip, setIp] = useState(process.env.EXPO_PUBLIC_IP || "don't work");
   const { login } = useContext(AuthContext)!;
-  console.log(AuthSession.makeRedirectUri());
   const [request, response, promptAsync] = AuthSession.useAuthRequest(
     {
       clientId: 'Ov23liSvunSD8xhDGxUs',
       scopes: ['identity', 'read:user', 'user:email'],
       extraParams: { prompt: 'consent' },
-      redirectUri: `http://10.18.207.252:8080/auth/github/callback`,
+      redirectUri: AuthSession.makeRedirectUri({
+        scheme: 'mobile',})
     },
     discovery
   );
@@ -35,33 +36,23 @@ export default function Login() {
   useEffect(() => {
 
     const handleLoginGithub = async (code?: string) => {
-      try {
-        const res = await fetch(`http://10.18.207.252:8080/auth/github/token`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify(
-          {
-            "code": code
-          })
-        })
-          
-        if (!res.ok) {
-          throw new Error(`Server error: ${res.status}`);
-        }
+      const res = await api.post(`/auth/github/token`, {
+          "code": code
+        }).catch((error: any) => {
+          console.log("Error posting github token:", error);
+        });
+        
+      if (!res || res.status !== 200) {
+        throw new Error(`Server error: ${res ? res.status : 'No response'}`);
+      }
 
-        const data = await res.json();
-        console.log('response', data);
-        {mode == 'login' ? router.push('/main/home') :
-          setMode('login');
-          setSuccess(true);
-          storeData()
-          login(data.access_token, 2)
-        }
-
-      } catch(err) {
-        console.log("error", err)
+      const data = await res.data;
+      console.log('response', data);
+      {mode == 'login' ? router.push('/main/home') :
+        setMode('login');
+        setSuccess(true);
+        storeData()
+        login(data.access_token, 2)
       }
     }
 
@@ -74,34 +65,24 @@ export default function Login() {
   }, [response]);
 
   const handleCallDB = async () => {
-    try {
-    const res = await fetch(mode == 'login' ? `http://${Ip}:8080/auth/token` : `http://${Ip}:8080/users`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(
-      {
-        "email": mail,
-        "password": password
-      })
-    })
-      
-    if (!res.ok) {
-      throw new Error(`Server error: ${res.status}`);
+    const res = await api.post(mode == 'login' ? `/auth/token` : `/users`, {
+      "email": mail,
+      "password": password
+    }).catch((error: any) => {
+      console.log("Error posting login:", error);
+    });
+
+    if (!res || res.status !== 200) {
+      throw new Error(`Server error: ${res ? res.status : 'No response'}`);
     }
 
-    const data = await res.json();
+    const data = await res.data;
     console.log('response', data);
     {mode == 'login' ? router.push('/main/home') :
       setMode('login');
       setSuccess(true);
       storeData()
       login(data.access_token, data.id)
-    }
-
-    } catch(err) {
-      console.log("error", err)
     }
   }
 

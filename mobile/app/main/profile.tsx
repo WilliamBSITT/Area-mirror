@@ -4,6 +4,7 @@ import { AuthContext } from "../../utils/AuthProvider";
 import { deleteToken } from "@/utils/secureStore";
 import { router } from "expo-router";
 import * as SecureStore from "expo-secure-store";
+import api from "@/utils/api";
 
 export default function Profile() {
     const auth = useContext(AuthContext);
@@ -19,52 +20,32 @@ export default function Profile() {
     }
 
     const sendMail = async () => {
-        const token = await SecureStore.getItemAsync("jwt")
         const id = await SecureStore.getItemAsync("id")
-        try {
-            const res = await fetch(`http://10.18.208.4:8080/users/${id}`,
-                {
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `Bearer ${token}`
-                    },
-                    method: 'PUT',
-                    body: JSON.stringify({
-                        email: newEmail
-                    })
-                }
-            )
-            if (!res.ok) {
-                throw new Error(`Server error: ${res.status}`);
-            }
-            console.log("ok")
-        } catch(err) {
-            console.error("send mail error", err)
+        const res = await api.put(`/users/${id}`, {
+            email: newEmail
+        }).catch((error: any) => {
+            console.log("Error changing email:", error);
+        });
+
+        if (res && res.status === 200) {
+            console.log("Email changed successfully")
+        } else {
+            console.log("Failed to change email")
         }
     }
 
     const verifyPwd = async () => {
-        const token = await SecureStore.getItemAsync("jwt")
         const id = await SecureStore.getItemAsync("id")
-        console.log("id :", token)
-        try {
-            const res = await fetch(`http://10.18.208.4:8080/users/${id}`,
-                {
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `Bearer ${token}`
-                    },
-                    method: 'PUT',
-                    body: JSON.stringify({
-                        password: newPwd
-                    })
-                }
-            )
-            if (!res.ok) {
-                throw new Error(`Server error: ${res.status}`);
-            }
-        } catch(err) {
-            console.error("fail to change pwd", err)
+        const res = await api.put(`http://10.18.208.4:8080/users/${id}`, {
+            password: newPwd
+        }).catch((error: any) => {
+            console.log("Error changing password:", error);
+        });
+        
+        if (res && res.status === 200) {    
+            console.log("Password changed successfully")
+        } else {
+            console.log("Failed to change password")
         }
         setIsModalOpen(false)
 

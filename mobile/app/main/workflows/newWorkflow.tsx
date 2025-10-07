@@ -1,7 +1,6 @@
 import { View, Text, TextInput, Pressable, Image } from "react-native"
 import React, {useEffect, useState} from "react"
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import * as SecureStore from "expo-secure-store";
 import DropDownPicker from 'react-native-dropdown-picker';
 import { router } from "expo-router";
 import { workflowProps } from "./[id]";
@@ -56,22 +55,24 @@ export default function NewWorkflow() {
 
     const save = async () => {
         try {
-        console.log("name :", title, valueAction, valueReaction, valueService)
+        console.log("name :", title, valueAction, valueReaction, valueService, valueServiceRea);
         const res = await api.post('/areas', {
-          body: JSON.stringify({
-            name: title,
-            action: valueAction,
-            action_service: valueService,
-            reaction: valueReaction,
-            reaction_service: "discord",
+            name: "salut",
+            action: "get_weather",
+            action_service: "openWeather",
+            reaction: "send_message",
+            reaction_service: "Discord",
             params: {"city": "Nancy", "message": "meteo {temp} {city} {desc}"}
-          })
-        })
+        }).catch((error: any) => {
+          console.log("Error posting areas:", error);
+        });
     
-        const data = await res.data;
-        console.log('response', data);
-        setData(data);
-        setTitle(data.name);
+        if (res && res.data) {
+          const data = await res.data;
+          console.log('response', data);
+          setData(data);
+          setTitle(data.name);
+        }
       } catch(err) {
         console.log("error posting areas", err)
       }
