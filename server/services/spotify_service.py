@@ -93,91 +93,54 @@ class SpotifyService(BaseService):
 
     
     def execute_reaction(self, user, reaction, params=None, data=None):
-        pass
+        tokens = params.get("tokens", {})
+        access_token = tokens.get("access_token")
+        refresh_token = tokens.get("refresh_token")
 
-    # met en pause / play la lecture de la musique par default mais si on veut on peut preciser la musique a jouer
-    # def play_musique(self, uri=None):
-        # if 'access_token' not in session:
-        #     return redirect('/login')
+        if not access_token or not refresh_token:
+            print("[Spotify] Missing tokens in params")
+            return False
 
-        # if datetime.now().timestamp() > session['expires_at']:
-        #     return redirect('/refresh_token')
+        headers = {"Authorization": f"Bearer {access_token}"}
 
-        # headers = {
-        # 'Authorization': f"Bearer {session['access_token']}"
-        # }
+        endpoints = {
+            "play": f"{self.api_base}/me/player/play",
+            "pause": f"{self.api_base}/me/player/pause",
+            "next": f"{self.api_base}/me/player/next",
+            "previous": f"{self.api_base}/me/player/previous"
+        }
 
-        # if uri:
-        #     data = {
-        #         "uris": [uri]
-        #     }
-        # else:
-        #     data = {}
+        endpoint = endpoints.get(reaction)
+        if not endpoint:
+            print(f"[Spotify] Réaction inconnue: {reaction}")
+            return False
 
-        # response = requests.put(f'{self.api_base}/me/player/play', headers=headers, json=data)
-        # if response.status_code != 204:
-        #     return f"Erreur lors de la lecture de la musique: {response.status_code} - {response.text}"
+        body = None
+        if reaction == "play":
+            track_uri = params.get("track_uri")
+            if track_uri:
+                body = {"uris": [track_uri]}
 
-    # met la musique suivante
-    # def next_musique(self):
-        # if 'access_token' not in session:
-        #     return redirect('/login')
+        res = requests.post(endpoint, headers=headers, json=body)
+        if res.status_code == 405:
+            res = requests.put(endpoint, headers=headers, json=body)
 
-        # if datetime.now().timestamp() > session['expires_at']:
-        #     return redirect('/refresh_token')
+        if res.status_code == 401:
+            refreshed = self.refresh_token(refresh_token)
+            if not refreshed:
+                return False
 
-        # headers = {
-        # 'Authorization': f"Bearer {session['access_token']}"
-        # }
+            new_access = refreshed.get("access_token")
+            headers["Authorization"] = f"Bearer {new_access}"
+            res = requests.post(endpoint, headers=headers, json=body)
+            if res.status_code == 405:
+                res = requests.put(endpoint, headers=headers, json=body)
 
-        # response = requests.post(f'{self.api_base}/me/player/next', headers=headers)
-        # if response.status_code != 204:
-        #     return f"Erreur lors du passage à la musique suivante: {response.status_code} - {response.text}"
+        if res.status_code not in (200, 204):
+            print(f"[Spotify] Échec de la requête {reaction}: {res.status_code} → {res.text}")
+            return False
 
-    # met la musique precedente
-    # def previous_musique(self):
-        # if 'access_token' not in session:
-        #     return redirect('/login')
+        return True
 
-        # if datetime.now().timestamp() > session['expires_at']:
-        #     return redirect('/refresh_token')
-
-        # headers = {
-        # 'Authorization': f"Bearer {session['access_token']}"
-        # }
-
-        # response = requests.post(f'{self.api_base}/me/player/previous', headers=headers)
-        # if response.status_code != 204:
-        #     return f"Erreur lors du passage à la musique précédente: {response.status_code} - {response.text}"
-
-    # Recupere la musique actuellement jouée
-    # def currently_playing(self, user, params=None):
-    #     if 'access_token' not in session:
-    #         return redirect('/login')
-
-    #     if datetime.now().timestamp() > session['expires_at']:
-    #         return redirect('/refresh_token')
-
-    #     headers = {
-    #         'Authorization': f"Bearer {session['access_token']}"
-    #     }
-
-    #     response = requests.get(f'{self.api_base}/me/player/currently-playing', headers=headers)
-    #     if response.status_code != 200:
-    #         return f"Erreur lors de la récupération de la musique actuellement jouée: {response.status_code} - {response.text}"
-
-    #     data = response.json()
-    #     return data
-
-    # detection d'un nouveau titre d'un artiste suivi
-    # def new_title(self, user, params=None):
-        # if 'access_token' not in session:
-        #     return redirect('/login')
-
-        # if datetime.now().timestamp() > session['expires_at']:
-        #     return redirect('/refresh_token')
-
-        # headers = {
-        #     'Authorization': f"Bearer {session['access_token']}"
-        # }
+        
 
