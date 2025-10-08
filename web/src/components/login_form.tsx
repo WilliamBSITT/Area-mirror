@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { useLogin } from "@/hooks/useLogin"
+import { useLogin } from "@/hooks/auth/useLogin"
 
 export function Login_form({
                               className,
@@ -94,7 +94,7 @@ export function Login_form({
                         <FieldSeparator>Or continue with</FieldSeparator>
                         <Field>
                             <Link
-                                href="https://github.com/login/oauth/authorize?client_id=Ov23liSvunSD8xhDGxUs&scope=identity read:user user:email"
+                                href="https://github.com/login/oauth/authorize?client_id=Ov23lix28mwqFbEBHV0d&scope=identity read:user user:email"
                                 className={buttonVariants({ variant: "outline" })}
                             >
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">

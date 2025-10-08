@@ -2,7 +2,7 @@
 
 import { useCallback } from "react"
 
-export function useCheckJWT(endpoint: string = "/api/auth/token") {
+export function useCheckJWT(endpoint: string = "/api/auth/auth") {
     return useCallback(async (): Promise<boolean> => {
         try {
             const res = await fetch(endpoint, {

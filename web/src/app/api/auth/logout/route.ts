@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 
-const COOKIE_NAME = process.env.SESSION_COOKIE_NAME || "session"
+const COOKIE_NAME = "session"
 const isProd = process.env.NODE_ENV === "production"
 
 export async function POST() {

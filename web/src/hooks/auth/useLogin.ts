@@ -16,7 +16,7 @@ export function useLogin() {
         try {
             if (!email || !password) throw new Error("Veuillez renseigner l'email et le mot de passe.")
 
-            const res = await fetch("/api/auth/token", {
+            const res = await fetch("/api/auth/auth", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 credentials: "include",

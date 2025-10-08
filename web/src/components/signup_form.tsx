@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { useSignup } from "@/hooks/useSignup"
+import { useSignup } from "@/hooks/auth/useSignup"
 import {Field, FieldDescription, FieldSeparator} from "@/components/ui/field";
 
 export function SignupForm({ className, ...props }: React.ComponentProps<"div">) {

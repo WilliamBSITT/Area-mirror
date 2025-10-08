@@ -2,11 +2,11 @@
 
 import { useEffect, useState } from "react"
 import { useAreas, Area } from "@/hooks/useAreas"
-import { DataTable } from "@/components/workflowList"
+import { DataTable } from "@/components/areas/workflowList"
 import { areaColumns } from "./columns"
 
 export default function AreasTable() {
-    const fetchAreas = useAreas("/api/areas")
+    const fetchAreas = useAreas()
     const [data, setData] = useState<Area[] | null>(null)
     const [error, setError] = useState<string | null>(null)
     const [loading, setLoading] = useState(true)

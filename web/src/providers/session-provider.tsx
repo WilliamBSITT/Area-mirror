@@ -14,7 +14,7 @@ export default function SessionProvider({
     const refresh = async () => {
         setLoading(true)
         try {
-            const res = await fetch("/api/auth/token", { method: "GET", credentials: "include" })
+            const res = await fetch("/api/auth/auth/", { method: "GET", credentials: "include" })
             setUser(res.ok ? { email: "" } : null)
         } finally {
             setLoading(false)

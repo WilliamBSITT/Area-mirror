@@ -22,8 +22,8 @@ import {
 import Image from 'next/image'
 import LogoTriggerHub from "@/../public/logo_trigger_hub.png"
 
-import { useLogout } from "@/hooks/useLogout"
-import { useAuthLoading, useIsAuthenticated } from "@/hooks/useAuth"
+import { useLogout } from "@/hooks/auth/useLogout"
+import { useAuthLoading, useIsAuthenticated } from "@/hooks/auth/useAuth"
 
 export function Navbar() {
     const loading = useAuthLoading()
