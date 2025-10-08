@@ -1,7 +1,5 @@
 import { View, Text, TextInput, Pressable } from "react-native"
 import React, {useEffect, useState} from "react"
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import * as SecureStore from "expo-secure-store";
 import { useLocalSearchParams } from "expo-router";
 import DropDownPicker from 'react-native-dropdown-picker';
 import { router } from "expo-router";
@@ -20,7 +18,6 @@ export interface workflowProps {
 
 export default function Workflow() {
   const [data, setData] = useState<workflowProps | null>(null)
-  const [Ip, setIp] = useState<string | null>("")
     const { id } = useLocalSearchParams();
     const [title, setTitle] = useState("")
     const [actionOpen, setActionOpen] = useState(false);

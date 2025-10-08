@@ -26,7 +26,7 @@ function Card({name, path, id}: {name:string, path:any, id:number} ) {
         }}
         className='bg-slate-400 rounded-2xl p-1 w-1/3 justify-end flex text-center mr-2 mb-2'
       >
-        Detail
+        Details
       </Link>
       </View>
     </View>

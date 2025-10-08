@@ -14,7 +14,6 @@ export const AuthContext = createContext<AuthContextType | null>(null);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState(true);
-  const [Ip, setIp] = useState(process.env.EXPO_PUBLIC_IP || "don't work");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
@@ -28,12 +27,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             setIsAuthenticated(false);
           });
 
-          if (!res || res.status !== 200) {
-            throw new Error(`Server error: ${res ? res.status : 'No response'}`);
-          } else {
-            setIsAuthenticated(true);
-            console.log("auto login ok");
-          }
+          // if (!res || res.status !== 200) {
+          //   throw new Error(`Server error: ${res ? res.status : 'No response'}`);
+          setIsAuthenticated(true);
+          console.log("auto login ok");
       }
       setLoading(false);
     };

@@ -34,6 +34,10 @@ export default function Login() {
   );
 
   useEffect(() => {
+    AsyncStorage.clear();
+  }, []);
+
+  useEffect(() => {
 
     const handleLoginGithub = async (code?: string) => {
       const res = await api.post(`/auth/github/token`, {

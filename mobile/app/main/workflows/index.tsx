@@ -34,7 +34,7 @@ function WorkflowTile({title, id, data, setData}: {title: string, id: number, da
   }
 
   return (
-    <Pressable className="bg-blue-900 w-3/4 h-20 m-10 rounded-2xl p-3" onPress={() => router.push(`/main/workflows/${id}`)}>
+    <Pressable className="bg-blue-900 w-3/4 h-20 ml-10 mr-10 m-4 rounded-2xl p-3" onPress={() => router.push(`/main/workflows/${id}`)}>
       <View className="flex flex-row">
         <Text className="text-xl h-full flex-1 text-white">{title}</Text>
         <View className="flex flex-row justify-between h-full gap-2">
@@ -57,7 +57,6 @@ export default function Index() {
         console.log("Error fetching areas:", error);
       });
       if (res && res.data) {
-        console.log('response', res.data);
         setData(res.data);
       }
     }
