@@ -71,3 +71,16 @@ class TMDBService(BaseService):
 
     def execute_reaction(self, user, reaction, params=None, data=None):
         pass
+
+    def get_actions_params(self, action_name):
+        return []
+    
+    def get_reactions_params(self, reaction_name):
+        return []
+    
+    def get_actions_outputs(self, action_name):
+        if action_name == "latest_movie":
+            return [
+                {"name": "{movies}", "type": "String", "description": "Les derniers films les plus populaires"},
+            ]
+        return []

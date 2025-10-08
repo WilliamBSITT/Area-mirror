@@ -8,19 +8,17 @@ from .base_service import BaseService
 logger = logging.getLogger("AREA-App")
 
 
+
 class DiscordService(BaseService):
     name = "discord"
 
     def __init__(self):
         self.token = os.getenv("DISCORD_TOKEN")
-        self.channel_id = int(1420732842341699594)
+        self.client = discord.Client(intents=discord.Intents.default())
 
-        intents = discord.Intents.default()
-        self.client = discord.Client(intents=intents)
 
         self.loop = asyncio.new_event_loop()
-        t = threading.Thread(target=self._start_bot, daemon=True)
-        t.start()
+        threading.Thread(target=self._start_bot, daemon=True).start()
 
     def _start_bot(self):
         asyncio.set_event_loop(self.loop)
@@ -31,24 +29,31 @@ class DiscordService(BaseService):
 
     def get_reactions(self):
         return [
-            {"name": "send_message", "description": "Envoie un message dans le salon Discord"}
+            {"name": "send_message", "description": "Envoie un message dans un salon Discord spécifique"}
         ]
 
     def check_action(self, user, action, params=None):
         return False
 
-    async def _send_message(self, message):
+    async def _send_message(self, channel_id, message):
+        """Envoie le message dans le salon indiqué."""
         await self.client.wait_until_ready()
-        channel = self.client.get_channel(self.channel_id)
+        channel = self.client.get_channel(int(channel_id))
         if channel:
             await channel.send(message)
         else:
-            print("[DiscordService] Salon introuvable")
+            logger.error(f"[DiscordService] Salon {channel_id} introuvable")
 
     def execute_reaction(self, user, reaction, params=None, data=None):
         if reaction == "send_message":
             message_template = params.get("message", "Hello from AREA!")
-            
+            channel_id = params.get("channel_id")
+
+            if not channel_id:
+                logger.error("[DiscordService] Aucun channel_id fourni dans les paramètres du workflow")
+                return False
+
+            # Fusion des données de contexte
             context = {}
             if data:
                 context.update(data)
@@ -58,9 +63,20 @@ class DiscordService(BaseService):
             except KeyError as e:
                 message = f"[Erreur] variable manquante dans le message : {e}"
 
-            logger.info(message)
+            logger.info(f"[DiscordService] Envoi vers salon {channel_id}: {message}")
             asyncio.run_coroutine_threadsafe(
-                self._send_message(message),
-                self.client.loop
+                self._send_message(channel_id, message),
+                self.loop
             )
+            return True
 
+
+    def get_reactions_params(self, reaction_name):
+        if reaction_name == "send_message":
+            return [
+                {"name": "message", "type": "String", "required": True, "description": "message de sortie"},
+                {"name": "channel_id", "type": "String", "required": True, "description": "id du channel discord de sortie"}
+            ]
+        return []
+
+    

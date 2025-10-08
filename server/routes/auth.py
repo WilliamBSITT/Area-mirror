@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, decode_token
 from extensions import db
 from models.user import User
 
@@ -77,6 +77,75 @@ def login():
     access_token = create_access_token(identity=str(user.id))
     return jsonify({"access_token": access_token, "id": user.id}), 200
 
+@bp.route("/refresh", methods=["POST"])
+def refresh():
+  """
+    Refresh un JWT expiré
+    ---
+    tags:
+      - Authentification
+    parameters:
+      - in: header
+        name: Authorization
+        type: string
+        required: true
+        description: "JWT token au format: Bearer <access_token>"
+    responses:
+      200:
+        description: Connexion réussie (JWT généré)
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                access_token:
+                  type: string
+                  example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+      401:
+        description: Token invalide ou mal formé
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                error:
+                  type: string
+                  example: Token invalide ou mal formé
+      400:
+        description: Identité introuvable dans le token
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                error:
+                  type: string
+                  example: Identité introuvable dans le token
+    """
+  auth_header = request.headers.get("Authorization", None)
+  if not auth_header:
+    return jsonify({"error": "Authorization header manquant"}), 401
+
+  parts = auth_header.split()
+  if len(parts) != 2 or parts[0].lower() != "bearer":
+    return jsonify({"error": "Format d'Authorization invalide"}), 401
+
+  token = parts[1]
+  try:
+    decoded = decode_token(token, allow_expired=True)
+  except Exception:
+    return jsonify({"error": "Token invalide"}), 401
+
+  if decoded.get("type") != "access":
+    return jsonify({"error": "Le token fourni n'est pas un access token"}), 401
+
+  identity = decoded.get("sub") or decoded.get("identity")
+  if identity is None:
+    return jsonify({"error": "Identité introuvable dans le token"}), 400
+
+  new_token = create_access_token(identity=identity)
+  return jsonify({"access_token": new_token}), 200
+
 
 @bp.route("/token", methods=["GET"])
 @jwt_required()
@@ -86,6 +155,12 @@ def verify_token():
     ---
     tags:
       - Authentification
+    parameters:
+      - in: header
+        name: Authorization
+        type: string
+        required: true
+        description: "JWT token au format: Bearer <access_token>"
     responses:
       200:
         description: Token valide
