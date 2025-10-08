@@ -80,41 +80,48 @@ def login():
 @bp.route("/refresh", methods=["POST"])
 def refresh():
   """
-  Rafraîchit le JWT (génère un nouveau token à partir d'un access token éventuellement expiré)
-  ---
-  tags:
-    - Authentification
-  parameters:
-    - in: header
-    name: Authorization
-    type: string
-    required: true
-    description: "JWT token au format: Bearer <access_token>"
-  security:
-    - BearerAuth: []
-  responses:
-    200:
-    description: Token rafraîchi avec succès
-    content:
-      application/json:
-      schema:
-        type: object
-        properties:
-        access_token:
-          type: string
-          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-    401:
-    description: Token invalide ou expiré
-    content:
-      application/json:
-      schema:
-        type: object
-        properties:
-        error:
-          type: string
-          example: Token invalide ou expiré
-  """
-
+    Refresh un JWT expiré
+    ---
+    tags:
+      - Authentification
+    parameters:
+      - in: header
+        name: Authorization
+        type: string
+        required: true
+        description: "JWT token au format: Bearer <access_token>"
+    responses:
+      200:
+        description: Connexion réussie (JWT généré)
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                access_token:
+                  type: string
+                  example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+      401:
+        description: Token invalide ou mal formé
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                error:
+                  type: string
+                  example: Token invalide ou mal formé
+      400:
+        description: Identité introuvable dans le token
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                error:
+                  type: string
+                  example: Identité introuvable dans le token
+    """
   auth_header = request.headers.get("Authorization", None)
   if not auth_header:
     return jsonify({"error": "Authorization header manquant"}), 401
