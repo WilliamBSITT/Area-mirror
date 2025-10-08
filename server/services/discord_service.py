@@ -70,8 +70,6 @@ class DiscordService(BaseService):
                 {"name": "message", "type": "String", "required": True, "description": "message de sortie"},
                 {"name": "channel_id", "type": "String", "required": True, "description": "id du channel discord de sortie"}
             ]
-
-    def get_actions_params(self, action_name):
         return []
-    
+
     

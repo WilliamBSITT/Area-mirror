@@ -95,14 +95,15 @@ class GmailService(BaseService):
             return False
 
     def get_reactions_params(self, reaction_name):
-        if reaction_name == "new_email":
+        if reaction_name == "send_email":
             return [
-                {"name": "from", "type": "string", "required": True, "description": "Adresse email du sender"},
-                {"name": "password", "type": "string", "required": True, "description": "Mot de passe de l'email (chiffré)"},
-                {"name": "to", "type": "string", "required": False, "description": "Sujet doit contenir"},
-                {"name": "subject", "type": "string", "required": False, "description": "Corps doit contenir"},
+                {"name": "from", "type": "string", "required": True, "description": "Adresse email de l'expéditeur"},
+                {"name": "password", "type": "string", "required": True, "description": "Mot de passe Application"},
+                {"name": "to", "type": "string", "required": False, "description": "Adresse email du destinataire"},
+                {"name": "subject", "type": "string", "required": False, "description": "Sujet de l'email"},
                 {"name": "content", "type": "string", "required": False, "description": "Contenu de l'email, supporte le formatage avec {var}"},
             ]
+        return []
         
     def get_actions_params(self, action_name):
         return []

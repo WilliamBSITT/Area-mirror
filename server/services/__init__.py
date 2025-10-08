@@ -1,3 +1,4 @@
+from .nasa_service import NasaService
 from .weather_service import OpenWeatherService
 from .discord_service import DiscordService
 from .tmbd_service import TMDBService
@@ -10,6 +11,7 @@ registered_services = [
     TMDBService(),
     GmailService(),
     SpotifyService(),
+    NasaService(),
 ]
 
 def get_all_services():

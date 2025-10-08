@@ -15,7 +15,7 @@ def find_reactions(service_name, reaction_name):
     Retourne les paramètres requis pour une réaction donnée
     ---
     tags:
-      - Services
+      - Service
     parameters:
       - name: service_name
         in: path
@@ -37,9 +37,9 @@ def find_reactions(service_name, reaction_name):
     """
     services = {s.name: s for s in get_all_services()}
     service = services.get(service_name.lower())
+
     if not service:
         return jsonify({"error": "Service not found"}), 404
-    
     try:
         params = service.get_reactions_params(reaction_name)
         return jsonify({
@@ -50,9 +50,32 @@ def find_reactions(service_name, reaction_name):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-
 @bp.route("/<string:service_name>/actions/<string:action_name>/params", methods=["GET"])
 def find_actions(service_name, action_name):
+    """
+    Retourne les paramètres requis pour une action donnée
+    ---
+    tags:
+      - Service
+    parameters:
+      - name: service_name
+        in: path
+        type: string
+        required: true
+        description: Nom du service
+      - name: action_name
+        in: path
+        type: string
+        required: true
+        description: Nom de l'action
+    responses:
+      200:
+        description: Liste des paramètres requis
+      404:
+        description: Service non trouvé
+      500:
+        description: Erreur interne du serveur
+    """
     services = {s.name: s for s in get_all_services()}
     service = services.get(service_name.lower())
 
@@ -71,6 +94,30 @@ def find_actions(service_name, action_name):
     
 @bp.route("/<string:service_name>/actions/<string:action_name>/outputs", methods=["GET"])
 def find_actions_outputs(service_name, action_name):
+    """
+    Retourne les paramètres que renvoie le service pour une action donnée
+    ---
+    tags:
+      - Service
+    parameters:
+      - name: service_name
+        in: path
+        type: string
+        required: true
+        description: Nom du service
+      - name: action_name
+        in: path
+        type: string
+        required: true
+        description: Nom de l'action
+    responses:
+      200:
+        description: Liste des paramètres requis
+      404:
+        description: Service non trouvé
+      500:
+        description: Erreur interne du serveur
+    """
     services = {s.name: s for s in get_all_services()}
     service = services.get(service_name.lower())
 
