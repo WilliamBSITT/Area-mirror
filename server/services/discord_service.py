@@ -71,3 +71,12 @@ class DiscordService(BaseService):
             return True
 
 
+    def get_reactions_params(self, reaction_name):
+        if reaction_name == "send_message":
+            return [
+                {"name": "message", "type": "String", "required": True, "description": "message de sortie"},
+                {"name": "channel_id", "type": "String", "required": True, "description": "id du channel discord de sortie"}
+            ]
+        return []
+
+    

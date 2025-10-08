@@ -1,57 +1,40 @@
 from flask import Blueprint, request, jsonify, redirect
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 import requests
 import os
+from models.user import User
+from extensions import db
 
 bp = Blueprint("github", __name__, url_prefix="/auth/github")
 
 GITHUB_CLIENT_ID = os.getenv("GITHUB_CLIENT_ID")
 GITHUB_CLIENT_SECRET = os.getenv("GITHUB_CLIENT_SECRET")
+GITHUB_CLIENT_WEB_ID = os.getenv("GITHUB_CLIENT_WEB_ID")
+GITHUB_CLIENT_WEB_SECRET = os.getenv("GITHUB_CLIENT_WEB_SECRET")
 
-@bp.route("/login", methods=["GET"])
-def github_login():
+@bp.route("/token", methods=["POST", "GET"])
+def github_token_callback():
     """
-    Obtenir l'URL de connexion GitHub
+    Callback OAuth GitHub (GET ou POST)
     ---
     tags:
       - Authentification GitHub
-    responses:
-      200:
-        description: URL GitHub générée
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                auth_url:
-                  type: string
-                  example: "https://github.com/login/oauth/authorize?client_id=xxx&scope=read:user user:email"
-    """
-    github_auth_url = (
-        "https://github.com/login/oauth/authorize"
-        f"?client_id={GITHUB_CLIENT_ID}&scope=read:user user:email"
-    )
-    return redirect(github_auth_url)
-
-
-@bp.route("/token", methods=["POST"])
-def github_token():
-    """
-    Échanger le code GitHub contre un access token
-    ---
-    tags:
-      - Authentification GitHub
-    requestBody:
-      required: true
-      content:
-        application/json:
-          schema:
-            type: object
-            required:
-              - code
-            properties:
-              code:
-                type: string
-                example: "123456"
+    parameters:
+      - in: query
+        name: code
+        required: false
+        schema:
+          type: string
+        description: "Code d'autorisation GitHub (GET)"
+      - in: body
+        name: body
+        required: false
+        schema:
+          type: object
+          properties:
+            code:
+              type: string
+              example: "123456"
     responses:
       200:
         description: Token GitHub obtenu
@@ -66,72 +49,56 @@ def github_token():
       400:
         description: Code invalide
     """
-    data = request.get_json()
-    code = data.get("code")
-
+    code = request.args.get("code") or (request.json and request.json.get("code"))
     if not code:
         return jsonify({"error": "Code GitHub manquant"}), 400
 
-    token_url = "https://github.com/login/oauth/access_token"
-    token_data = {
-        "client_id": GITHUB_CLIENT_ID,
-        "client_secret": GITHUB_CLIENT_SECRET,
-        "code": code,
-    }
-    headers = {"Accept": "application/json"}
-    token_res = requests.post(token_url, data=token_data, headers=headers)
-    token_json = token_res.json()
+    try:
+      token_url = "https://github.com/login/oauth/access_token"
+      token_data = {
+          "client_id": GITHUB_CLIENT_ID,
+          "client_secret": GITHUB_CLIENT_SECRET,
+          "code": code,
+      }
+      headers = {"Accept": "application/json"}
+      token_res = requests.post(token_url, data=token_data, headers=headers)
+      token_json = token_res.json()
+
+      
+    except Exception as e:
+      token_url = "https://github.com/login/oauth/access_token"
+      token_data = {
+          "client_id": GITHUB_CLIENT_WEB_ID,
+          "client_secret": GITHUB_CLIENT_WEB_SECRET,
+          "code": code,
+      }
+      headers = {"Accept": "application/json"}
+      token_res = requests.post(token_url, data=token_data, headers=headers)
+      token_json = token_res.json()
 
     if "access_token" not in token_json:
-        return jsonify({"error": "Impossible d’obtenir le token GitHub"}), 400
+        return jsonify({"error": "Impossible d’obtenir le token GitHub", "github": token_json}), 400
 
-    return jsonify({"access_token": token_json["access_token"]}), 200
+    access_token = token_json["access_token"]
+    headers = {"Authorization": f"token {access_token}"}
+    user_res = requests.get("https://api.github.com/user", headers=headers)
 
-
-@bp.route("/me", methods=["GET"])
-def github_me():
-    """
-    Récupérer les infos utilisateur GitHub avec un access token
-    ---
-    tags:
-      - Authentification GitHub
-    parameters:
-      - name: Authorization
-        in: header
-        required: true
-        schema:
-          type: string
-        description: "Token GitHub au format 'token <ACCESS_TOKEN>'"
-        example: "token ghp_xxx123abc"
-    responses:
-      200:
-        description: Infos utilisateur GitHub
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                id:
-                  type: integer
-                  example: 123456
-                login:
-                  type: string
-                  example: octocat
-                email:
-                  type: string
-                  example: octocat@github.com
-      401:
-        description: Token invalide
-    """
-    auth_header = request.headers.get("Authorization")
-    if not auth_header:
-        return jsonify({"error": "Authorization header manquant"}), 401
-
-    user_res = requests.get(
-        "https://api.github.com/user",
-        headers={"Authorization": auth_header}
-    )
     if user_res.status_code != 200:
-        return jsonify({"error": "Token GitHub invalide"}), 401
+        return jsonify({"error": "Token GitHub invalide"}), 400
+    user_data = user_res.json()
 
-    return jsonify(user_res.json()), 200
+    user = User.query.filter_by(email=user_data.get("login")).first()
+    if not user:
+        new_user = User(email=user_data.get("login"), password=None)
+        db.session.add(new_user)
+        db.session.commit()
+        user = new_user
+
+    access_token = create_access_token(
+        identity=str(user.id), 
+    )
+
+    response = user.to_dict()
+    response["access_token"] = access_token
+
+    return jsonify(response), 201

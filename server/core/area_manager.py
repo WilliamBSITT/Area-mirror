@@ -7,7 +7,7 @@ def _get_services_map():
     """Retourne un dict { service_name: service_instance }"""
     return {s.name: s for s in get_all_services()}
 
-def create_area(user_id, action_service, action, reaction_service, reaction, params=None, enabled=True):
+def create_area(user_id, action_service, action, reaction_service, reaction, params=None, enabled=True, name="My AREA"):
     user = User.query.get(user_id)
     if not user:
         return None, "Utilisateur introuvable"
@@ -28,6 +28,7 @@ def create_area(user_id, action_service, action, reaction_service, reaction, par
         return None, f"Reaction '{reaction}' invalide pour {reaction_service}"
 
     area = Area(
+        name=name,
         user_id=user_id,
         action_service=action_service,
         action=action,

@@ -60,17 +60,20 @@ def create_area():
 
     area, err = area_manager.create_area(
         user_id,
-        data.get("action_service"),
+        data.get("action_service").lower(),
         data.get("action"),
-        data.get("reaction_service"),
+        data.get("reaction_service").lower(),
         data.get("reaction"),
-        params=data.get("params", {})
+        params=data.get("params", {}),
+        enabled=data.get("enabled", True),
+        name=data.get("name", "My AREA")
     )
 
     if err:
         return jsonify({"error": err}), 400
 
     return jsonify({
+        "name": area.name,
         "id": area.id,
         "action_service": area.action_service,
         "action": area.action,
@@ -260,11 +263,11 @@ def update_area(area_id):
   if "name" in data:
     area.name = data["name"]
   if "action_service" in data:
-    area.action_service = data["action_service"]
+    area.action_service = data["action_service"].lower()
   if "action" in data:
     area.action = data["action"]
   if "reaction_service" in data:
-    area.reaction_service = data["reaction_service"]
+    area.reaction_service = data["reaction_service"].lower()
   if "reaction" in data:
     area.reaction = data["reaction"]
   if "params" in data:
