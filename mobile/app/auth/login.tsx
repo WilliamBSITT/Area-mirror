@@ -8,6 +8,7 @@ import { useEffect } from 'react';
 import * as WebBrowser from 'expo-web-browser';
 import * as AuthSession from "expo-auth-session";
 import api from "@/utils/api";
+import { colorScheme } from "nativewind";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -22,6 +23,7 @@ export default function Login() {
   const [success, setSuccess] = useState(false);
   const [Ip, setIp] = useState(process.env.EXPO_PUBLIC_IP || "don't work");
   const { login } = useContext(AuthContext)!;
+    console.log("theme", colorScheme.get());
   const [request, response, promptAsync] = AuthSession.useAuthRequest(
     {
       clientId: 'Ov23liSvunSD8xhDGxUs',
@@ -46,7 +48,7 @@ export default function Login() {
           console.log("Error posting github token:", error);
         });
         
-      if (!res || res.status !== 200) {
+      if (!res || (res.status !== 201 && res.status !== 200)) {
         throw new Error(`Server error: ${res ? res.status : 'No response'}`);
       }
 
@@ -76,9 +78,8 @@ export default function Login() {
       console.log("Error posting login:", error);
     });
 
-    if (!res || res.status !== 200) {
-      throw new Error(`Server error: ${res ? res.status : 'No response'}`);
-    }
+    if (!res || (res.status !== 201 && res.status !== 200))
+      throw Error("fail to login")
 
     const data = await res.data;
     console.log('response', data);

@@ -3,24 +3,28 @@ import React, {use, useEffect, useState} from "react"
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import DropDownPicker from 'react-native-dropdown-picker';
 import { router } from "expo-router";
-import { workflowProps } from "./[id]";
 import api from "@/utils/api";
+import WheelPicker from '@quidone/react-native-wheel-picker';
 
-function ArgList({args}: {args: {name: string, type: string, required: boolean}[]}) {
-  const [values, setValues] = useState<{[key: string]: string}>({});
+const data = [...Array(60).keys()].map((index) => ({
+    value: index,
+    label: index.toString(),
+}));
 
+function ArgList({args, paramsValues, setParamsValues}: {args: {name: string, type: string, required: boolean}[], paramsValues: {[key: string]: string}, setParamsValues: React.Dispatch<React.SetStateAction<{[key: string]: string}>>}) {
   const handleChange = (name: string, value: string) => {
-    setValues(prev => ({ ...prev, [name]: value }));
+    setParamsValues(prev => ({ ...prev, [name]: value }));
   };
 
   return (
-    <View className="mt-4">
+    <View className="mt-4 flex flex-row w-full">
       {args.map((arg) => (
-        <View key={arg.name} className="flex flex-row mb-4">
-          <Text className="w-1/3 text-lg">{arg.name}:</Text>
+        <View key={arg.name} style={{ width: "45%" }} className="flex flex-column mb-4 ml-5">
+          <Text className="text-lg">{arg.name}:<Text className="text-red-700">{arg.required ? "*" : ""}</Text></Text>
           <TextInput
-            className="border border-gray-300 rounded-full p-2 w-1/3"
-            value={values[arg.name] || ""}
+            style={{ width: "100%" }}
+            className="border border-gray-300 rounded-full p-2"
+            value={paramsValues[arg.name] || ""}
             onChangeText={text => handleChange(arg.name, text)}
             placeholder={arg.type}
           />
@@ -30,9 +34,23 @@ function ArgList({args}: {args: {name: string, type: string, required: boolean}[
   );
 }
 
-function MultiSelect({type, services}: {type: "action" | "reaction", services?: { label: string; value: string; icon: (() => React.JSX.Element) | undefined }[]}) {
-  const [data, setData] = useState<workflowProps | null>(null)
-  
+function MultiSelect({
+  type,
+  services,
+  onServiceChange,
+  onActionChange,
+  onParamsChange,
+  paramsValues,
+  setParamsValues
+}: {
+  type: "actions" | "reactions",
+  services?: { label: string; value: string; icon: (() => React.JSX.Element) | undefined }[],
+  onServiceChange: (service: string) => void,
+  onActionChange: (action: string) => void,
+  onParamsChange: (params: any) => void,
+  paramsValues: { [key: string]: string },
+  setParamsValues: React.Dispatch<React.SetStateAction<{ [key: string]: string }>>
+}) {
   const [actionOpen, setActionOpen] = useState(false);
   const [valueAction, setValueAction] = useState(null);
   const [action, setAction] = useState<any[]>([]);
@@ -53,8 +71,8 @@ function MultiSelect({type, services}: {type: "action" | "reaction", services?: 
       });
       if (res && res.data) {
         const data = await res.data;
-        type == "action" && setAction(data.actions.map((action: { name: string; service: string }) => ({ label: action.name, value: action.name })));
-        type == "reaction" && setAction(data.reactions.map((reaction: { name: string; service: string }) => ({ label: reaction.name, value: reaction.service })));
+        type == "actions" && setAction(data.actions.map((action: { name: string; service: string }) => ({ label: action.name, value: action.name })));
+        type == "reactions" && setAction(data.reactions.map((reaction: { name: string; service: string }) => ({ label: reaction.name, value: reaction.name })));
       }
     }
     fetchActions();
@@ -62,13 +80,13 @@ function MultiSelect({type, services}: {type: "action" | "reaction", services?: 
 
   useEffect(() => {
     const fetchActions = async () => {
-      const res = await api.get(`/services/${valueService}/actions/${valueAction}/params`).catch((error: any) => {
-        console.log("Error fetching actions params:", error);
+      const res = await api.get(`/services/${valueService}/${type}/${valueAction}/params`).catch((error: any) => {
+        console.log(`/services/${valueService}/${type}/${valueAction}/params`, error);
       });
       if (res && res.data) {
         const data = await res.data;
         console.log("data", data.params);
-        setParams(data.params.map((param: { name: string; type: string; required: boolean }) => ({ key: param.name, type: param.type, required: param.required })));
+        setParams(data.params.map((param: { name: string; type: string; required: boolean }) => ({ name: param.name, type: param.type, required: param.required })));
       }
     }
     fetchActions();
@@ -78,10 +96,26 @@ function MultiSelect({type, services}: {type: "action" | "reaction", services?: 
     console.log("params", params);
   }, [params]);
 
+  useEffect(() => {
+    onServiceChange(valueService);
+  }, [valueService]);
+
+  useEffect(() => {
+    onActionChange(valueAction);
+  }, [valueAction]);
+
+  useEffect(() => {
+    onParamsChange(params);
+  }, [params]);
+
+  const handleParamsChange = (values: any) => {
+    onParamsChange(values);
+  };
+
   return (
     <View>
       <View className="flex flex-row mt-10 justify-center mb-10">
-        {type == "action" ? <Text className="text-2xl font-semibold mt-4">If:</Text> : <Text className="text-2xl font-semibold mt-4">Then:</Text>}
+        {type == "actions" ? <Text className="text-2xl font-semibold mt-4">If:</Text> : <Text className="text-2xl font-semibold mt-4">Then:</Text>}
 
         <View style={{ zIndex: 4000 }} className="mx-4">
           <DropDownPicker
@@ -122,22 +156,43 @@ function MultiSelect({type, services}: {type: "action" | "reaction", services?: 
             }}
             style={{ width: 150, alignSelf: "center" }}
             dropDownContainerStyle={{ width: 150, alignSelf: "center" }}
-            placeholder={type == "action" ? "Select an action" : "Select a reaction"}
+            placeholder={type == "actions" ? "Select an action" : "Select a reaction"}
             showArrowIcon={false}
             listMode="MODAL"
           />
         </View>
       </View>
-      <ArgList args={params}/>
+      <ArgList args={params} onChange={handleParamsChange} paramsValues={paramsValues} setParamsValues={setParamsValues} />
     </View>
   )
 }
 
 export default function NewWorkflow() {
-  const [data, setData] = useState<workflowProps | null>(null)
-    const [title, setTitle] = useState("")
-    const [services, setServices] = useState<{ label: string; value: string; icon: (() => React.JSX.Element) | undefined }[]>([]);
+  const [title, setTitle] = useState("");
+  const [services, setServices] = useState<{ label: string; value: string; icon: (() => React.JSX.Element) | undefined }[]>([]);
+  const [workflows, setWorkflows] = useState<Array<{
+    type: "actions" | "reactions",
+    service: string | null,
+    action: string | null,
+    params: any,
+  }>>([{ type: "actions", service: null, action: null, params: {} }, { type: "reactions", service: null, action: null, params: {} }]);
+  const [paramsValues, setParamsValues] = useState<{ [key: string]: string }>({});
+  const [min, setMin] = useState<number>(0);
+  const [hour, setHour] = useState<number>(0);
 
+  const addWorkflow = (type: "actions" | "reactions") => {
+    setWorkflows([...workflows, { type, service: null, action: null, params: {} }]);
+  };
+
+  const removeWorkflow = (index: number) => {
+    setWorkflows(workflows.filter((_, i) => i !== index));
+  };
+
+  const updateWorkflow = (index: number, data: any) => {
+    const newWorkflows = [...workflows];
+    newWorkflows[index] = { ...newWorkflows[index], ...data };
+    setWorkflows(newWorkflows);
+  };
 
   useEffect(() => {
     const loadIcons = async () => {
@@ -167,41 +222,106 @@ export default function NewWorkflow() {
     loadIcons();
   }, []);
 
-    const save = async () => {
-        try {
-        const res = await api.post('/areas', {
-            name: "salut",
-            action: "get_weather",
-            action_service: "openWeather",
-            reaction: "send_message",
-            reaction_service: "Discord",
-            params: {"city": "Nancy", "message": "meteo {temp} {city} {desc}"}
-        }).catch((error: any) => {
-          console.log("Error posting areas:", error);
-        });
-    
-        if (res && res.data) {
-          const data = await res.data;
-          console.log('response', data);
-          setData(data);
-          setTitle(data.name);
-        }
-      } catch(err) {
-        console.log("error posting areas", err)
-      }
-    }
+  const save = async () => {
 
-    return (
-        <View className="mt-20">
-            <Pressable className="bg-blue-900 rounded-full p-4 w-1/4 bottom-1 mb-4 ml-5" onPress={() => router.push('/main/workflows/')}>
-                <Text className="text-white text-center">Back</Text>
-            </Pressable>
-            <TextInput className="text-4xl font-bold mb-4 ml-5" onChangeText={setTitle} value={title} defaultValue={data?.name} placeholder="title"></TextInput>            
-            <MultiSelect type="action" services={services}/>
-            <MultiSelect type="reaction" services={services}/>
-            <Pressable className="bg-blue-900 rounded-full p-4 w-1/4 m-auto bottom-1" onPress={save}>
-                <Text className="text-white text-center">Save</Text>
-            </Pressable>
+    try {
+      const actions = workflows.filter(w => w.type === "actions");
+      const reactions = workflows.filter(w => w.type === "reactions");
+      console.log("actions", {
+        name: title,
+        action: actions[0].action,
+        action_service: actions[0].service,
+        params: paramsValues,
+        reaction: reactions[0].action,
+        reaction_service: reactions[0].service,
+      });
+
+      const res = await api.post('/areas', {
+        name: title,
+        action: actions[0].action,
+        action_service: actions[0].service,
+        params: paramsValues,
+        reaction: reactions[0].action,
+        reaction_service: reactions[0].service,
+        frequency: hour * 3600 + min * 60,
+      });
+
+      if (res && res.data) {
+        router.push('/main/workflows/');
+      }
+    } catch(err) {
+      console.log("error posting areas", err);
+    }
+  };
+
+  return (
+    <View className="border-b border-gray-300 mb-4">
+      <Pressable className="bg-blue-900 rounded-full p-4 w-1/4 bottom-1 mb-4 ml-5 mt-20" onPress={() => router.push('/main/workflows/')}>
+        <Text className="text-white text-center">Back</Text>
+      </Pressable>
+      <View className="flex flex-row w-full justify-between">
+      <TextInput className="text-4xl font-bold mb-4 ml-5" onChangeText={setTitle} value={title} placeholder="title"></TextInput>            
+      <View className="flex flex-row items-center mr-5">
+        <WheelPicker
+          data={data}
+          value={hour}
+          onValueChanged={({ item: { value } }) => setHour(value)}
+          enableScrollByTapOnItem={true}
+          width={50}
+          itemHeight={20}
+          style={{ alignSelf: "center"}}
+        />
+        <Text className="font-bold">h</Text>
+        <WheelPicker
+            data={data}
+            value={min}
+            onValueChanged={({ item: { value } }) => setMin(value)}
+            enableScrollByTapOnItem={true}
+            width={50}
+            itemHeight={20}
+            style={{ alignSelf: "center"}}
+        />
+        <Text className="font-bold">min</Text>
         </View>
-    )
+      </View>
+      {workflows.map((workflow, index) => (
+        <View key={index} className="relative">
+          <MultiSelect 
+            type={workflow.type}
+            services={services}
+            onServiceChange={(service) => updateWorkflow(index, { service })}
+            onActionChange={(action) => updateWorkflow(index, { action })}
+            onParamsChange={(params) => updateWorkflow(index, { params })}
+            paramsValues={paramsValues || {}}
+            setParamsValues={setParamsValues}
+          />
+          <Pressable 
+            className="absolute right-4 top-4 bg-red-500 p-2 rounded-full"
+            onPress={() => removeWorkflow(index)}
+          >
+            <Text className="text-white">×</Text>
+          </Pressable>
+        </View>
+      ))}
+
+      <View className="flex-row justify-center space-x-20 mt-4">
+        <Pressable 
+          className="bg-green-600 rounded-full p-4 mr-5"
+          onPress={() => addWorkflow("actions")}
+        >
+          <Text className="text-white">Add Action</Text>
+        </Pressable>
+        <Pressable 
+          className="bg-blue-600 rounded-full p-4 right ml-5"
+          onPress={() => addWorkflow("reactions")}
+        >
+          <Text className="text-white">Add Reaction</Text>
+        </Pressable>
+      </View>
+
+      <Pressable className="bg-blue-900 rounded-full p-4 w-1/4 m-auto mt-8" onPress={save}>
+        <Text className="text-white text-center">Save</Text>
+      </Pressable>
+    </View>
+  );
 }
