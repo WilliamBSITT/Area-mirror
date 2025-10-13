@@ -31,6 +31,7 @@ def seed_services():
             "name": "Spotify",
             "description": "Spotify is a digital music platform where you can stream millions of songs and podcasts. It lets you create and share playlists for any mood or moment. Discover new artists and listen to your favorite albums anytime, anywhere. You can connect with friends and see what they’re listening to. Perfect for anyone who loves music and wants instant access to it.",
             "image": image_to_binary("spotify"),
+            "auth_url": "https://accounts.spotify.com/authorize?client_id=a63f13819159493eb695b3c16785aa55&response_type=code&redirect_uri=http%3A%2F%2F127.0.0.1%3A8080%2Fspotify%2Fcallback&scope=user-read-currently-playing+user-read-playback-state&show_dialog=true"
         },
         {
             "name": "OpenWeather",
@@ -41,11 +42,6 @@ def seed_services():
             "name": "GitHub",
             "description": "GitHub is a platform where developers store and share their code online. It allows teams to collaborate on software projects from anywhere. You can track changes, review contributions, and manage updates easily. Developers use it to build, test, and improve their applications together. It’s the world’s largest community for open-source and coding projects.",
             "image": image_to_binary("github"),
-        },
-        {
-            "name": "Strava",
-            "description": "Strava is a fitness tracking app designed for runners, cyclists, and athletes. It records your workouts using GPS and analyzes your performance. You can compare results, set goals, and track your progress over time. Join clubs, share your activities, and connect with a global community. Strava turns every run or ride into a social and motivating experience.",
-            "image": image_to_binary("strava"),
         },
         {
             "name": "NASA",
