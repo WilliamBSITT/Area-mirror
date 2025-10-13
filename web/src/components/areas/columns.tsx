@@ -1,71 +1,85 @@
-"use client"
+// components/areas/columns.tsx
+"use client";
 
-import { ColumnDef } from "@tanstack/react-table"
-import { Switch } from "@/components/ui/switch"
-import { toast } from "sonner"
-import { Area } from "@/hooks/useAreas"
+import { ColumnDef } from "@tanstack/react-table";
+import { Switch } from "@/components/ui/switch";
+import { toast } from "sonner";
+import { Area } from "@/hooks/useAreas";
+import { useAreasActivateDeactivate } from "@/hooks/areas/useAreasActivateDeactivate";
+import { useRouter } from "next/navigation";
 
-async function toggleArea(id: number, enabled: boolean) {
-    // Exemple: appel BFF
-    const res = await fetch(`/api/areas/${id}`, {
-        method: "PATCH",
-        credentials: "include",
-        headers: { "Content-Type": "application/json", Accept: "application/json" },
-        body: JSON.stringify({ enabled }),
-    })
-    if (!res.ok) {
-        const msg = await res.text().catch(() => `Erreur ${res.status}`)
-        throw new Error(msg || `Erreur ${res.status}`)
-    }
-}
+export function createAreaColumns(
+    setAreas: React.Dispatch<React.SetStateAction<Area[]>>
+): ColumnDef<Area>[] {
+    const Columns: ColumnDef<Area>[] = [
+        { accessorKey: "name", header: "Name" },
+        {
+            id: "actions",
+            header: "Actions",
+            cell: ({ row }) => {
+                const area = row.original;
+                const router = useRouter();
+                const { activate, deactivate, loadingId } = useAreasActivateDeactivate({
+                    onMutate: (areaId, enabled) => {
+                        setAreas(prev => prev.map(a => a.id === areaId ? { ...a, enabled } : a));
+                    },
+                    onRevalidate: async () => {
+                        try {
+                            const res = await fetch("/api/areas", { credentials: "include", cache: "no-store" });
+                            if (res.ok) {
+                                const next = await res.json();
+                                setAreas(next);
+                            } else {
+                                router.refresh();
+                            }
+                        } catch {
+                            router.refresh();
+                        }
+                    },
+                });
 
-export const areaColumns: ColumnDef<Area>[] = [
-    { accessorKey: "name", header: "Name" },
-    {
-        id: "actions",
-        header: "Actions",
-        cell: ({ row }) => {
-            const area = row.original
-            const current = Boolean(area.enabled)
-
-            const onChange = async (checked: boolean) => {
-                const previous = current
-
-                // Toast « en cours »
-                const tid = toast.loading(checked ? "Activation…" : "Désactivation…")
-
-                try {
-                    await toggleArea(area.id, checked)
-                    toast.success(checked ? "Activé" : "Désactivé", {
-                        id: tid,
-                        description: area.name,
-                        action: {
-                            label: "Undo",
-                            onClick: async () => {
-                                const undoId = toast.loading("Annulation…")
-                                try {
-                                    await toggleArea(area.id, previous)
-                                    toast.success("Annulé", { id: undoId, description: area.name })
-                                } catch (e: any) {
-                                    toast.error(e?.message ?? "Échec de l’annulation", { id: undoId })
-                                }
+                const onChange = async (checked: boolean) => {
+                    const prev = Boolean(area.enabled);
+                    const tid = toast.loading(checked ? "Activation…" : "Désactivation…");
+                    try {
+                        const r = await (checked ? activate : deactivate)(area.id);
+                        if (!r.ok) throw new Error(r.body?.error ?? "Failed");
+                        toast.success(checked ? "Activé" : "Désactivé", {
+                            id: tid,
+                            description: area.name,
+                            action: {
+                                label: "Undo",
+                                onClick: async () => {
+                                    const undoId = toast.loading("Annulation…");
+                                    try {
+                                        const r2 = await (prev ? activate : deactivate)(area.id);
+                                        if (!r2.ok) throw new Error(r2.body?.error ?? "Failed");
+                                        toast.success("Annulé", { id: undoId, description: area.name });
+                                    } catch (e: any) {
+                                        toast.error(e?.message ?? "Échec de l’annulation", { id: undoId });
+                                    }
+                                },
                             },
-                        },
-                    })
-                } catch (e: any) {
-                    toast.error(e?.message ?? "Échec de la mise à jour", { id: tid })
-                }
-            }
+                        });
+                    } catch (e: any) {
+                        // rollback local
+                        setAreas(prevArr => prevArr.map(a => a.id === area.id ? { ...a, enabled: prev } : a));
+                        toast.error(e?.message ?? "Échec de la mise à jour", { id: tid });
+                    }
+                };
 
-            return (
-                <Switch
-                    defaultChecked={current}
-                    onCheckedChange={onChange}
-                    aria-label={`Toggle ${area.name}`}
-                />
-            )
+                return (
+                    <Switch
+                        checked={Boolean(area.enabled)}
+                        disabled={loadingId === area.id}
+                        onCheckedChange={onChange}
+                        aria-label={`Toggle ${area.name}`}
+                    />
+                );
+            },
+            enableSorting: false,
+            enableHiding: false,
         },
-        enableSorting: false,
-        enableHiding: false,
-    },
-]
+    ];
+    return Columns;
+}

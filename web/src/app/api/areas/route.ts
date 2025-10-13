@@ -9,7 +9,6 @@ export async function GET(req: NextRequest) {
         return NextResponse.json({ error: "unauthorized" }, { status: 401 })
     }
 
-    // Appel backend avec Authorization: Bearer à partir du cookie
     const be = await fetch(`${BACKEND_URL}/areas`, {
         method: "GET",
         headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
@@ -26,11 +25,31 @@ export async function GET(req: NextRequest) {
         },
     })
 
-    // Propager d’éventuels Set-Cookie du backend (ex: rotation de jeton)
     const beSetCookie = be.headers.get("set-cookie")
     if (beSetCookie) {
         for (const c of beSetCookie.split(/,(?=[^;]+?=)/)) res.headers.append("set-cookie", c.trim())
     }
 
     return res
+}
+
+export async function PUT(req: NextRequest, ctx: { params: { id: string } }) {
+    const { id } = ctx.params;
+    const token = req.cookies.get(COOKIE_NAME)?.value
+    if (!token) {
+        return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+    }
+
+    const bodyText = await req.text();
+
+    const be = await fetch(`${BACKEND_URL}/areas/${id}`, {
+        method: "PUT",
+        headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: "application/json",
+            "Content-Type": "application/json",
+        },
+        body: bodyText,
+        cache: "no-store",
+    });
 }
