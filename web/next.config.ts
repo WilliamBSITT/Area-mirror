@@ -5,7 +5,7 @@ const nextConfig: NextConfig = {
         return [
             {
                 source: "/api/:path*",
-                destination: "http://127.0.0.1:8080/:path*", // ton backend
+                destination: "http://server:8080/:path*", // nom du service backend Docker
             },
         ]
     },

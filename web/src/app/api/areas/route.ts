@@ -40,16 +40,25 @@ export async function PUT(req: NextRequest, ctx: { params: { id: string } }) {
         return NextResponse.json({ error: "unauthorized" }, { status: 401 });
     }
 
-    const bodyText = await req.text();
-
+    const body = await req.json();
     const be = await fetch(`${BACKEND_URL}/areas/${id}`, {
         method: "PUT",
         headers: {
-            Authorization: `Bearer ${token}`,
             Accept: "application/json",
             "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
         },
-        body: bodyText,
+        body: JSON.stringify(body),
         cache: "no-store",
     });
+
+    // const text = await be.text();
+    // return new NextResponse(text, {
+    //     status: be.status,
+    //     headers: {
+    //         "Content-Type": be.headers.get("content-type") ?? "application/json",
+    //         "Cache-Control": "no-store, private",
+    //         Vary: "Cookie",
+    //     },
+    // });
 }

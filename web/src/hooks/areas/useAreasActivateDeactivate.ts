@@ -25,11 +25,11 @@ export function useAreasActivateDeactivate(options: UseAreasToggleOptions = {}) 
 
             try {
                 const res = await fetch(`/api/areas/${areaId}`, {
-                    method: "PUT",
-                    headers: { "Content-Type": "application/json", Accept: "application/json" },
-                    credentials: "include",
-                    body: JSON.stringify({ enabled }),
-                    cache: "no-store",
+                method: "PUT",
+                headers: { "Content-Type": "application/json", Accept: "application/json" },
+                credentials: "include",
+                body: JSON.stringify({ enabled }),
+                cache: "no-store",
                 });
 
                 // Tenter de parser JSON, sinon texte brut
