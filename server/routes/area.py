@@ -48,7 +48,7 @@ def create_area():
               example: "send_message"
             params:
               type: object
-              example: { "city": "Nancy", "message": "🌦️ Météo {city} : {temp}°C, {desc}" }
+              example: { "city": "Nancy", "message": "🌦️ Météo {city} : {temp}°C, {desc}", "channel_id": "1424684119471689759" }
     responses:
       201:
         description: AREA créé avec succès
