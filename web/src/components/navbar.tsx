@@ -79,7 +79,6 @@ export function Navbar() {
                             <DropdownMenuTrigger asChild>
                                 <Button variant="ghost" className="h-9 px-2 gap-2" aria-label="User menu">
                                     <Avatar className="h-6 w-6">
-                                        {/* Pas d'avatar connu → image vide + fallback */}
                                         <AvatarImage src={undefined} alt="User" />
                                         <AvatarFallback>U</AvatarFallback>
                                     </Avatar>

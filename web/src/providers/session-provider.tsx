@@ -2,11 +2,7 @@
 import { useEffect, useState } from "react"
 import { SessionContext, type SessionUser } from "@/context/session-contexte"
 
-export default function SessionProvider({
-                                            children,
-                                            initialUser = null,
-                                            autoRefresh = true,
-                                        }: { children: React.ReactNode; initialUser?: SessionUser; autoRefresh?: boolean }) {
+export default function SessionProvider({ children, initialUser = null, autoRefresh = true }: { children: React.ReactNode; initialUser?: SessionUser; autoRefresh?: boolean }) {
 
     const [user, setUser] = useState<SessionUser>(initialUser)
     const [loading, setLoading] = useState(true)

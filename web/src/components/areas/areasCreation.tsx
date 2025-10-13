@@ -27,8 +27,7 @@ export default function AreasCreationDialog() {
                     <DialogHeader>
                         <DialogTitle>Edit Workflows</DialogTitle>
                         <DialogDescription>
-                            Make changes to your profile here. Click save when you&apos;re
-                            done.
+                            Create your workflow here. Click save when you&apos;re done.
                         </DialogDescription>
                     </DialogHeader>
                     <div className="grid gap-4">

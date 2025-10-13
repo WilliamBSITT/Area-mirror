@@ -2,10 +2,10 @@
 
 import { useCallback } from "react"
 
-export function useCheckJWT(endpoint: string = "/api/auth/auth") {
+export function useCheckJWT() {
     return useCallback(async (): Promise<boolean> => {
         try {
-            const res = await fetch(endpoint, {
+            const res = await fetch("/api/auth/auth", {
                 method: "GET",
                 credentials: "include",
                 headers: { Accept: "application/json" },
@@ -15,5 +15,5 @@ export function useCheckJWT(endpoint: string = "/api/auth/auth") {
         } catch {
             return false;
         }
-    }, [endpoint]);
+    }, []);
 }
