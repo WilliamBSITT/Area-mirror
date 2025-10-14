@@ -28,7 +28,7 @@ def check_hooks(app=None):
                 if not act_srv or not rea_srv:
                     continue
 
-                if area.last_run:
+                if area.last_run and area.frequency != 60:
                     last_run = area.last_run.replace(tzinfo=timezone.utc)
                     if (now - last_run) < timedelta(seconds=area.frequency):
                         continue
