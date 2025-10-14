@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useMemo } from "react";
-import { useAreas, Area } from "@/hooks/useAreas";
+import { useAreas, Area } from "@/hooks/areas/useAreas";
 import { DataTable } from "@/components/areas/workflowList";
 import { createAreaColumns } from "./columns";
 

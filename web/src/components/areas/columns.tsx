@@ -4,7 +4,7 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
-import { Area } from "@/hooks/useAreas";
+import { Area } from "@/hooks/areas/useAreas";
 import { useAreasActivateDeactivate } from "@/hooks/areas/useAreasActivateDeactivate";
 import { useRouter } from "next/navigation";
 
