@@ -3,7 +3,7 @@ import * as SecureStore from "expo-secure-store";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const api = axios.create({
-  baseURL: `http://${process.env.EXPO_PUBLIC_IP}:8080`,
+  baseURL: `http://${process.env.EXPO_PUBLIC_IP || "http://10.18.208.13"}:8080`,
   timeout: 10000,
 });
 

@@ -2,11 +2,24 @@ import { View, Text, TextInput, Pressable, Image } from "react-native"
 import React, {use, useEffect, useState} from "react"
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import DropDownPicker from 'react-native-dropdown-picker';
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import api from "@/utils/api";
 import WheelPicker from '@quidone/react-native-wheel-picker';
+import { setParams } from "expo-router/build/global-state/routing";
 
-const data = [...Array(60).keys()].map((index) => ({
+export interface workflowProps {
+    "action": string,
+    "action_service": string,
+    "enabled": boolean,
+    "id": number,
+    "last_run": string,
+    "name": string,
+    "params": string,
+    "reaction": string,
+    "reaction_service": string
+}
+
+const minutes = [...Array(60).keys()].map((index) => ({
     value: index,
     label: index.toString(),
 }));
@@ -41,7 +54,9 @@ function MultiSelect({
   onActionChange,
   onParamsChange,
   paramsValues,
-  setParamsValues
+  setParamsValues,
+  initialService,  // Add this prop
+  initialAction    // Add this prop
 }: {
   type: "actions" | "reactions",
   services?: { label: string; value: string; icon: (() => React.JSX.Element) | undefined }[],
@@ -49,16 +64,31 @@ function MultiSelect({
   onActionChange: (action: string) => void,
   onParamsChange: (params: any) => void,
   paramsValues: { [key: string]: string },
-  setParamsValues: React.Dispatch<React.SetStateAction<{ [key: string]: string }>>
+  setParamsValues: React.Dispatch<React.SetStateAction<{ [key: string]: string }>>,
+  initialService?: string | null,  // Add these to the interface
+  initialAction?: string | null
 }) {
   const [actionOpen, setActionOpen] = useState(false);
-  const [valueAction, setValueAction] = useState(null);
+  const [valueAction, setValueAction] = useState<string>(initialAction || "");  // Use initial value
   const [action, setAction] = useState<any[]>([]);
 
-  const [valueService, setValueServices] = useState(null);
+  const [valueService, setValueServices] = useState<string>(initialService || "");  // Use initial value
   const [servicesOpen, setServicesOpen] = useState(false);
   const [newServices, setServices] = useState<{ label: string; value: string; icon: (() => React.JSX.Element) | undefined }[]>(services ?? []);
   const [params, setParams] = useState<{name: string, type: string, required: boolean}[]>([]);
+
+  // Set initial values when they change
+  useEffect(() => {
+    if (initialService) {
+      setValueServices(initialService);
+    }
+  }, [initialService]);
+
+  useEffect(() => {
+    if (initialAction) {
+      setValueAction(initialAction);
+    }
+  }, [initialAction]);
 
   useEffect(() => {
     setServices(services ?? []);
@@ -152,7 +182,6 @@ function MultiSelect({
             schema={{
               label: "label",
               value: "value",
-              icon: "icon"
             }}
             style={{ width: 150, alignSelf: "center" }}
             dropDownContainerStyle={{ width: 150, alignSelf: "center" }}
@@ -162,13 +191,15 @@ function MultiSelect({
           />
         </View>
       </View>
-      <ArgList args={params} onChange={handleParamsChange} paramsValues={paramsValues} setParamsValues={setParamsValues} />
+      <ArgList args={params} paramsValues={paramsValues} setParamsValues={setParamsValues} />
     </View>
   )
 }
 
-export default function NewWorkflow() {
+export default function Workflow({type = "new"}: {type: "new" | "edit"}) {
+  const { id } = useLocalSearchParams();
   const [title, setTitle] = useState("");
+  // const [data, setData] = useState<workflowProps | null>(null)
   const [services, setServices] = useState<{ label: string; value: string; icon: (() => React.JSX.Element) | undefined }[]>([]);
   const [workflows, setWorkflows] = useState<Array<{
     type: "actions" | "reactions",
@@ -193,6 +224,46 @@ export default function NewWorkflow() {
     newWorkflows[index] = { ...newWorkflows[index], ...data };
     setWorkflows(newWorkflows);
   };
+
+    useEffect(() => {
+    const fetchAREA = async () => {
+      try {
+        const res = await api.get(`/areas/${id}`);
+        if (!res || res.status !== 200) {
+          throw new Error(`Server error: ${res ? res.status : 'No response'}`);
+        }
+  
+        const data = await res.data;
+        console.log("data", data);
+        setHour(Math.floor(data.frequency / 3600));
+        setMin(Math.floor((data.frequency % 3600) / 60));
+        setTitle(data.name);
+        setParamsValues(data.params ? JSON.parse(data.params) : {});
+        
+        // Ensure we're setting the workflows after the data is loaded
+        setWorkflows([
+          { 
+            type: "actions",
+            service: data.action_service, 
+            action: data.action, 
+            params: data.params
+          }, 
+          { 
+            type: "reactions",
+            service: data.reaction_service, 
+            action: data.reaction, 
+            params: data.params
+          }
+        ]);
+      } catch(err) {
+        console.error("error fetching areas", err)
+      }
+    }
+
+    if (type === "edit" && id) {
+      fetchAREA();
+    }
+  }, [id, type])  // Add type as dependency
 
   useEffect(() => {
     const loadIcons = async () => {
@@ -263,7 +334,7 @@ export default function NewWorkflow() {
       <TextInput className="text-4xl font-bold mb-4 ml-5" onChangeText={setTitle} value={title} placeholder="title"></TextInput>            
       <View className="flex flex-row items-center mr-5">
         <WheelPicker
-          data={data}
+          data={minutes}
           value={hour}
           onValueChanged={({ item: { value } }) => setHour(value)}
           enableScrollByTapOnItem={true}
@@ -273,7 +344,7 @@ export default function NewWorkflow() {
         />
         <Text className="font-bold">h</Text>
         <WheelPicker
-            data={data}
+            data={minutes}
             value={min}
             onValueChanged={({ item: { value } }) => setMin(value)}
             enableScrollByTapOnItem={true}
@@ -294,6 +365,8 @@ export default function NewWorkflow() {
             onParamsChange={(params) => updateWorkflow(index, { params })}
             paramsValues={paramsValues || {}}
             setParamsValues={setParamsValues}
+            initialService={workflow.service}
+            initialAction={workflow.action}
           />
           <Pressable 
             className="absolute right-4 top-4 bg-red-500 p-2 rounded-full"

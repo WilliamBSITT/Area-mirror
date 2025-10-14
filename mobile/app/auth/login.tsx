@@ -21,7 +21,7 @@ const discovery = {
 
 export default function Login() {
   const [success, setSuccess] = useState(false);
-  const [Ip, setIp] = useState(process.env.EXPO_PUBLIC_IP || "don't work");
+  const [Ip, setIp] = useState(process.env.EXPO_PUBLIC_IP || "10.18.208.13");
   const { login } = useContext(AuthContext)!;
     console.log("theme", colorScheme.get());
   const [request, response, promptAsync] = AuthSession.useAuthRequest(
@@ -30,7 +30,7 @@ export default function Login() {
       scopes: ['identity', 'read:user', 'user:email'],
       extraParams: { prompt: 'consent' },
       redirectUri: AuthSession.makeRedirectUri({
-        scheme: 'mobile',})
+        scheme: 'area',})
     },
     discovery
   );

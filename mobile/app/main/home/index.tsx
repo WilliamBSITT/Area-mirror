@@ -91,10 +91,9 @@ export default function Home() {
   }, []);
   return (
   <View style={{ flex: 1 }}>
-    <Header />
     <ScrollView
       className="flex-1"
-      contentContainerStyle={{ paddingBottom: 40 }}
+      contentContainerStyle={{ paddingBottom: 80 }}
     >
       <View className="flex flex-row flex-wrap mt-10 ml-4">
         {data.map((service: service) => (
@@ -107,7 +106,6 @@ export default function Home() {
           </View>
         ))}
       </View>
-      <View className='h-20'></View>
     </ScrollView>
   </View>
 );
