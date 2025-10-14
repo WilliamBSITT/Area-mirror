@@ -7,7 +7,7 @@ import AreasCreationDialog from "@/components/areas/areasCreation"
 export default function Page() {
     return (
         <main className="py-8 bg-sky-100 space-y-6">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-start gap-3">
                 <h1 className="text-4xl">My Workflows</h1>
                 <AreasCreationDialog />
             </div>
