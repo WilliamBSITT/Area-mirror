@@ -34,6 +34,9 @@ def create_area():
             name:
               type: string
               example: "Météo to Discord"
+            frequency:
+              type: integer
+              example: 3600
             action_service:
               type: string
               example: "openweather"
@@ -66,7 +69,8 @@ def create_area():
         data.get("reaction"),
         params=data.get("params", {}),
         enabled=data.get("enabled", True),
-        name=data.get("name", "My AREA")
+        name=data.get("name", "My AREA"),
+        frequency=data.get("frequency", 3600),
     )
 
     if err:
@@ -80,7 +84,8 @@ def create_area():
         "reaction_service": area.reaction_service,
         "reaction": area.reaction,
         "params": area.params,
-        "enabled": area.enabled
+        "enabled": area.enabled,
+        "frequency": int(area.frequency),
     }), 201
 
 @bp.route("/<int:area_id>", methods=["GET"])
