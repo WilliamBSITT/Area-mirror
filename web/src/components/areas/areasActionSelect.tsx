@@ -18,9 +18,6 @@ export default function AreasActionSelect() {
                     <h1 className="font-bold text-4xl">
                         If
                     </h1>
-                    <br />
-                    <br />
-                    <br />
                 </div>
             </div>
             <div>
@@ -39,9 +36,6 @@ export default function AreasActionSelect() {
                         </SelectGroup>
                     </SelectContent>
                 </Select>
-                <br />
-                <br />
-                <br />
             </div>
             <div>
                 <Select>
@@ -59,9 +53,6 @@ export default function AreasActionSelect() {
                         </SelectGroup>
                     </SelectContent>
                 </Select>
-                <br />
-                <br />
-                <br />
             </div>
         </section>
     );
