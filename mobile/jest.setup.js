@@ -1,32 +1,72 @@
-import "@testing-library/jest-native/extend-expect";
+import '@testing-library/jest-native/extend-expect';
 
-jest.mock("expo-router", () => ({
-  Link: ({ children }) => children,
-  useRouter: () => ({ push: jest.fn(), replace: jest.fn(), back: jest.fn() }),
-  useLocalSearchParams: () => ({}),
-  useSegments: () => [],
+// Mock expo-constants with proper manifest
+jest.mock('expo-constants', () => ({
+  expoConfig: {
+    name: 'mobile',
+    slug: 'mobile',
+    scheme: 'mobile',
+    extra: {
+      apiUrl: 'http://localhost:8080'
+    }
+  },
+  manifest: {
+    name: 'mobile',
+    slug: 'mobile',
+    scheme: 'mobile',
+  }
 }));
 
-jest.mock("expo-image", () => {
-  const { View } = require("react-native");
-  return {
-    Image: View,
-  };
-});
-
-jest.mock("expo-constants", () => ({
-  manifest: { extra: {} },
-  expoConfig: {},
-  systemFonts: [],
+// Mock expo-linking
+jest.mock('expo-linking', () => ({
+  createURL: jest.fn((path) => `mobile://${path}`),
+  parse: jest.fn(),
+  addEventListener: jest.fn(),
+  removeEventListener: jest.fn(),
+  canOpenURL: jest.fn(() => Promise.resolve(true)),
+  openURL: jest.fn(() => Promise.resolve()),
+  makeUrl: jest.fn((path) => `mobile://${path}`),
 }));
 
-jest.mock("react-native-safe-area-context", () => {
-  return {
-    SafeAreaProvider: ({ children }) => children,
-    useSafeAreaInsets: () => ({ top: 0, bottom: 0, left: 0, right: 0 }),
-  };
-});
+// Mock AsyncStorage
+jest.mock('@react-native-async-storage/async-storage', () =>
+  require('@react-native-async-storage/async-storage/jest/async-storage-mock')
+);
 
-// Mock Expo Winter runtime (not needed in tests)
-jest.mock("expo/src/winter/runtime.native", () => ({}));
-jest.mock("expo/src/winter/installGlobal", () => ({}));
+// Mock expo-secure-store
+jest.mock('expo-secure-store', () => ({
+  setItemAsync: jest.fn(),
+  getItemAsync: jest.fn(),
+  deleteItemAsync: jest.fn(),
+}));
+
+// Mock expo-router
+jest.mock('expo-router', () => ({
+  router: {
+    push: jest.fn(),
+    replace: jest.fn(),
+    back: jest.fn(),
+    canGoBack: jest.fn(() => true),
+  },
+  useRouter: () => ({
+    push: jest.fn(),
+    replace: jest.fn(),
+    back: jest.fn(),
+    canGoBack: jest.fn(() => true),
+  }),
+  usePathname: jest.fn(() => '/test'),
+  Stack: {
+    Screen: ({ children }) => children,
+    Protected: ({ children }) => children,
+  },
+}));
+
+// Mock axios
+jest.mock('axios', () => ({
+  create: jest.fn(() => ({
+    get: jest.fn(() => Promise.resolve({ data: {} })),
+    post: jest.fn(() => Promise.resolve({ data: {} })),
+    put: jest.fn(() => Promise.resolve({ data: {} })),
+    delete: jest.fn(() => Promise.resolve({ data: {} })),
+  })),
+}));

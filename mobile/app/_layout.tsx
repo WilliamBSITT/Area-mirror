@@ -37,6 +37,7 @@ function RootLayoutNav() {
       <Stack.Protected guard={!auth.isAuthenticated}>
         <Stack.Screen name="auth" options={{headerShown: false}}/>
       </Stack.Protected>
+      <Stack.Screen name="index" options={{headerTitle: (props) => <Header />}}/>
     </Stack>
   );
 }
@@ -46,11 +47,7 @@ export default function RootLayout() {
   return (
     <ErrorBoundary FallbackComponent={ErrorFallback}>
       <AuthProvider>
-        <Stack>
-          <Stack.Screen name="index" options={{headerTitle: (props) => <Header />}}/>
-          <Stack.Screen name="auth" />
-          <Stack.Screen name="main" options={{headerTitle: (props) => <Header />}}/>
-        </Stack>
+        <RootLayoutNav />
       </AuthProvider>
     </ErrorBoundary>
   );

@@ -74,7 +74,7 @@ export default function Profile() {
         fetchUser();
     }, [Mail]);
     return (
-    <View className="mt-20 ml-5 h-full p-5">
+    <View className="ml-5 h-full p-5">
         <View className="flex-row items-center justify-between mb-8">
             <Image
                 source={require('../../images/avatar.png')}

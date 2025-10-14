@@ -259,7 +259,7 @@ function MultiSelect({
           {outputs.length === 0 ? (
             <Text className="ml-5 text-gray-500">No outputs available</Text>
           ) : (
-            <View className="mt-2">
+            <View className="mt-2 flex flex-row">
               {outputs.map((out) => (
                 <View key={out.name} className="flex flex-row mb-4 ml-5 w-90%">
                   <Text className="text-lg">{out.name}: <Text className="text-gray-600">{out.type}</Text></Text>
@@ -437,11 +437,8 @@ export default function Workflow({type = "new"}: {type: "new" | "edit"}) {
 
   return (
     <ScrollView className="border-b border-gray-300 mb-4" contentContainerStyle={{ paddingBottom: 80 }}>
-      <Pressable className="bg-blue-900 rounded-full p-4 w-1/4 bottom-1 mb-4 ml-5 mt-20" onPress={() => router.push('/main/workflows/')}>
-        <Text className="text-white text-center">Back</Text>
-      </Pressable>
       <View className="flex flex-row w-full justify-between">
-      <TextInput className="text-4xl font-bold mb-4 ml-5" onChangeText={setTitle} value={title} placeholder="title"></TextInput>            
+      <TextInput className="text-4xl font-bold ml-5" onChangeText={setTitle} value={title} placeholder="title"></TextInput>            
       <View className="flex flex-row items-center mr-5">
         <WheelPicker
           data={minutes}
@@ -487,7 +484,7 @@ export default function Workflow({type = "new"}: {type: "new" | "edit"}) {
         </View>
       ))}
 
-      <View className="flex-row justify-center space-x-20 mt-4">
+      {/* <View className="flex-row justify-center space-x-20 mt-4">
         <Pressable 
           className="bg-green-600 rounded-full p-4 mr-5"
           onPress={() => addWorkflow("actions")}
@@ -500,9 +497,9 @@ export default function Workflow({type = "new"}: {type: "new" | "edit"}) {
         >
           <Text className="text-white">Add Reaction</Text>
         </Pressable>
-      </View>
+      </View> */}
 
-      <Pressable className="bg-blue-900 rounded-full p-4 w-1/4 m-auto mt-8" onPress={save}>
+      <Pressable className="bg-blue-900 rounded-full p-4 w-1/4 m-auto" onPress={save}>
         <Text className="text-white text-center">Save</Text>
       </Pressable>
     </ScrollView>

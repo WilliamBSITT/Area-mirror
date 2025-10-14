@@ -101,7 +101,7 @@ export default function Index() {
       <Pressable onPress={() => callSpotify()}>
         <Text className="text-black">Spotify</Text>
       </Pressable>
-      <Pressable className="absolute bottom-52 right-14 bg-blue-900 w-16 h-16 rounded-full" onPress={() => router.push('/main/workflows/newWorkflow')}>
+      <Pressable className="absolute bottom-32 right-14 bg-blue-900 w-16 h-16 rounded-full" onPress={() => router.push('/main/workflows/newWorkflow')}>
         <Image source={require("../../../images/plus-white.png")} className="w-10 h-10 m-auto"/>
       </Pressable>
     </View>

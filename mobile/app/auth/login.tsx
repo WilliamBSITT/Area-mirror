@@ -23,7 +23,8 @@ export default function Login() {
   const [success, setSuccess] = useState(false);
   const [Ip, setIp] = useState(process.env.EXPO_PUBLIC_IP || "10.18.208.13");
   const { login } = useContext(AuthContext)!;
-    console.log("theme", colorScheme.get());
+  const [msg, setMsg] = useState('');
+    // console.log("theme", colorScheme.get());
   const [request, response, promptAsync] = AuthSession.useAuthRequest(
     {
       clientId: 'Ov23liSvunSD8xhDGxUs',
@@ -76,10 +77,13 @@ export default function Login() {
       "password": password
     }).catch((error: any) => {
       console.log("Error posting login:", error);
+      setMsg("Invalid password or email");
+      setSuccess(false);
     });
 
-    if (!res || (res.status !== 201 && res.status !== 200))
-      throw Error("fail to login")
+    if (!res || (res.status !== 201 && res.status !== 200)) {
+      return;
+    }
 
     const data = await res.data;
     console.log('response', data);
@@ -125,6 +129,7 @@ export default function Login() {
         {(password !== confirmPwd && confirmPwd) && <Text className="text-red-600">Password don't match</Text>}
         <TextInput secureTextEntry className="border-2 border-solid rounded-full w-1/2 mb-5 p-4 border-blue-900" placeholder="Confirm your password" onChangeText={setConfirmPwd} defaultValue={confirmPwd}/>
       </View>)}
+      {msg &&<Text className="text-red-600 mb-5">{msg}</Text>}
       <Pressable className="bg-blue-900 rounded-full p-6 mb-30 text-2xl" onPress={handleCallDB} disabled={(password !== confirmPwd) && (mode == 'register')}>
         <Text className="text-white text-2xl">
           {mode == 'register' ? 'Register' : 'Login'}

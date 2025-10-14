@@ -95,7 +95,7 @@ export default function Home() {
       className="flex-1"
       contentContainerStyle={{ paddingBottom: 80 }}
     >
-      <View className="flex flex-row flex-wrap mt-10 ml-4">
+      <View className="flex flex-row flex-wrap ml-4">
         {data.map((service: service) => (
           <View className="w-1/2 p-5" key={service.name}>
             <Card
