@@ -1,3 +1,4 @@
+import * as React from "react"
 import { Button } from "@/components/ui/button"
 import {
     Dialog,
@@ -12,6 +13,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import {PlusIcon} from "lucide-react";
+
 
 export default function AreasCreationDialog() {
     return (
@@ -35,10 +37,9 @@ export default function AreasCreationDialog() {
                             <Label htmlFor="name-1">Name</Label>
                             <Input id="name-1" name="name" />
                         </div>
-                        <div className="grid gap-3">
-                            <Label htmlFor="username-1">Username</Label>
-                            <Input id="username-1" name="username" />
-                        </div>
+                    </div>
+                    <div>
+
                     </div>
                     <DialogFooter>
                         <DialogClose asChild>
