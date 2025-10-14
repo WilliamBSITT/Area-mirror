@@ -122,7 +122,7 @@ export default function Profile() {
         </View>
  */}
         
-        <Pressable className="bg-blue-900 rounded-full p-4 w-1/4 mt-96 ml-64" onPress={logout}>
+        <Pressable className="bg-blue-900 rounded-full p-4 w-1/4 mt-64 ml-64" onPress={logout}>
             <Text className="text-white text-center">Log out</Text>
         </Pressable>
     </View>)

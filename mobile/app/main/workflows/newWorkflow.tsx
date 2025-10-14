@@ -1,4 +1,4 @@
-import { View, Text, TextInput, Pressable, Image } from "react-native"
+import { View, Text, TextInput, Pressable, Image, ScrollView } from "react-native"
 import React, {use, useEffect, useState} from "react"
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -101,8 +101,12 @@ function MultiSelect({
       });
       if (res && res.data) {
         const data = await res.data;
-        type == "actions" && setAction(data.actions.map((action: { name: string; service: string }) => ({ label: action.name, value: action.name })));
-        type == "reactions" && setAction(data.reactions.map((reaction: { name: string; service: string }) => ({ label: reaction.name, value: reaction.name })));
+        if (type === "actions" && Array.isArray(data.actions)) {
+          setAction(data.actions.map((action: { name: string; service: string }) => ({ label: action.name, value: action.name })));
+        }
+        if (type === "reactions" && Array.isArray(data.reactions)) {
+          setAction(data.reactions.map((reaction: { name: string; service: string }) => ({ label: reaction.name, value: reaction.name })));
+        }
       }
     }
     fetchActions();
@@ -121,6 +125,26 @@ function MultiSelect({
     }
     fetchActions();
   }, [valueAction]);
+
+  // Fetch outputs for the selected service/action and type
+  const [outputs, setOutputs] = useState<{name: string, type: string, required: boolean}[]>([]);
+  useEffect(() => {
+    const fetchOutputs = async () => {
+      if (!valueService || !valueAction) {
+        setOutputs([]);
+        return;
+      }
+      const res = await api.get(`/services/${valueService}/${type}/${valueAction}/outputs`).catch((error: any) => {
+        console.log(`/services/${valueService}/${type}/${valueAction}/outputs`, error);
+      });
+      if (res && res.data) {
+        const data = await res.data;
+        // Expect data.outputs to be an array like [{ name, type, required }]
+        setOutputs((data.outputs || []).map((out: { name: string; type: string; required?: boolean }) => ({ name: out.name, type: out.type, required: !!out.required })));
+      }
+    }
+    fetchOutputs();
+  }, [valueService, valueAction]);
 
   useEffect(() => {
     console.log("params", params);
@@ -192,6 +216,27 @@ function MultiSelect({
         </View>
       </View>
       <ArgList args={params} paramsValues={paramsValues} setParamsValues={setParamsValues} />
+
+      <View className="mt-6">
+        {type === "actions" && (
+          <View>
+            <Text className="text-xl font-semibold ml-5">Outputs:</Text>
+            <View className="mt-2">
+          {outputs.length === 0 ? (
+            <Text className="ml-5 text-gray-500">No outputs available</Text>
+          ) : (
+            <View className="mt-2">
+              {outputs.map((out) => (
+                <View key={out.name} className="flex flex-row mb-4 ml-5 w-90%">
+                  <Text className="text-lg">{out.name}: <Text className="text-gray-600">{out.type}</Text></Text>
+                </View>
+              ))}
+            </View>
+          )}
+            </View>
+          </View>
+        )}
+      </View>
     </View>
   )
 }
@@ -326,7 +371,7 @@ export default function Workflow({type = "new"}: {type: "new" | "edit"}) {
   };
 
   return (
-    <View className="border-b border-gray-300 mb-4">
+    <ScrollView className="border-b border-gray-300 mb-4" contentContainerStyle={{ paddingBottom: 80 }}>
       <Pressable className="bg-blue-900 rounded-full p-4 w-1/4 bottom-1 mb-4 ml-5 mt-20" onPress={() => router.push('/main/workflows/')}>
         <Text className="text-white text-center">Back</Text>
       </Pressable>
@@ -395,6 +440,6 @@ export default function Workflow({type = "new"}: {type: "new" | "edit"}) {
       <Pressable className="bg-blue-900 rounded-full p-4 w-1/4 m-auto mt-8" onPress={save}>
         <Text className="text-white text-center">Save</Text>
       </Pressable>
-    </View>
+    </ScrollView>
   );
 }
