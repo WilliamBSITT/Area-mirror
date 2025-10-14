@@ -1,4 +1,4 @@
-// AuthProvider.tsx
+"use client";
 import React, { createContext, useState, useEffect } from "react";
 import * as SecureStore from "expo-secure-store";
 
