@@ -95,6 +95,24 @@ function MultiSelect({
   }, [services]);
 
   useEffect(() => {
+    if (initialService && newServices) {
+      const match = newServices.find(s => s.value === initialService || s.label.toLowerCase() === String(initialService).toLowerCase());
+      if (match) {
+        setValueServices(match.value);
+      } else if (initialService !== "") {
+        // append a fallback item so the picker can display it
+        const fallback = { label: String(initialService), value: String(initialService), icon: undefined };
+        setServices(prev => {
+          // avoid duplicates
+          if (prev.find(p => p.value === fallback.value)) return prev;
+          return [...prev, fallback];
+        });
+        setValueServices(String(initialService));
+      }
+    }
+  }, [newServices, initialService]);
+
+  useEffect(() => {
     const fetchActions = async () => {
       const res = await api.get(`/services/${valueService}`).catch((error: any) => {
         console.log("Error fetching actions:", error);
@@ -125,6 +143,22 @@ function MultiSelect({
     }
     fetchActions();
   }, [valueAction]);
+
+  useEffect(() => {
+    if (initialAction && action) {
+      const match = action.find(a => a.value === initialAction || a.label.toLowerCase() === String(initialAction).toLowerCase());
+      if (match) {
+        setValueAction(match.value);
+      } else if (initialAction !== "") {
+        const fallback = { label: String(initialAction), value: String(initialAction) };
+        setAction(prev => {
+          if (prev.find(p => p.value === fallback.value)) return prev;
+          return [...prev, fallback];
+        });
+        setValueAction(String(initialAction));
+      }
+    }
+  }, [action, initialAction]);
 
   // Fetch outputs for the selected service/action and type
   const [outputs, setOutputs] = useState<{name: string, type: string, required: boolean}[]>([]);
@@ -283,23 +317,38 @@ export default function Workflow({type = "new"}: {type: "new" | "edit"}) {
         setHour(Math.floor(data.frequency / 3600));
         setMin(Math.floor((data.frequency % 3600) / 60));
         setTitle(data.name);
-        setParamsValues(data.params ? JSON.parse(data.params) : {});
-        
+
+        let parsedParams: any = {};
+        if (data.params) {
+          if (typeof data.params === 'string') {
+            try {
+              parsedParams = JSON.parse(data.params);
+            } catch (e) {
+              console.warn('Failed to parse params JSON:', e);
+              parsedParams = {};
+            }
+          } else if (typeof data.params === 'object') {
+            parsedParams = data.params;
+          }
+        }
+        setParamsValues(parsedParams || {});
+
         // Ensure we're setting the workflows after the data is loaded
         setWorkflows([
           { 
             type: "actions",
             service: data.action_service, 
             action: data.action, 
-            params: data.params
+            params: parsedParams
           }, 
           { 
             type: "reactions",
             service: data.reaction_service, 
             action: data.reaction, 
-            params: data.params
+            params: parsedParams
           }
         ]);
+    
       } catch(err) {
         console.error("error fetching areas", err)
       }
@@ -352,19 +401,35 @@ export default function Workflow({type = "new"}: {type: "new" | "edit"}) {
         reaction_service: reactions[0].service,
       });
 
-      const res = await api.post('/areas', {
-        name: title,
-        action: actions[0].action,
-        action_service: actions[0].service,
-        params: paramsValues,
-        reaction: reactions[0].action,
-        reaction_service: reactions[0].service,
-        frequency: hour * 3600 + min * 60,
-      });
-
-      if (res && res.data) {
-        router.push('/main/workflows/');
+      if (type === "edit" && id) {
+        const res = await api.put(`/areas/${id}`, {
+          name: title,
+          action: actions[0].action,
+          action_service: actions[0].service,
+          params: paramsValues,
+          reaction: reactions[0].action,
+          reaction_service: reactions[0].service,
+          frequency: hour * 3600 + min * 60,
+        });
+        if (res && res.data) {
+          router.push('/main/workflows/');
+        }
+      } else {
+        const res = await api.post('/areas', {
+          name: title,
+          action: actions[0].action,
+          action_service: actions[0].service,
+          params: paramsValues,
+          reaction: reactions[0].action,
+          reaction_service: reactions[0].service,
+          frequency: hour * 3600 + min * 60,
+        });
+        if (res && res.data) {
+          router.push('/main/workflows/');
+        }
       }
+
+      
     } catch(err) {
       console.log("error posting areas", err);
     }

@@ -94,7 +94,7 @@ export default function Profile() {
                 <Text className="text-white text-center text-xl">Change</Text>
             </Pressable>
             </View>
-            : <Text className="text-3xl mb-3 mt-2 ml-4">{Mail}</Text>
+            : <Text className="text-3xl mb-5 mt-3 ml-4 p-1">{Mail}</Text>
         }
         
         <Text className="text-4xl">Password</Text>
