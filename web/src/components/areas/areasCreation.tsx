@@ -1,62 +1,84 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { Button } from "@/components/ui/button"
+import * as React from "react";
+import { Button } from "@/components/ui/button";
 import {
-    Dialog,
-    DialogClose,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { PlusIcon, X } from "lucide-react"
+    Dialog, DialogClose, DialogContent, DialogDescription,
+    DialogFooter, DialogHeader, DialogTitle, DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { PlusIcon, X } from "lucide-react";
+import AreasActionSelect from "@/components/areas/areasActionSelect";
+import AreasReactionSelect from "@/components/areas/areasReactionSelect";
 
-import AreasActionSelect from "@/components/areas/areasActionSelect"
-import AreasReactionSelect from "@/components/areas/areasReactionSelect"
+type ActionItem = { id: number; left: string | null; right: string | null };
+type ReactionItem = { id: number; value: string | null };
 
 export default function AreasCreationDialog() {
-    const [showExtras, setShowExtras] = React.useState(false)
+    const [name, setName] = React.useState("");
 
-    // Actions dynamiques
-    const [actions, setActions] = React.useState([{ id: 1 }])
+    const [actions, setActions] = React.useState<ActionItem[]>([
+        { id: 1, left: null, right: null },
+    ]);
+
+    const [reactions, setReactions] = React.useState<ReactionItem[]>([
+        { id: 1, value: null },
+    ]);
+
+    const [showExtras, setShowExtras] = React.useState(false);
+
     const addAction = () => {
         setActions(prev => {
-            const maxId = prev.length ? Math.max(...prev.map(a => a.id)) : 0
-            return [...prev, { id: maxId + 1 }]
-        })
-    }
-    const removeAction = (id: number) => {
-        setActions(prev => prev.filter(a => a.id !== id))
-    }
+            const nextId = prev.length ? Math.max(...prev.map(a => a.id)) + 1 : 1;
+            return [...prev, { id: nextId, left: null, right: null }];
+        });
+    };
 
-    const [reactions, setReactions] = React.useState([{ id: 1 }])
+    const removeAction = (id: number) => {
+        setActions(prev => prev.filter(a => a.id !== id));
+    };
+
+    const setActionLeft = (id: number, v: string) => {
+        setActions(prev => prev.map(a => (a.id === id ? { ...a, left: v } : a)));
+    };
+
+    const setActionRight = (id: number, v: string) => {
+        setActions(prev => prev.map(a => (a.id === id ? { ...a, right: v } : a)));
+    };
+
     const addReaction = () => {
         setReactions(prev => {
-            const maxId = prev.length ? Math.max(...prev.map(r => r.id)) : 0
-            return [...prev, { id: maxId + 1 }]
-        })
-    }
-    const removeReaction = (id: number) => {
-        setReactions(prev => prev.filter(r => r.id !== id))
-    }
+            const nextId = prev.length ? Math.max(...prev.map(r => r.id)) + 1 : 1;
+            return [...prev, { id: nextId, value: null }];
+        });
+    };
 
-    const toggleExtras = () => setShowExtras(v => !v)
+    const removeReaction = (id: number) => {
+        setReactions(prev => prev.filter(r => r.id !== id));
+    };
+
+    const setReactionValue = (id: number, v: string) => {
+        setReactions(prev => prev.map(r => (r.id === id ? { ...r, value: v } : r)));
+    };
+
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        console.log("Name:", name);
+        console.log("Actions:", actions.map(a => ({ left: a.left, right: a.right })));
+        console.log("Reactions:", reactions.map(r => r.value));
+    };
 
     return (
         <Dialog>
-            <form>
-                <DialogTrigger asChild>
-                    <Button variant="outline" size="icon" aria-label="Submit">
-                        <PlusIcon />
-                    </Button>
-                </DialogTrigger>
+            <DialogTrigger asChild>
+                <Button variant="outline" size="icon" aria-label="Open creation dialog">
+                    <PlusIcon />
+                </Button>
+            </DialogTrigger>
 
-                <DialogContent className="sm:max-w-[700px]">
+            <DialogContent className="sm:max-w-[700px]">
+                <form onSubmit={handleSubmit}>
                     <DialogHeader>
                         <DialogTitle>Edit Workflows</DialogTitle>
                         <DialogDescription>
@@ -67,24 +89,34 @@ export default function AreasCreationDialog() {
                     <div className="grid gap-4">
                         <div className="grid gap-3">
                             <Label htmlFor="name-1">Name</Label>
-                            <Input id="name-1" name="name" />
+                            <Input
+                                id="name-1"
+                                name="name"
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                            />
                         </div>
                     </div>
 
                     <br />
 
                     <div className="space-y-3">
-                        {actions.map((action, idx) => (
-                            <div key={action.id} className="flex items-center gap-2">
+                        {actions.map((a, idx) => (
+                            <div key={a.id} className="flex items-center gap-2">
                                 <div className="flex-1">
-                                    <AreasActionSelect />
+                                    <AreasActionSelect
+                                        leftValue={a.left ?? undefined}
+                                        onLeftChange={(v) => setActionLeft(a.id, v)}
+                                        rightValue={a.right ?? undefined}
+                                        onRightChange={(v) => setActionRight(a.id, v)}
+                                    />
                                 </div>
                                 {actions.length > 1 && (
                                     <Button
                                         type="button"
                                         variant="ghost"
                                         size="icon"
-                                        onClick={() => removeAction(action.id)}
+                                        onClick={() => removeAction(a.id)}
                                         className="text-destructive hover:text-destructive"
                                         aria-label={`Remove action ${idx + 1}`}
                                     >
@@ -98,17 +130,20 @@ export default function AreasCreationDialog() {
                     <br />
 
                     <div className="space-y-3">
-                        {reactions.map((reaction, idx) => (
-                            <div key={reaction.id} className="flex items-center gap-2">
+                        {reactions.map((r, idx) => (
+                            <div key={r.id} className="flex items-center gap-2">
                                 <div className="flex-1">
-                                    <AreasReactionSelect />
+                                    <AreasReactionSelect
+                                        value={r.value ?? undefined}
+                                        onValueChange={(v: string) => setReactionValue(r.id, v)}
+                                    />
                                 </div>
                                 {reactions.length > 1 && (
                                     <Button
                                         type="button"
                                         variant="ghost"
                                         size="icon"
-                                        onClick={() => removeReaction(reaction.id)}
+                                        onClick={() => removeReaction(r.id)}
                                         className="text-destructive hover:text-destructive"
                                         aria-label={`Remove reaction ${idx + 1}`}
                                     >
@@ -124,9 +159,9 @@ export default function AreasCreationDialog() {
                             type="button"
                             variant="outline"
                             size="icon"
-                            aria-label="Toggle extra actions"
                             aria-pressed={showExtras}
-                            onClick={toggleExtras}
+                            aria-label="Toggle extra actions"
+                            onClick={() => setShowExtras(v => !v)}
                         >
                             <PlusIcon />
                         </Button>
@@ -143,14 +178,14 @@ export default function AreasCreationDialog() {
                         </div>
                     )}
 
-                    <DialogFooter>
+                    <DialogFooter className="mt-4">
                         <DialogClose asChild>
-                            <Button variant="outline">Cancel</Button>
+                            <Button type="button" variant="outline">Cancel</Button>
                         </DialogClose>
                         <Button type="submit">Save changes</Button>
                     </DialogFooter>
-                </DialogContent>
-            </form>
+                </form>
+            </DialogContent>
         </Dialog>
-    )
+    );
 }

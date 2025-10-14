@@ -1,5 +1,6 @@
-import * as React from "react"
+"use client";
 
+import * as React from "react";
 import {
     Select,
     SelectContent,
@@ -8,20 +9,28 @@ import {
     SelectLabel,
     SelectTrigger,
     SelectValue,
-} from "@/components/ui/select"
+} from "@/components/ui/select";
 
-export default function AreasActionSelect() {
+export type AreasActionSelectProps = {
+    // left
+    leftValue?: string;
+    onLeftChange?: (v: string) => void;
+    // right
+    rightValue?: string;
+    onRightChange?: (v: string) => void;
+};
+
+export default function AreasActionSelect({ leftValue, onLeftChange, rightValue, onRightChange}: AreasActionSelectProps) {
     return (
         <section className="grid md:grid-cols-3">
             <div>
                 <div className="px-30">
-                    <h1 className="font-bold text-4xl">
-                        If
-                    </h1>
+                    <h1 className="font-bold text-4xl">If</h1>
                 </div>
             </div>
+
             <div>
-                <Select>
+                <Select value={leftValue} onValueChange={onLeftChange}>
                     <SelectTrigger className="w-[180px]">
                         <SelectValue placeholder="Select a fruit" />
                     </SelectTrigger>
@@ -37,8 +46,9 @@ export default function AreasActionSelect() {
                     </SelectContent>
                 </Select>
             </div>
+
             <div>
-                <Select>
+                <Select value={rightValue} onValueChange={onRightChange}>
                     <SelectTrigger className="w-[180px]">
                         <SelectValue placeholder="Select a fruit" />
                     </SelectTrigger>

@@ -1,5 +1,6 @@
-import * as React from "react"
+"use client"
 
+import * as React from "react"
 import {
     Select,
     SelectContent,
@@ -9,8 +10,18 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
+import {AreasActionSelectProps} from "@/components/areas/areasActionSelect";
 
-export default function AreasReactionSelect() {
+export type AreasReactionSelectProps = {
+    // left
+    leftValue?: string;
+    onLeftChange?: (v: string) => void;
+    // right
+    rightValue?: string;
+    onRightChange?: (v: string) => void;
+};
+
+export default function AreasReactionSelect({ leftValue, onLeftChange, rightValue, onRightChange}: AreasActionSelectProps) {
     return (
         <section className="grid md:grid-cols-3">
             <div>
@@ -20,6 +31,7 @@ export default function AreasReactionSelect() {
                     </h1>
                 </div>
             </div>
+
             <div>
                 <Select>
                     <SelectTrigger className="w-[180px]">
