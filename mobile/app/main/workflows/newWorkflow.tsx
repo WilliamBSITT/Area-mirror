@@ -288,7 +288,7 @@ export default function Workflow({type = "new"}: {type: "new" | "edit"}) {
   }>>([{ type: "actions", service: null, action: null, params: {} }, { type: "reactions", service: null, action: null, params: {} }]);
   const [paramsValues, setParamsValues] = useState<{ [key: string]: string }>({});
   const [min, setMin] = useState<number>(0);
-  const [hour, setHour] = useState<number>(0);
+  const [hour, setHour] = useState<number>(1);
 
   const addWorkflow = (type: "actions" | "reactions") => {
     setWorkflows([...workflows, { type, service: null, action: null, params: {} }]);
