@@ -5,7 +5,7 @@ import { CircleUserRoundIcon, XIcon } from "lucide-react"
 import { useFileUpload } from "@/hooks/use-file-upload"
 import { Button } from "@/components/ui/button"
 
-export default function Component() {
+export default function Avatar() {
   const [{ files }, { removeFile, openFileDialog, getInputProps }] =
     useFileUpload({
       accept: "image/*",
@@ -19,7 +19,7 @@ export default function Component() {
       <div className="relative inline-flex">
         <Button
           variant="outline"
-          className="relative size-16 overflow-hidden p-0 shadow-none"
+          className="relative size-28 overflow-hidden p-0 shadow-none"
           onClick={openFileDialog}
           aria-label={previewUrl ? "Change image" : "Upload image"}
         >
@@ -34,7 +34,7 @@ export default function Component() {
             />
           ) : (
             <div aria-hidden="true">
-              <CircleUserRoundIcon className="size-4 opacity-60" />
+              <CircleUserRoundIcon className="size-10 opacity-60" />
             </div>
           )}
         </Button>
@@ -59,9 +59,9 @@ export default function Component() {
       <p
         aria-live="polite"
         role="region"
-        className="mt-2 text-xs text-muted-foreground"
+        className="mt-2 text-xl text-muted-foreground"
       >
-        Avatar upload button
+      Select your avatar image (optional)
       </p>
     </div>
   )
