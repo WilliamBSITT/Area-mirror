@@ -34,3 +34,32 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
 
     return res;
 }
+
+export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
+    const token = req.cookies.get(COOKIE_NAME)?.value;
+    if (!token) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+
+    const be = await fetch(`${BACKEND_URL}/areas/${params.id}`, {
+        method: "DELETE",
+        headers: {
+            Accept: "application/json",
+            Authorization: `Bearer ${token}`,
+        },
+        cache: "no-store",
+    });
+
+    const text = await be.text();
+    const res = new NextResponse(text, {
+        status: be.status,
+        headers: {
+            "Content-Type": be.headers.get("content-type") ?? "application/json",
+            "Cache-Control": "no-store, private",
+            Vary: "Cookie",
+        },
+    });
+
+    const beSetCookie = be.headers.get("set-cookie");
+    if (beSetCookie) for (const c of beSetCookie.split(/,(?=[^;]+?=)/)) res.headers.append("set-cookie", c.trim());
+
+    return res;
+}
