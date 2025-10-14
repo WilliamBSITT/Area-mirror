@@ -233,6 +233,9 @@ def update_area(area_id):
         schema:
           type: object
           properties:
+            frequency:
+              type: integer
+              example: 3600
             enabled:
               type: boolean
               example: true
@@ -277,6 +280,8 @@ def update_area(area_id):
     area.reaction = data["reaction"]
   if "params" in data:
     area.params = data["params"]
+  if "frequency" in data:
+    area.frequency = data["frequency"]
 
   db.session.commit()
   return jsonify("success"), 200
