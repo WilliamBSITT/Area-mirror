@@ -101,27 +101,16 @@ export default function Profile() {
         {
             Edit 
             ? <View>
-                    <Pressable className="bg-blue-900 rounded-full p-4 w-1/2" onPress={() => setIsModalOpen(!isModalOpen)}>
-                    <Text className="text-white text-center">Change password</Text>
-                    </Pressable>
-                    <Modal visible={isModalOpen}>
-                        <TextInput value={oldPwd} defaultValue={""} placeholder="current password" onChangeText={setOldPwd}/>
+                    <TextInput value={oldPwd} defaultValue={""} placeholder="current password" onChangeText={setOldPwd}/>
+                    <View className="flex-row">
                         <TextInput value={newPwd} defaultValue={""} placeholder="new password" onChangeText={setNewPwd}/>
-                        <Pressable className="bg-blue-900 rounded-full p-4 w-1/4" onPress={verifyPwd}>
-                            <Text className="text-white text-center">change</Text>
+                        <Pressable className="bg-blue-900 rounded-full p-3 w-1/4 m-auto" onPress={verifyPwd}>
+                            <Text className="text-white text-center text-xl">Change</Text>
                         </Pressable>
-                    </Modal>
+                    </View>
             </View>
             : <Text className="text-3xl mb-3 mt-2 ml-4">********</Text>
-        }
-        {/* <View className="flex flex-row ">
-            <TextInput className="mb-4 text-lg border-2 border-solid border-blue-800 rounded-full" value={newEmail} defaultValue={""} placeholder="replace your email" onChangeText={setNewEmail} onKeyPress={(e) => verif(e)}/>
-            <Pressable className="bg-blue-900 rounded-full p-3 w-1/4 m-auto" onPress={logout}>
-                <Text className="text-white text-center text-xl">Change</Text>
-            </Pressable>
-        </View>
- */}
-        
+        }    
         <Pressable className="bg-blue-900 rounded-full p-4 w-1/4 mt-64 ml-64" onPress={logout}>
             <Text className="text-white text-center">Log out</Text>
         </Pressable>
