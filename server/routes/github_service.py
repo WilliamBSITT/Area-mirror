@@ -9,8 +9,7 @@ REDIRECT_URI = os.getenv("GITHUB_APP_REDIRECT_URI")
 AUTH_URL = os.getenv("GITHUB_AUTH_URL")
 TOKEN_URL = os.getenv("GITHUB_TOKEN_URL")
 
-
-@bp.route("/login")
+@bp.route("/login", methods=["GET"])
 def github_login():
     """
     Redirige l'utilisateur vers GitHub pour autorisation OAuth
@@ -21,12 +20,11 @@ def github_login():
         "redirect_uri": REDIRECT_URI,
         "scope": scope,
     }
-
     url = f"{AUTH_URL}?{urllib.parse.urlencode(params)}"
     return redirect(url)
 
 
-@bp.route("/callback")
+@bp.route("/callback", methods=["GET"])
 def github_callback():
     """
     Récupère le code GitHub et échange contre un access_token
