@@ -133,7 +133,8 @@ def get_area(area_id):
           "frequency": result[0].frequency,
           "params": result[0].params,
           "last_run": result[0].last_run.isoformat() if result[0].last_run else None,
-          "enabled": result[0].enabled
+          "enabled": result[0].enabled,
+          "public": result[0].public
         })
 
 @bp.route("/public", methods=["GET"])
@@ -317,6 +318,8 @@ def update_area(area_id):
     area.params = data["params"]
   if "frequency" in data:
     area.frequency = data["frequency"]
+  if "public" in data:
+    area.public = data["public"]
 
   db.session.commit()
   return jsonify("success"), 200
