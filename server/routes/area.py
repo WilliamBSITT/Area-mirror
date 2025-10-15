@@ -34,6 +34,9 @@ def create_area():
             name:
               type: string
               example: "Météo to Discord"
+            frequency:
+              type: integer
+              example: 3600
             action_service:
               type: string
               example: "openweather"
@@ -66,7 +69,8 @@ def create_area():
         data.get("reaction"),
         params=data.get("params", {}),
         enabled=data.get("enabled", True),
-        name=data.get("name", "My AREA")
+        name=data.get("name", "My AREA"),
+        frequency=data.get("frequency", 3600),
     )
 
     if err:
@@ -80,7 +84,8 @@ def create_area():
         "reaction_service": area.reaction_service,
         "reaction": area.reaction,
         "params": area.params,
-        "enabled": area.enabled
+        "enabled": area.enabled,
+        "frequency": int(area.frequency),
     }), 201
 
 @bp.route("/<int:area_id>", methods=["GET"])
@@ -130,6 +135,41 @@ def get_area(area_id):
           "last_run": result[0].last_run.isoformat() if result[0].last_run else None,
           "enabled": result[0].enabled
         })
+
+@bp.route("/public", methods=["GET"])
+@jwt_required()
+def list_public_areas():
+    """
+    Liste les AREAs publics
+    ---
+    tags:
+      - Areas
+    security:
+      - BearerAuth: []
+    parameters:
+      - in: header
+        name: Authorization
+        type: string
+        required: true
+        description: "JWT token au format: Bearer <access_token>"
+    responses:
+      200:
+        description: Liste des AREAs publics
+    """
+    areas = area_manager.list_areas()
+    public_areas = [a for a in areas if a.public]
+
+    return jsonify([
+        {
+          "id": a[0].id,
+          "name": a[0].name,
+          "action_service": a[0].action_service,
+          "action": a[0].action,
+          "reaction_service": a[0].reaction_service,
+          "reaction": a[0].reaction,
+          "frequency": a[0].frequency
+        } for a in public_areas
+    ])
 
 @bp.route("", methods=["GET"])
 @jwt_required()
@@ -228,6 +268,9 @@ def update_area(area_id):
         schema:
           type: object
           properties:
+            frequency:
+              type: integer
+              example: 3600
             enabled:
               type: boolean
               example: true
@@ -272,6 +315,8 @@ def update_area(area_id):
     area.reaction = data["reaction"]
   if "params" in data:
     area.params = data["params"]
+  if "frequency" in data:
+    area.frequency = data["frequency"]
 
   db.session.commit()
   return jsonify("success"), 200

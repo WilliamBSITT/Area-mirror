@@ -42,6 +42,7 @@ def seed_services():
             "name": "GitHub",
             "description": "GitHub is a platform where developers store and share their code online. It allows teams to collaborate on software projects from anywhere. You can track changes, review contributions, and manage updates easily. Developers use it to build, test, and improve their applications together. It’s the world’s largest community for open-source and coding projects.",
             "image": image_to_binary("github"),
+            "auth_url": "https://github.com/login/oauth/authorize?client_id=Ov23liHHgFODT3eZrD2N&scope=repo+user",
         },
         {
             "name": "NASA",
@@ -59,7 +60,12 @@ def seed_services():
             "description": "Gmail is Google’s email service used by millions worldwide. It offers fast, secure, and easy-to-use email communication. You can organize your inbox, filter messages, and search efficiently. Integrated with other Google services, it keeps everything connected. A reliable platform for personal and professional communication.",
             "image": image_to_binary("gmail"),
             "auth_url": "https://support.google.com/mail/answer/185833?hl=fr"
-        }
+        },
+        {
+            "name": "TMDB",
+            "description": "TMDB (The Movie Database) is a community-driven platform that provides detailed information about movies and TV shows. You can discover popular films, upcoming releases, and top-rated content. It offers rich metadata, including cast, crew, reviews, and trailers. Perfect for movie enthusiasts looking to explore and stay updated on entertainment.",
+            "image": image_to_binary("movie_db"),
+        },
     ]
     for s in services:
         if not Service.query.filter_by(name=s["name"]).first():

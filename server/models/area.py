@@ -16,6 +16,7 @@ class Area(db.Model):
     last_run = db.Column(db.DateTime, default=None)
     params = db.Column(db.JSON, nullable=True)
     enabled = db.Column(db.Boolean, default=True)
+    public = db.Column(db.Boolean, default=False)
 
     user = db.relationship("User", backref="areas")
 

@@ -102,3 +102,5 @@ def github_token_callback():
     response["access_token"] = access_token
 
     return jsonify(response), 201
+
+

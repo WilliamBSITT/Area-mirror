@@ -7,7 +7,7 @@ def _get_services_map():
     """Retourne un dict { service_name: service_instance }"""
     return {s.name: s for s in get_all_services()}
 
-def create_area(user_id, action_service, action, reaction_service, reaction, params=None, enabled=True, name="My AREA"):
+def create_area(user_id, action_service, action, reaction_service, reaction, params=None, enabled=True, name="My AREA", frequency=3600):
     user = User.query.get(user_id)
     if not user:
         return None, "Utilisateur introuvable"
@@ -34,7 +34,8 @@ def create_area(user_id, action_service, action, reaction_service, reaction, par
         action=action,
         reaction_service=reaction_service,
         reaction=reaction,
-        enabled=enabled
+        enabled=enabled,
+        frequency=frequency
     )   
     area.set_params(params)
     db.session.add(area)
