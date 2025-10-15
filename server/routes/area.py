@@ -136,6 +136,41 @@ def get_area(area_id):
           "enabled": result[0].enabled
         })
 
+@bp.route("/public", methods=["GET"])
+@jwt_required()
+def list_public_areas():
+    """
+    Liste les AREAs publics
+    ---
+    tags:
+      - Areas
+    security:
+      - BearerAuth: []
+    parameters:
+      - in: header
+        name: Authorization
+        type: string
+        required: true
+        description: "JWT token au format: Bearer <access_token>"
+    responses:
+      200:
+        description: Liste des AREAs publics
+    """
+    areas = area_manager.list_areas()
+    public_areas = [a for a in areas if a.public]
+
+    return jsonify([
+        {
+          "id": a[0].id,
+          "name": a[0].name,
+          "action_service": a[0].action_service,
+          "action": a[0].action,
+          "reaction_service": a[0].reaction_service,
+          "reaction": a[0].reaction,
+          "frequency": a[0].frequency
+        } for a in public_areas
+    ])
+
 @bp.route("", methods=["GET"])
 @jwt_required()
 def list_areas():
