@@ -37,23 +37,11 @@ def spotify_login():
     return redirect(url)
 
 
-@bp.route("/spotify/callback", methods=["GET"])
+@bp.route("/spotify/callback")
 def spotify_callback():
-    """
-    Callback Spotify après l'authentification
-    ---
-    tags:
-      - Spotify
-    responses:
-      200:
-        description: Retourne les tokens d'accès Spotify
-    """
-    if "error" in request.args:
-        return jsonify({"error": request.args["error"]}), 400
-
     code = request.args.get("code")
     if not code:
-        return jsonify({"error": "Missing authorization code"}), 400
+        return jsonify({"error": "Missing code"}), 400
 
     data = {
         "grant_type": "authorization_code",
@@ -63,22 +51,14 @@ def spotify_callback():
         "client_secret": CLIENT_SECRET
     }
 
-    res = requests.post(TOKEN_URL, data=data)
-    if res.status_code != 200:
-        return jsonify({"error": res.text}), 400
-
+    headers = {"Content-Type": "application/x-www-form-urlencoded"}
+    res = requests.post("https://accounts.spotify.com/api/token", data=data, headers=headers)
     tokens = res.json()
-    access_token = tokens.get("access_token")
-    refresh_token = tokens.get("refresh_token")
-    expires_in = tokens.get("expires_in")
 
-    session["spotify_tokens"] = {
-        "access_token": access_token,
-        "refresh_token": refresh_token,
-        "expires_at": datetime.now().timestamp() + expires_in
-    }
+    if "access_token" not in tokens:
+        return jsonify({"error": "Spotify token exchange failed", "details": tokens}), 400
 
-    return jsonify({
-        "message": "Spotify connected successfully!",
-        "tokens": tokens
-    })
+    # Redirige vers ton FRONT avec les tokens dans le hash fragment (sécurisé)
+    front_url = os.getenv("FRONT_REDIRECT_URI")
+    redirect_url = f"{front_url}#access_token={tokens['access_token']}&refresh_token={tokens.get('refresh_token','')}"
+    return redirect(redirect_url)
