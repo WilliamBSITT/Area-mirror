@@ -123,7 +123,18 @@ export default function Login() {
           <Text className="text-white text-2xl">change ip</Text>
         </Pressable>
       </View>
-      <TextInput className="border-2 border-solid rounded-full w-1/2 mb-5 p-4 border-blue-900 text-2xl" placeholder="email" onChangeText={setMail} defaultValue={mail}/>
+      <TextInput
+        className="border-2 border-solid rounded-full w-1/2 mb-5 p-4 border-blue-900 text-2xl"
+        placeholder="email"
+        onChangeText={(text) => {
+          setMail(text);
+          if (!text.includes("@") || !text.includes(".")) {
+            console.log("Adresse email invalide");
+            setMail("");
+          }
+        }}
+        defaultValue={mail}
+      />
       <TextInput secureTextEntry className="border-2 border-solid rounded-full w-1/2 mb-5 p-4 border-blue-900 text-2xl" placeholder="Password" onChangeText={setPassword} defaultValue={password}/>
       {mode == 'register' && (<View className="w-full justify-center items-center">
         {(password !== confirmPwd && confirmPwd) && <Text className="text-red-600">Password don't match</Text>}
