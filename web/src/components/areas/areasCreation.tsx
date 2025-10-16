@@ -13,7 +13,7 @@ import AreasActionSelect from "@/components/areas/areasActionSelect";
 import AreasReactionSelect from "@/components/areas/areasReactionSelect";
 
 type ActionItem = { id: number; left: string | null; right: string | null };
-type ReactionItem = { id: number; value: string | null };
+type ReactionItem = { id: number; left: string | null; right: string | null };
 
 export default function AreasCreationDialog() {
     const [name, setName] = React.useState("");
@@ -23,7 +23,7 @@ export default function AreasCreationDialog() {
     ]);
 
     const [reactions, setReactions] = React.useState<ReactionItem[]>([
-        { id: 1, value: null },
+        { id: 1, left: null, right: null },
     ]);
 
     const [showExtras, setShowExtras] = React.useState(false);
@@ -34,15 +34,12 @@ export default function AreasCreationDialog() {
             return [...prev, { id: nextId, left: null, right: null }];
         });
     };
-
     const removeAction = (id: number) => {
         setActions(prev => prev.filter(a => a.id !== id));
     };
-
     const setActionLeft = (id: number, v: string) => {
         setActions(prev => prev.map(a => (a.id === id ? { ...a, left: v } : a)));
     };
-
     const setActionRight = (id: number, v: string) => {
         setActions(prev => prev.map(a => (a.id === id ? { ...a, right: v } : a)));
     };
@@ -50,23 +47,24 @@ export default function AreasCreationDialog() {
     const addReaction = () => {
         setReactions(prev => {
             const nextId = prev.length ? Math.max(...prev.map(r => r.id)) + 1 : 1;
-            return [...prev, { id: nextId, value: null }];
+            return [...prev, { id: nextId, left: null, right: null }];
         });
     };
-
     const removeReaction = (id: number) => {
         setReactions(prev => prev.filter(r => r.id !== id));
     };
-
-    const setReactionValue = (id: number, v: string) => {
-        setReactions(prev => prev.map(r => (r.id === id ? { ...r, value: v } : r)));
+    const setReactionLeft = (id: number, v: string) => {
+        setReactions(prev => prev.map(r => (r.id === id ? { ...r, left: v } : r)));
+    };
+    const setReactionRight = (id: number, v: string) => {
+        setReactions(prev => prev.map(r => (r.id === id ? { ...r, right: v } : r)));
     };
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         console.log("Name:", name);
         console.log("Actions:", actions.map(a => ({ left: a.left, right: a.right })));
-        console.log("Reactions:", reactions.map(r => r.value));
+        console.log("Reactions:", reactions.map(r => ({ left: r.left, right: r.right })));
     };
 
     return (
@@ -100,6 +98,7 @@ export default function AreasCreationDialog() {
 
                     <br />
 
+                    {/* Actions */}
                     <div className="space-y-3">
                         {actions.map((a, idx) => (
                             <div key={a.id} className="flex items-center gap-2">
@@ -129,13 +128,16 @@ export default function AreasCreationDialog() {
 
                     <br />
 
+                    {/* Reactions */}
                     <div className="space-y-3">
                         {reactions.map((r, idx) => (
                             <div key={r.id} className="flex items-center gap-2">
                                 <div className="flex-1">
                                     <AreasReactionSelect
-                                        value={r.value ?? undefined}
-                                        onValueChange={(v: string) => setReactionValue(r.id, v)}
+                                        leftValue={r.left ?? undefined}
+                                        onLeftChange={(v) => setReactionLeft(r.id, v)}
+                                        rightValue={r.right ?? undefined}
+                                        onRightChange={(v) => setReactionRight(r.id, v)}
                                     />
                                 </div>
                                 {reactions.length > 1 && (

@@ -9,7 +9,7 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
-import type { Services } from "@/hooks/useServices";
+import type { Services } from "@/hooks/services/useServices";
 import Image, { type StaticImageData } from "next/image";
 import fallbackImg from "../../public/landing.jpg";
 

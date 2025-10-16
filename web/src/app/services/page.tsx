@@ -1,6 +1,6 @@
 "use client";
 
-import { useServices, type Services } from "@/hooks/useServices";
+import { useServices, type Services } from "@/hooks/services/useServices";
 import { CardServices } from "@/components/cardServices";
 
 export default function Page() {

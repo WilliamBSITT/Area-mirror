@@ -10,7 +10,6 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
-import {AreasActionSelectProps} from "@/components/areas/areasActionSelect";
 
 export type AreasReactionSelectProps = {
     // left
@@ -21,7 +20,7 @@ export type AreasReactionSelectProps = {
     onRightChange?: (v: string) => void;
 };
 
-export default function AreasReactionSelect({ leftValue, onLeftChange, rightValue, onRightChange}: AreasActionSelectProps) {
+export default function AreasReactionSelect({ leftValue, onLeftChange, rightValue, onRightChange}: AreasReactionSelectProps) {
     return (
         <section className="grid md:grid-cols-3">
             <div>
@@ -33,7 +32,7 @@ export default function AreasReactionSelect({ leftValue, onLeftChange, rightValu
             </div>
 
             <div>
-                <Select>
+                <Select value={leftValue} onValueChange={onLeftChange}>
                     <SelectTrigger className="w-[180px]">
                         <SelectValue placeholder="Select a fruit" />
                     </SelectTrigger>
@@ -49,8 +48,9 @@ export default function AreasReactionSelect({ leftValue, onLeftChange, rightValu
                     </SelectContent>
                 </Select>
             </div>
+
             <div>
-                <Select>
+                <Select value={rightValue} onValueChange={onRightChange}>
                     <SelectTrigger className="w-[180px]">
                         <SelectValue placeholder="Select a fruit" />
                     </SelectTrigger>
