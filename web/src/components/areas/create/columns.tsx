@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { Area } from "@/hooks/areas/useAreas";
 import { useAreasActivateDeactivate } from "@/hooks/areas/useAreasActivateDeactivate";
-import { AreasDeletionDialog } from "@/components/areas/areasDeletion";
+import { AreasDeletionDialog } from "@/components/areas/delet/areasDeletion";
 import { useRouter } from "next/navigation";
 import { Trash2 } from "lucide-react";
 

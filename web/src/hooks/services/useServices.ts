@@ -1,55 +1,50 @@
-"use client"
+// src/hooks/useServices.ts
+import { useCallback, useEffect, useRef, useState } from 'react';
+import type { Service } from '@/types/service';
 
-import { useCallback, useEffect, useState } from "react";
+type UseServicesState = {
+    data: Service[] | null;
+    loading: boolean;
+    error: Error | null;
+    refetch: () => Promise<void>;
+};
 
-const API_BASE = process.env.NEXT_PUBLIC_BACKEND_URL
-
-export type Services = {
-    id: number;
-    name: string;
-    description: string;
-    image: string;
-}
-
-export function useServices() {
-    const [data, setData] = useState<Services[] | null>(null);
-    const [isLoading, setIsLoading] = useState(false);
+export function useServices(): UseServicesState {
+    const [data, setData] = useState<Service[] | null>(null);
+    const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<Error | null>(null);
+    const controllerRef = useRef<AbortController | null>(null);
 
-    const fetchServices = useCallback(async (signal?: AbortSignal) => {
-        setIsLoading(true);
+    const fetchServices = useCallback(async () => {
+        controllerRef.current?.abort();
+        const controller = new AbortController();
+        controllerRef.current = controller;
+
+        setLoading(true);
         setError(null);
+
         try {
-            const res = await fetch(`${API_BASE}/services`, {
-                method: "GET",
-                headers: { Accept: "application/json" },
-                cache: "no-store",
-                signal,
-            });
+            const res = await fetch('/api/services', { signal: controller.signal });
             if (!res.ok) {
-                throw new Error(`HTTP ${res.status} – ${res.statusText}`);
+                throw new Error(`Request failed with ${res.status}`);
             }
-            const json = (await res.json()) as Services[];
+            const json = (await res.json()) as Service[];
             setData(json);
-        } catch (e: any) {
-            if (e?.name !== "AbortError") setError(e);
+        } catch (e: unknown) {
+            if ((e as any)?.name !== 'AbortError') {
+                setError(e as Error);
+            }
         } finally {
-            setIsLoading(false);
+            setLoading(false);
         }
     }, []);
 
     useEffect(() => {
-        const controller = new AbortController();
-        fetchServices(controller.signal);
-        return () => controller.abort();
+        fetchServices();
+        return () => {
+            controllerRef.current?.abort();
+        };
     }, [fetchServices]);
 
-    const refetch = useCallback(() => fetchServices(), [fetchServices]);
-
-    return { data, isLoading, error, refetch };
+    return { data, loading, error, refetch: fetchServices };
 }
-
-
-
-
-

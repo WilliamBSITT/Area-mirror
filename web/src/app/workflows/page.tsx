@@ -2,7 +2,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import AreasTable from "@/components/areas/AreasTable"
 import {PlusIcon} from "lucide-react";
-import AreasCreationDialog from "@/components/areas/areasCreation"
+import AreasCreationDialog from "@/components/areas/create/areasCreation"
 
 export default function Page() {
     return (

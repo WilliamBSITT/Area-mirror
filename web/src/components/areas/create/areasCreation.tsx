@@ -9,8 +9,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { PlusIcon, X } from "lucide-react";
-import AreasActionSelect from "@/components/areas/areasActionSelect";
-import AreasReactionSelect from "@/components/areas/areasReactionSelect";
+import AreasActionSelect from "@/components/areas/create/areasActionSelect";
+import AreasReactionSelect from "@/components/areas/create/areasReactionSelect";
 
 type ActionItem = { id: number; left: string | null; right: string | null };
 type ReactionItem = { id: number; left: string | null; right: string | null };
