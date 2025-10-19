@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react'
 import { router } from "expo-router";
 import { workflowProps } from "./newWorkflow";
 import api from "@/utils/api.js";
-import * as AuthSession from "expo-auth-session";
 
 function WorkflowTile({title, id, data, setData}: {title: string, id: number, data: workflowProps[] | null, setData: React.Dispatch<React.SetStateAction<workflowProps[] | null>>}) {
   const [isEnabled, setIsEnabled] = useState(data?.find((area) => area.id === id)?.enabled || false);
@@ -65,42 +64,11 @@ export default function Index() {
     fetchAREA()
   }, [])
 
-  const discovery = {
-    authorizationEndpoint: 'https://accounts.spotify.com/authorize',
-    tokenEndpoint: 'https://accounts.spotify.com/api/token',
-    revocationEndpoint: 'https://accounts.spotify.com/api/revoke',
-  };
-
-  const [request, response, promptAsync] = AuthSession.useAuthRequest(
-    {
-      clientId: 'a63f13819159493eb695b3c16785aa55',
-      scopes: ['user-read-currently-playing', 'user-read-playback-state'],
-      redirectUri: AuthSession.makeRedirectUri({
-        scheme: 'area'})
-    },
-    discovery
-  );
-
-  const callSpotify = async () => {
-  promptAsync();
-    // let res = await api.post(`/spotify/callback`, {
-    //   code: result.type === 'success' && result.url.split('code=')[1]
-    // }).catch((error: any) => {
-    //   console.log("Error posting spotify callback:", error);
-    // });
-    // if (res && (res.status === 200 || res.status === 201)) {
-    //   console.log("Spotify connected successfully");
-    // }
-  }
-
   return (
     <View className="w-full h-full">
       {data?.map((area: workflowProps) => (
         <WorkflowTile title={area.name} id={area.id} key={area.id} data={data} setData={setData}/>
       ))}
-      <Pressable onPress={() => callSpotify()}>
-        <Text className="text-black">Spotify</Text>
-      </Pressable>
       <Pressable className="absolute bottom-32 right-14 bg-blue-900 w-16 h-16 rounded-full" onPress={() => router.push('/main/workflows/newWorkflow')}>
         <Image source={require("../../../images/plus-white.png")} className="w-10 h-10 m-auto"/>
       </Pressable>

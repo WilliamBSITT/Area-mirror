@@ -5,26 +5,6 @@ import {Link} from 'expo-router'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import api from '@/utils/api';
 
-const Header: React.FC = () => {
-  return (
-    <View style={styles.header}>
-      <Image
-        source={require('../../../images/logo.png')}
-        style={{ width: 200, height: 120, marginLeft: 5, marginTop: 5 }}
-        resizeMode="contain"
-      />
-    </View>
-  );
-};
-
-const styles = StyleSheet.create({
-  header: {
-    backgroundColor: '#FFFFFF',
-    justifyContent: 'flex-start',
-    alignItems: 'flex-start',
-  },
-});
-
 function Card({name, path, id}: {name:string, path:any, id:number} ) {
   return (
     <Link
@@ -58,12 +38,12 @@ function Card({name, path, id}: {name:string, path:any, id:number} ) {
 
 export interface service {
     name: string
-    id: number
+    id: string
     image: string
     required: boolean
     description: string
     auth_url: string
-  }
+}
 
 export default function Home() {
   const [data, setData] = useState([]);
@@ -101,7 +81,7 @@ export default function Home() {
             <Card
               name={service.name}
               path={`data:image/png;base64,${service.image}`}
-              id={service.id}
+              id={Number(service.id)}
             />
           </View>
         ))}

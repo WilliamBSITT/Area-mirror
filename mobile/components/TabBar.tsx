@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, LayoutChangeEvent } from 'react-native';
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import TabBarButton from './TabBarButton';
-import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
+import Animated, { useAnimatedStyle, useSharedValue, withTiming, Easing } from 'react-native-reanimated';
 
 export function MyTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
   const [dimensions, setDimensions] = useState({ width: 320, height: 56 });
@@ -15,16 +15,20 @@ export function MyTabBar({ state, descriptors, navigation }: BottomTabBarProps) 
 
   const buttonCount = Math.max(1, state.routes.length);
   const buttonWidth = dimensions.width / buttonCount;
-  const indicatorPadding = 25;                 // keep your padding idea
+  const indicatorPadding = 25;
   const indicatorWidth = Math.max(10, buttonWidth - indicatorPadding);
   const indicatorHeight = Math.max(30, dimensions.height - 15);
 
-  // whenever layout or active index changes, move the indicator
+  // Use withTiming instead of withSpring for smooth linear movement
   useEffect(() => {
     if (!dimensions.width) return;
     const centerOffset = (buttonWidth - indicatorWidth) / 2;
     const targetX = buttonWidth * state.index + centerOffset;
-    tabPositionX.value = withSpring(targetX, { damping: 16, stiffness: 140 });
+
+    tabPositionX.value = withTiming(targetX, {
+      duration: 250, // Animation duration in milliseconds
+      easing: Easing.out(Easing.cubic), // Smooth easing curve
+    });
   }, [dimensions.width, state.index]);
 
   const animatedStyle = useAnimatedStyle(() => ({
@@ -47,14 +51,13 @@ export function MyTabBar({ state, descriptors, navigation }: BottomTabBarProps) 
         backgroundColor: 'white',
         borderRadius: 999,
         padding: 12,
-        paddingLeft: 30,
-        paddingRight: 30,
+        paddingLeft: 20,
+        paddingRight: 20,
         shadowColor: '#000',
         justifyContent: 'space-between',
         alignItems: 'center',
       }}
     >
-      {/* animated bubble */}
       <Animated.View
         style={[
           animatedStyle,
@@ -70,7 +73,12 @@ export function MyTabBar({ state, descriptors, navigation }: BottomTabBarProps) 
         const onPress = () => {
           const centerOffset = (buttonWidth - indicatorWidth) / 2;
           const targetX = buttonWidth * index + centerOffset;
-          tabPositionX.value = withSpring(targetX, { damping: 16, stiffness: 140 });
+
+          // Use the same smooth timing animation in onPress
+          tabPositionX.value = withTiming(targetX, {
+            duration: 250,
+            easing: Easing.out(Easing.cubic),
+          });
 
           const event = navigation.emit({
             type: 'tabPress',

@@ -13,18 +13,18 @@ import { colorScheme } from "nativewind";
 WebBrowser.maybeCompleteAuthSession();
 
 // Endpoint
-const discovery = {
-  authorizationEndpoint: 'https://github.com/login/oauth/authorize',
-  tokenEndpoint: 'https://github.com/login/oauth/access_token',
-  revocationEndpoint: 'https://github.com/settings/connections/applications/Ov23liSvunSD8xhDGxUs',
-};
-
 export default function Login() {
   const [success, setSuccess] = useState(false);
   const [Ip, setIp] = useState(process.env.EXPO_PUBLIC_IP || "10.18.208.13");
   const { login } = useContext(AuthContext)!;
   const [msg, setMsg] = useState('');
     // console.log("theme", colorScheme.get());
+  const discovery = {
+    authorizationEndpoint: 'https://github.com/login/oauth/authorize',
+    tokenEndpoint: 'https://github.com/login/oauth/access_token',
+    revocationEndpoint: 'https://github.com/settings/connections/applications/Ov23liSvunSD8xhDGxUs',
+  };
+
   const [request, response, promptAsync] = AuthSession.useAuthRequest(
     {
       clientId: 'Ov23liSvunSD8xhDGxUs',
@@ -128,8 +128,8 @@ export default function Login() {
         placeholder="email"
         onChangeText={(text) => {
           setMail(text);
-          if (!text.includes("@") || !text.includes(".")) {
-            console.log("Adresse email invalide");
+          if (mode !== 'login' && (!text.includes("@") || !text.includes("."))) {
+            setMsg("Adresse email invalide");
             setMail("");
           }
         }}

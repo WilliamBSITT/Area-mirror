@@ -23,7 +23,7 @@ export default function Header() {
   };
 
   return (
-    <View className="bg-primary justify-center items-start h-20">
+    <View className="bg-blur justify-center items-start h-20">
       {pathname !== '/main/home' && (
         <Pressable
           onPress={handleGoBack}
