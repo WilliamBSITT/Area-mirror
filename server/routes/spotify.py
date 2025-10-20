@@ -12,73 +12,45 @@ REDIRECT_URI = os.getenv("SPOTIFY_REDIRECT_URI", "http://127.0.0.1:8081")
 AUTH_URL = "https://accounts.spotify.com/authorize"
 TOKEN_URL = "https://accounts.spotify.com/api/token"
 
-@bp.route("/spotify/login", methods=["GET"])
+import urllib.parse
+
+@bp.route("/spotify/login")
 def spotify_login():
-    """
-    Redirige l'utilisateur vers Spotify pour se connecter à l'application
-    ---
-    tags:
-      - Spotify
-    responses:
-      302:
-        description: Redirection vers la page d'autorisation Spotify
-    """
-    
+    frontend = request.args.get("frontend", "web")
+
     scope = "user-read-currently-playing user-read-playback-state"
+    state = f"frontend:{frontend}"
+
     params = {
         "client_id": CLIENT_ID,
         "response_type": "code",
         "redirect_uri": REDIRECT_URI,
         "scope": scope,
-        "show_dialog": "true"
+        "state": state,
     }
 
-    url = f"{AUTH_URL}?{urllib.parse.urlencode(params)}"
-    return redirect(url)
+    auth_url = f"{AUTH_URL}?{urllib.parse.urlencode(params)}"
+    return redirect(auth_url)
 
 
-@bp.route("/spotify/callback", methods=["GET"])
+
+@bp.route("/spotify/callback")
 def spotify_callback():
-    """
-    Callback Spotify après l'authentification
-    ---
-    tags:
-      - Spotify
-    responses:
-      200:
-        description: Retourne les tokens d'accès Spotify
-    """
-    if "error" in request.args:
-        return jsonify({"error": request.args["error"]}), 400
-
     code = request.args.get("code")
-    if not code:
-        return jsonify({"error": "Missing authorization code"}), 400
+    state = request.args.get("state", "frontend:web")
 
-    data = {
-        "grant_type": "authorization_code",
-        "code": code,
-        "redirect_uri": REDIRECT_URI,
-        "client_id": CLIENT_ID,
-        "client_secret": CLIENT_SECRET
-    }
+    frontend = state.split(":")[1]
 
-    res = requests.post(TOKEN_URL, data=data)
-    if res.status_code != 200:
-        return jsonify({"error": res.text}), 400
+    tokens = {...}
 
-    tokens = res.json()
-    access_token = tokens.get("access_token")
-    refresh_token = tokens.get("refresh_token")
-    expires_in = tokens.get("expires_in")
+    if frontend == "mobile":
+        redirect_uri = "areaapp://auth/spotify/callback"
+    else:
+        redirect_uri = "http://localhost:5173/spotify/callback"
 
-    session["spotify_tokens"] = {
-        "access_token": access_token,
-        "refresh_token": refresh_token,
-        "expires_at": datetime.now().timestamp() + expires_in
-    }
+    redirect_url = (
+        f"{redirect_uri}?access_token={tokens['access_token']}"
+        f"&refresh_token={tokens.get('refresh_token','')}"
+    )
+    return redirect(redirect_url)
 
-    return jsonify({
-        "message": "Spotify connected successfully!",
-        "tokens": tokens
-    })
