@@ -12,53 +12,45 @@ REDIRECT_URI = os.getenv("SPOTIFY_REDIRECT_URI", "http://127.0.0.1:8080/spotify/
 AUTH_URL = "https://accounts.spotify.com/authorize"
 TOKEN_URL = "https://accounts.spotify.com/api/token"
 
-@bp.route("/spotify/login", methods=["GET"])
+import urllib.parse
+
+@bp.route("/spotify/login")
 def spotify_login():
-    """
-    Redirige l'utilisateur vers Spotify pour se connecter à l'application
-    ---
-    tags:
-      - Spotify
-    responses:
-      302:
-        description: Redirection vers la page d'autorisation Spotify
-    """
-    
+    frontend = request.args.get("frontend", "web")
+
     scope = "user-read-currently-playing user-read-playback-state"
+    state = f"frontend:{frontend}"
+
     params = {
         "client_id": CLIENT_ID,
         "response_type": "code",
         "redirect_uri": REDIRECT_URI,
         "scope": scope,
-        "show_dialog": "true"
+        "state": state,
     }
 
-    url = f"{AUTH_URL}?{urllib.parse.urlencode(params)}"
-    return redirect(url)
+    auth_url = f"{AUTH_URL}?{urllib.parse.urlencode(params)}"
+    return redirect(auth_url)
+
 
 
 @bp.route("/spotify/callback")
 def spotify_callback():
     code = request.args.get("code")
-    if not code:
-        return jsonify({"error": "Missing code"}), 400
+    state = request.args.get("state", "frontend:web")
 
-    data = {
-        "grant_type": "authorization_code",
-        "code": code,
-        "redirect_uri": REDIRECT_URI,
-        "client_id": CLIENT_ID,
-        "client_secret": CLIENT_SECRET
-    }
+    frontend = state.split(":")[1]
 
-    headers = {"Content-Type": "application/x-www-form-urlencoded"}
-    res = requests.post("https://accounts.spotify.com/api/token", data=data, headers=headers)
-    tokens = res.json()
+    tokens = {...}
 
-    if "access_token" not in tokens:
-        return jsonify({"error": "Spotify token exchange failed", "details": tokens}), 400
+    if frontend == "mobile":
+        redirect_uri = "areaapp://auth/spotify/callback"
+    else:
+        redirect_uri = "http://localhost:5173/spotify/callback"
 
-    # Redirige vers ton FRONT avec les tokens dans le hash fragment (sécurisé)
-    front_url = os.getenv("FRONT_REDIRECT_URI")
-    redirect_url = f"{front_url}#access_token={tokens['access_token']}&refresh_token={tokens.get('refresh_token','')}"
+    redirect_url = (
+        f"{redirect_uri}?access_token={tokens['access_token']}"
+        f"&refresh_token={tokens.get('refresh_token','')}"
+    )
     return redirect(redirect_url)
+
