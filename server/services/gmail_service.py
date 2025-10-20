@@ -54,12 +54,11 @@ class GmailService(BaseService):
 
     def execute_reaction(self, user, reaction, params=None, data=None):
         if reaction == "send_email":
-            # On récupère les paramètres depuis le workflow
             from_address = params.get("from")
             password_enc = params.get("password")
             to_address = params.get("to")
             subject = params.get("subject", "Notification from Area")
-            content = params.get("content", "This is a notification from Area service.")
+            content_template = params.get("content", "This is a notification from Area service.")
 
             if not (from_address and password_enc and to_address):
                 print("[GmailService] Paramètres manquants")
@@ -75,9 +74,36 @@ class GmailService(BaseService):
                 print(f"[GmailService] Adresse email invalide: {to_address}")
                 return False
 
+            # On fusionne params + data pour le formattage
+            context = {}
+            if params:
+                context.update(params)
+            if data:
+                context.update(data)
+
+            try:
+                content = content_template.format(**context)
+            except KeyError as e:
+                print(f"[GmailService] Variable manquante dans le message : {e}")
+                content = content_template
+
             msg = self.create_email(from_address, to_address, subject, content)
             return self.send_email(from_address, password, to_address, msg)
 
         else:
             print(f"[GmailService] Réaction inconnue: {reaction}")
             return False
+
+    def get_reactions_params(self, reaction_name):
+        if reaction_name == "send_email":
+            return [
+                {"name": "from", "type": "string", "required": True, "description": "Adresse email de l'expéditeur"},
+                {"name": "password", "type": "string", "required": True, "description": "Mot de passe Application"},
+                {"name": "to", "type": "string", "required": False, "description": "Adresse email du destinataire"},
+                {"name": "subject", "type": "string", "required": False, "description": "Sujet de l'email"},
+                {"name": "content", "type": "string", "required": False, "description": "Contenu de l'email, supporte le formatage avec {var}"},
+            ]
+        return []
+        
+    def get_actions_params(self, action_name):
+        return []

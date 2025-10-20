@@ -1,0 +1,7 @@
+2025-10-20 10:42:30,488 [INFO] discord.gateway: Shard ID None has connected to Gateway (Session ID: 00c9054d4b4dc08a1cd512fdc7bedeeb).
+2025-10-20 10:43:12,883 [INFO] discord.gateway: Shard ID None has connected to Gateway (Session ID: 27e603dee3f998f774b30b7dc19fff29).
+2025-10-20 10:47:31,256 [INFO] discord.gateway: Shard ID None has connected to Gateway (Session ID: 4596e2a8c1c163c50a0295b2b2d68e4a).
+2025-10-20 10:48:18,455 [INFO] discord.gateway: Shard ID None has connected to Gateway (Session ID: af714c3798c54aece11d596133567db5).
+2025-10-20 10:57:25,663 [INFO] AREA-API: App started in TEST mode (SQLite in-memory).
+2025-10-20 10:59:21,018 [INFO] AREA-API: App started in TEST mode (SQLite in-memory).
+2025-10-20 12:23:10,150 [INFO] AREA-API: App started in TEST mode (SQLite in-memory).

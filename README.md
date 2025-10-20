@@ -47,6 +47,10 @@ You can find how to generate the required API keys here:
 - Nasa -> https://api.nasa.gov/
 - Discord -> https://discord.com/developers/applications 
 - OpenWheather -> https://home.openweathermap.org/api_keys
+- Spotify -> https://developer.spotify.com/dashboard
+- Github -> https://github.com/settings/apps
+- TMDB -> https://www.themoviedb.org/settings/api
+- Gmail -> https://support.google.com/mail/answer/185833?hl=fr
 
 ### 3 Start the Project
 To run locally:
@@ -62,6 +66,56 @@ docker compose up --build -d
 To stop everything:
 ```bash
 docker compose down
+```
+
+## Add a new services
+
+### 1 Add the service in the DB
+Go in /server/models/service.py and add the new services with his name, description and image
+
+### 2 Create the service
+Go in /server/services and add the service you want to add
+
+```python
+from .base_service import BaseService
+import requests
+import os
+
+class YOUR SERVICE(BaseService):
+    name = "YOUR SERIVIVCE"
+
+    def __init__(self):
+        # Fetch the api key ...
+
+    def get_actions(self):
+        return [
+        ]
+
+    def get_reactions(self):
+        return []
+
+    def check_action(self, user, action):
+        # Implement logic to check for new movie releases
+        available_actions = [action["name"] for action in self.get_actions()]
+        if action not in available_actions:
+            print(f"Action non disponible: {action}")
+            return None
+        
+        if action == "NAME OF THE ACTION":
+            # CODE OF THE ACTION
+
+        
+        response = requests.get(full_url)
+        if response.status_code != 200:
+            print(f"Erreur: {response.text}")
+            return None
+
+        return {
+        }
+
+    def get_actions_output(self, action_name):
+        return [
+        ]
 ```
 
 ### API documentation

@@ -50,20 +50,37 @@ class TMDBService(BaseService):
         if not data:
             return None
 
+        # Si c’est le dernier film (unique)
         if action == "latest_movie":
-            return {
-                "title": data.get("title"),
-                "release_date": data.get("release_date")
-            }
+            title = data.get("title")
+            release = data.get("release_date")
+            formatted = f"Dernier film : {title} (sorti le {release})"
+            return {"movies": formatted}
 
+        # Sinon → liste de films
         movies = []
         for m in data.get("results", [])[:10]:
-            movies.append({
-                "title": m.get("title"),
-                "release_date": m.get("release_date"),
-                "rating": m.get("vote_average")
-            })
-        return movies
+            title = m.get("title")
+            release = m.get("release_date")
+            rating = m.get("vote_average")
+            movies.append(f"{title} ({release}) - ⭐ {rating}")
+
+        formatted_list = "\n".join(movies)
+        return {"movies": formatted_list}
+
 
     def execute_reaction(self, user, reaction, params=None, data=None):
         pass
+
+    def get_actions_params(self, action_name):
+        return []
+    
+    def get_reactions_params(self, reaction_name):
+        return []
+    
+    def get_actions_outputs(self, action_name):
+        if action_name == "latest_movie":
+            return [
+                {"name": "{movies}", "type": "String", "description": "Les derniers films les plus populaires"},
+            ]
+        return []
