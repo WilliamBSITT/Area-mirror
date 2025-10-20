@@ -60,11 +60,23 @@ export default function AreasCreationDialog() {
         setReactions(prev => prev.map(r => (r.id === id ? { ...r, right: v } : r)));
     };
 
+    const [actionsParams, setActionsParams] = React.useState<Record<number, Record<string, string>>>({});
+    const [reactionsParams, setReactionsParams] = React.useState<Record<number, Record<string, string>>>({});
+
+
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         console.log("Name:", name);
-        console.log("Actions:", actions.map(a => ({ left: a.left, right: a.right })));
-        console.log("Reactions:", reactions.map(r => ({ left: r.left, right: r.right })));
+        console.log("Actions:", actions.map(a => ({
+            left: a.left,
+            right: a.right,
+            params: actionsParams[a.id] ?? {}
+        })));
+        console.log("Reactions:", reactions.map(r => ({
+            left: r.left,
+            right: r.right,
+            params: reactionsParams[r.id] ?? {}
+        })));
     };
 
     return (
@@ -100,29 +112,15 @@ export default function AreasCreationDialog() {
 
                     {/* Actions */}
                     <div className="space-y-3">
-                        {actions.map((a, idx) => (
-                            <div key={a.id} className="flex items-center gap-2">
-                                <div className="flex-1">
-                                    <AreasActionSelect
-                                        leftValue={a.left ?? undefined}
-                                        onLeftChange={(v) => setActionLeft(a.id, v)}
-                                        rightValue={a.right ?? undefined}
-                                        onRightChange={(v) => setActionRight(a.id, v)}
-                                    />
-                                </div>
-                                {actions.length > 1 && (
-                                    <Button
-                                        type="button"
-                                        variant="ghost"
-                                        size="icon"
-                                        onClick={() => removeAction(a.id)}
-                                        className="text-destructive hover:text-destructive"
-                                        aria-label={`Remove action ${idx + 1}`}
-                                    >
-                                        <X className="h-4 w-4" />
-                                    </Button>
-                                )}
-                            </div>
+                        {actions.map(a => (
+                            <AreasActionSelect
+                                key={a.id}
+                                leftValue={a.left ?? undefined}
+                                onLeftChange={v => setActionLeft(a.id, v)}
+                                rightValue={a.right ?? undefined}
+                                onRightChange={v => setActionRight(a.id, v)}
+                                onParamsChange={params => setActionsParams(prev => ({ ...prev, [a.id]: params }))}
+                            />
                         ))}
                     </div>
 
@@ -130,29 +128,15 @@ export default function AreasCreationDialog() {
 
                     {/* Reactions */}
                     <div className="space-y-3">
-                        {reactions.map((r, idx) => (
-                            <div key={r.id} className="flex items-center gap-2">
-                                <div className="flex-1">
-                                    <AreasReactionSelect
-                                        leftValue={r.left ?? undefined}
-                                        onLeftChange={(v) => setReactionLeft(r.id, v)}
-                                        rightValue={r.right ?? undefined}
-                                        onRightChange={(v) => setReactionRight(r.id, v)}
-                                    />
-                                </div>
-                                {reactions.length > 1 && (
-                                    <Button
-                                        type="button"
-                                        variant="ghost"
-                                        size="icon"
-                                        onClick={() => removeReaction(r.id)}
-                                        className="text-destructive hover:text-destructive"
-                                        aria-label={`Remove reaction ${idx + 1}`}
-                                    >
-                                        <X className="h-4 w-4" />
-                                    </Button>
-                                )}
-                            </div>
+                        {reactions.map(r => (
+                            <AreasReactionSelect
+                                key={r.id}
+                                leftValue={r.left ?? undefined}
+                                onLeftChange={v => setReactionLeft(r.id, v)}
+                                rightValue={r.right ?? undefined}
+                                onRightChange={v => setReactionRight(r.id, v)}
+                                onParamsChange={params => setReactionsParams(prev => ({ ...prev, [r.id]: params }))}
+                            />
                         ))}
                     </div>
 

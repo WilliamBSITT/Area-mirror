@@ -22,3 +22,22 @@ export type Reactions = {
     name: string;
     description: string;
 }
+
+export type ServicesActionsParams = {
+    action: string;
+    params: Params[];
+    service: string;
+}
+
+export type ServicesReactionsParams = {
+    params: Params[];
+    action: string;
+    service: string;
+}
+
+export type Params = {
+    description: string;
+    name: string;
+    required: boolean;
+    type: string;
+}
