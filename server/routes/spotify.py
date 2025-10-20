@@ -8,16 +8,13 @@ bp = Blueprint("spotify_auth", __name__)
 
 CLIENT_ID = os.getenv("SPOTIFY_CLIENT_ID")
 CLIENT_SECRET = os.getenv("SPOTIFY_CLIENT_SECRET")
-REDIRECT_URI = os.getenv("SPOTIFY_REDIRECT_URI", "http://127.0.0.1:8081")
+REDIRECT_URI = os.getenv("SPOTIFY_REDIRECT_URI", "http://127.0.0.1:8080/spotify/callback")
 AUTH_URL = "https://accounts.spotify.com/authorize"
 TOKEN_URL = "https://accounts.spotify.com/api/token"
 
-import urllib.parse
-
-@bp.route("/spotify/login")
+@bp.route("/spotify/login", methods=["GET"])
 def spotify_login():
     frontend = request.args.get("frontend", "web")
-
     scope = "user-read-currently-playing user-read-playback-state"
     state = f"frontend:{frontend}"
 
@@ -27,30 +24,75 @@ def spotify_login():
         "redirect_uri": REDIRECT_URI,
         "scope": scope,
         "state": state,
+        "show_dialog": "true"
     }
 
-    auth_url = f"{AUTH_URL}?{urllib.parse.urlencode(params)}"
-    return redirect(auth_url)
+    url = f"{AUTH_URL}?{urllib.parse.urlencode(params)}"
+    return redirect(url)
 
 
-
-@bp.route("/spotify/callback")
+@bp.route("/spotify/callback", methods=["GET"])
 def spotify_callback():
+    if "error" in request.args:
+        return jsonify({"error": request.args["error"]}), 400
+
     code = request.args.get("code")
     state = request.args.get("state", "frontend:web")
 
     frontend = state.split(":")[1]
 
-    tokens = {...}
-
     if frontend == "mobile":
-        redirect_uri = "areaapp://auth/spotify/callback"
-    else:
-        redirect_uri = "http://localhost:5173/spotify/callback"
+        # 👉 Retour direct pour le mobile (pas de redirection navigateur)
+        return jsonify({
+            "message": "Authorization successful",
+            "code": code
+        })
 
-    redirect_url = (
-        f"{redirect_uri}?access_token={tokens['access_token']}"
-        f"&refresh_token={tokens.get('refresh_token','')}"
-    )
-    return redirect(redirect_url)
+    # Si c’est un login via web, on continue le flow normal
+    data = {
+        "grant_type": "authorization_code",
+        "code": code,
+        "redirect_uri": REDIRECT_URI,
+        "client_id": CLIENT_ID,
+        "client_secret": CLIENT_SECRET
+    }
+
+    res = requests.post(TOKEN_URL, data=data)
+    if res.status_code != 200:
+        return jsonify({"error": res.text}), 400
+
+    tokens = res.json()
+    return jsonify({
+        "message": "Spotify connected successfully!",
+        "tokens": tokens
+    })
+
+
+@bp.route("/spotify/exchange_token", methods=["POST"])
+def spotify_exchange_token():
+    body = request.get_json()
+    code = body.get("code")
+
+    if not code:
+        return jsonify({"error": "Missing code"}), 400
+
+    data = {
+        "grant_type": "authorization_code",
+        "code": code,
+        "redirect_uri": REDIRECT_URI,
+        "client_id": CLIENT_ID,
+        "client_secret": CLIENT_SECRET
+    }
+
+    res = requests.post(TOKEN_URL, data=data)
+    if res.status_code != 200:
+        return jsonify({"error": res.text}), 400
+
+    tokens = res.json()
+    return jsonify({
+        "message": "Spotify tokens received",
+        "tokens": tokens
+    })
+
+
 
