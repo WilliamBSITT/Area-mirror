@@ -19,6 +19,11 @@ def find_reactions(service_name, reaction_name):
     tags:
       - Service
     parameters:
+      - in: header
+        name: Authorization
+        type: string
+        required: true
+        description: "JWT token au format: Bearer <access_token>"
       - name: service_name
         in: path
         type: string
@@ -61,6 +66,11 @@ def find_actions(service_name, action_name):
     tags:
       - Service
     parameters:
+      - in: header
+        name: Authorization
+        type: string
+        required: true
+        description: "JWT token au format: Bearer <access_token>"
       - name: service_name
         in: path
         type: string
@@ -104,6 +114,11 @@ def find_actions_outputs(service_name, action_name):
     tags:
       - Service
     parameters:
+      - in: header
+        name: Authorization
+        type: string
+        required: true
+        description: "JWT token au format: Bearer <access_token>"
       - name: service_name
         in: path
         type: string
