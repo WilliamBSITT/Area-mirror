@@ -156,7 +156,8 @@ def update_user(user_id):
             type: object
             properties:
               email:
-                type: string                example: test@mail.com
+                type: string
+                example: test@mail.com
               password:
                 type: string
                 example: secret123
@@ -182,6 +183,7 @@ def update_user(user_id):
       404:
         description: Utilisateur non trouvé
     """
+
     user = User.query.get_or_404(user_id)
     data = request.get_json()
     email = data.get("email")
