@@ -158,18 +158,17 @@ def list_public_areas():
         description: Liste des AREAs publics
     """
     areas = area_manager.list_areas()
-    public_areas = [a for a in areas if a.public]
 
     return jsonify([
         {
-          "id": a[0].id,
-          "name": a[0].name,
-          "action_service": a[0].action_service,
-          "action": a[0].action,
-          "reaction_service": a[0].reaction_service,
-          "reaction": a[0].reaction,
-          "frequency": a[0].frequency
-        } for a in public_areas
+          "id": a.id,
+          "name": a.name,
+          "action_service": a.action_service,
+          "action": a.action,
+          "reaction_service": a.reaction_service,
+          "reaction": a.reaction,
+          "frequency": a.frequency
+        } for a in areas if a.public
     ])
 
 @bp.route("", methods=["GET"])
