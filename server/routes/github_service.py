@@ -5,42 +5,61 @@ bp = Blueprint("github_service", __name__, url_prefix="/git")
 
 CLIENT_ID = os.getenv("GITHUB_APP_CLIENT_ID")
 CLIENT_SECRET = os.getenv("GITHUB_APP_CLIENT_SECRET")
-REDIRECT_URI = os.getenv("GITHUB_APP_REDIRECT_URI")
-AUTH_URL = os.getenv("GITHUB_AUTH_URL")
-TOKEN_URL = os.getenv("GITHUB_TOKEN_URL")
+REDIRECT_URI = os.getenv("GITHUB_APP_REDIRECT_URI", "https://avowedly-uncomputed-velvet.ngrok-free.dev/git/callback")
+AUTH_URL = os.getenv("GITHUB_AUTH_URL", "https://github.com/login/oauth/authorize")
+TOKEN_URL = os.getenv("GITHUB_TOKEN_URL", "https://github.com/login/oauth/access_token")
+
 
 @bp.route("/login", methods=["GET"])
 def github_login():
     """
     Redirige l'utilisateur vers GitHub pour autorisation OAuth
     """
+    with open("oui.txt", "w") as f:
+        print(REDIRECT_URI, file=f)
+    frontend = request.args.get("frontend", "web")
     scope = "repo user"
+    state = f"frontend:{frontend}"
+
     params = {
         "client_id": CLIENT_ID,
         "redirect_uri": REDIRECT_URI,
         "scope": scope,
+        "state": state
     }
     url = f"{AUTH_URL}?{urllib.parse.urlencode(params)}"
     return redirect(url)
 
-
+# --- 🟡 Étape 2 : callback GitHub après autorisation
 @bp.route("/callback", methods=["GET"])
 def github_callback():
     """
-    Récupère le code GitHub et échange contre un access_token
+    Récupère le code GitHub et redirige selon la plateforme (web ou mobile)
     """
+    if "error" in request.args:
+        return jsonify({"error": request.args["error"]}), 400
+
     code = request.args.get("code")
+    state = request.args.get("state", "frontend:web")
+
     if not code:
         return jsonify({"error": "Missing authorization code"}), 400
 
+    frontend = state.split(":")[1]
+
+    if frontend == "mobile":
+        mobile_redirect_uri = "exp://10.18.208.5:8081"
+        return redirect(f"{mobile_redirect_uri}?code={code}")
+
+    # --- 🌐 Sinon : flow classique web
     data = {
         "client_id": CLIENT_ID,
         "client_secret": CLIENT_SECRET,
         "code": code,
         "redirect_uri": REDIRECT_URI,
     }
-
     headers = {"Accept": "application/json"}
+
     res = requests.post(TOKEN_URL, data=data, headers=headers)
     tokens = res.json()
 
@@ -49,6 +68,38 @@ def github_callback():
 
     return jsonify({
         "message": "GitHub connected successfully!",
+        "tokens": tokens
+    })
+
+# --- 🔵 Étape 3 : échange du code (flow mobile)
+@bp.route("/exchange_token", methods=["POST"])
+def github_exchange_token():
+    """
+    Échange le code GitHub contre les tokens (pour mobile)
+    """
+    data = request.get_json()
+    code = data.get("code")
+
+    if not code:
+        return jsonify({"error": "Missing authorization code"}), 400
+
+    payload = {
+        "client_id": CLIENT_ID,
+        "client_secret": CLIENT_SECRET,
+        "code": code,
+        "redirect_uri": REDIRECT_URI,
+    }
+
+    headers = {"Accept": "application/json"}
+    res = requests.post(TOKEN_URL, data=payload, headers=headers)
+
+    if res.status_code != 200:
+        print("[GitHub] Token exchange failed:", res.text)
+        return jsonify({"error": "GitHub token exchange failed", "details": res.text}), 400
+
+    tokens = res.json()
+    return jsonify({
+        "message": "GitHub tokens received",
         "tokens": tokens
     })
 
