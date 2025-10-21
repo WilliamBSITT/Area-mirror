@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
     Dialog, DialogClose, DialogContent, DialogDescription,
@@ -17,10 +18,11 @@ import { usePostArea } from "@/hooks/areas/useCreateAreas";
 type ActionItem = { id: number; left: string | null; right: string | null };
 type ReactionItem = { id: number; left: string | null; right: string | null };
 
-export default function AreasCreationDialog() {
+export default function AreasCreationDialog({ onCreated }: { onCreated?: () => void }) {
     const [open, setOpen] = React.useState(false);
     const [name, setName] = React.useState("");
     const { postArea, loading, error, data } = usePostArea();
+    const router = useRouter();
 
     const [actions, setActions] = React.useState<ActionItem[]>([
         { id: 1, left: null, right: null },
@@ -69,6 +71,13 @@ export default function AreasCreationDialog() {
 
     const [errorMsg, setErrorMsg] = React.useState<string | null>(null);
 
+    const handleOpenChange = (isOpen: boolean) => {
+        setOpen(isOpen);
+        if (!isOpen) {
+            router.refresh();
+        }
+    };
+
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
@@ -101,13 +110,15 @@ export default function AreasCreationDialog() {
             });
             setErrorMsg(null);
             setOpen(false);
+            if (onCreated) onCreated();
+            setTimeout(() => router.refresh(), 300);
         } catch (err: any) {
             setErrorMsg(err.message || "Une erreur s'est produite lors de la création.");
         }
     };
 
     return (
-        <Dialog open={open} onOpenChange={setOpen}>
+        <Dialog open={open} onOpenChange={handleOpenChange}>
             <DialogTrigger asChild>
                 <Button variant="outline" size="icon" aria-label="Open creation dialog">
                     <PlusIcon />
