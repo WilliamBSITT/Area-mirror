@@ -120,3 +120,25 @@ class YOUR SERVICE(BaseService):
 
 ### API documentation
 Api documentation can be found on the http://localhost:8080
+
+### Documentation
+
+- **Front** :
+```mermaid
+graph LR
+A --> B
+A((AREA)) --> C
+B[App mobile] --> E{React native}
+C[App web] --> D{Next}
+```
+
+- **Back** :
+```mermaid
+graph LR
+A --> B
+A((AREA)) --> C
+B[App mobile] --> E{React native}
+A --> F[Api]
+F --> G{Node.js}
+C[App web] --> D{Next}
+```
