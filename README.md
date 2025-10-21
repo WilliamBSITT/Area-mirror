@@ -119,7 +119,7 @@ class YOUR SERVICE(BaseService):
 ```
 
 ### API documentation
-Api documentation can be found on the http://localhost:8080
+Api documentation can be found on the http://localhost:8080 or if you want to use the online documentation https://avowedly-uncomputed-velvet.ngrok-free.dev/
 
 ### Stack Documentation
 
