@@ -129,7 +129,7 @@ graph LR
 A --> B
 A((AREA)) --> C
 B[App mobile] --> E{React native}
-C[App web] --> D{Next (expo)}
+C[App web] --> D{Next with expo}
 ```
 
 - **Back** :
@@ -139,8 +139,8 @@ A --> B
 A((AREA)) --> C
 B[App mobile] --> E{React native}
 A --> F[Api]
-F --> G{Python (Flask)}
-C[App web] --> D{Next (expo)}
+F --> G{Python Flask}
+C[App web] --> D{Next with expo}
 ```
 
 ### Other kind of documentation
