@@ -1,3 +1,11 @@
+export type Area = {
+    id: number
+    name: string
+    status: "success" | "processing" | "failed"
+    amount?: number
+    enabled?: boolean
+}
+
 export type Service = {
     id: number;
     name: string;

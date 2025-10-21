@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useState, useMemo } from "react";
-import { useAreas, Area } from "@/hooks/areas/useAreas";
+import { useAreas } from "@/hooks/areas/useAreas";
+import { Area } from "@/types/service"
 import { DataTable } from "@/components/areas/create/workflowList";
-import { createAreaColumns } from "./create/columns";
+import { createAreaColumns } from "./columns";
 
 export default function AreasTable() {
     const fetchAreas = useAreas();

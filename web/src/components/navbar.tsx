@@ -42,6 +42,9 @@ export function Navbar() {
         }
     }, [darkTheme])
 
+    //classname
+    const commonClassName = "lg:text-md xl:text-2xl"
+
     return (
         <nav className="p-2 bg-primary text-secondary">
             <div className="flex justify-between items-center">
@@ -62,21 +65,21 @@ export function Navbar() {
                         </NavigationMenuItem>
                         <NavigationMenuItem>
                             <NavigationMenuLink asChild>
-                                <Link href="/workflows" className='lg:text-md xl:text-2xl'>
+                                <Link href="/workflows" className='commonClassName'>
                                     Workflows
                                 </Link>
                             </NavigationMenuLink>
                         </NavigationMenuItem>
                         <NavigationMenuItem>
                             <NavigationMenuLink asChild>
-                                <Link href="/services" className='lg:text-md xl:text-2xl'>
+                                <Link href="/services" className='commonClassName'>
                                     Services
                                 </Link>
                             </NavigationMenuLink>
                         </NavigationMenuItem>
                         <NavigationMenuItem>
                             <NavigationMenuLink asChild>
-                                <Link href="/about" className='lg:text-md lg:text-2xl'>
+                                <Link href="/about" className='commonClassName'>
                                     About
                                 </Link>
                             </NavigationMenuLink>

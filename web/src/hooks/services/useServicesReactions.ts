@@ -44,7 +44,6 @@ export function useServiceReactionParams(
             if (!res.ok) throw new Error(`Request failed with ${res.status}`);
 
             const json = (await res.json()) as ServicesReactionsParams;
-            console.log("Contenu de params dans hook :", json.params);
             setData(json);
         } catch (e: any) {
             if (e?.name !== 'AbortError') setError(e as Error);

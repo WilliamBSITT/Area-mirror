@@ -1,6 +1,7 @@
 "use client"
 
 import { useCallback } from "react"
+import { Area } from "@/types/service"
 
 export function useAreas(endpoint = "/api/areas") {
     return useCallback(async () => {
@@ -13,12 +14,4 @@ export function useAreas(endpoint = "/api/areas") {
         if (!res.ok) throw new Error(`Erreur ${res.status}`)
         return res.json() as Promise<Area[]>
     }, [endpoint])
-}
-
-export type Area = {
-    id: number
-    name: string
-    status: "success" | "processing" | "failed"
-    amount?: number
-    enabled?: boolean
 }

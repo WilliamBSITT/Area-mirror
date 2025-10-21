@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { PlusIcon, X } from "lucide-react";
+import { PlusIcon, X, PencilLine } from "lucide-react";
 import AreasActionSelect from "@/components/areas/create/areasActionSelect";
 import AreasReactionSelect from "@/components/areas/create/areasReactionSelect";
 
@@ -18,7 +18,7 @@ import { usePostArea } from "@/hooks/areas/useCreateAreas";
 type ActionItem = { id: number; left: string | null; right: string | null };
 type ReactionItem = { id: number; left: string | null; right: string | null };
 
-export default function AreasCreationDialog({ onCreated }: { onCreated?: () => void }) {
+export function AreasUpdateDialog({ onCreated }: { onCreated?: () => void }) {
     const [open, setOpen] = React.useState(false);
     const [name, setName] = React.useState("");
     const { postArea, loading, error, data } = usePostArea();
@@ -127,8 +127,8 @@ export default function AreasCreationDialog({ onCreated }: { onCreated?: () => v
     return (
         <Dialog open={open} onOpenChange={handleOpenChange}>
             <DialogTrigger asChild>
-                <Button variant="outline" size="icon" aria-label="Open creation dialog">
-                    <PlusIcon />
+                <Button variant="ghost" size="icon" aria-label="Open creation dialog">
+                    <PencilLine/>
                 </Button>
             </DialogTrigger>
 
@@ -150,6 +150,7 @@ export default function AreasCreationDialog({ onCreated }: { onCreated?: () => v
                                     name="name"
                                     value={name}
                                     onChange={(e) => setName(e.target.value)}
+                                    className="w-60"
                                 />
                             </div>
                         </div>

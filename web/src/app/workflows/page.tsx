@@ -7,7 +7,6 @@ import AreasCreationDialog from "@/components/areas/create/areasCreation";
 export default function Page() {
     const [refreshKey, setRefreshKey] = React.useState(0);
 
-    // Callback passé au dialog : appelé lorsqu’une area est créée
     const handleCreated = () => {
         setRefreshKey((prev) => prev + 1);
     };
@@ -18,8 +17,6 @@ export default function Page() {
                 <h1 className="text-4xl">My Workflows</h1>
                 <AreasCreationDialog onCreated={handleCreated} />
             </div>
-
-            {/* En passant key, AreasTable sera réinitialisé / rerendu */}
             <AreasTable key={refreshKey} />
         </main>
     );
