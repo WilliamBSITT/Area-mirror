@@ -1,4 +1,4 @@
-import { View, Text, TextInput, Pressable, Image, ScrollView } from "react-native"
+import { View, Text, TextInput, Pressable, Image, ScrollView, Switch} from "react-native"
 import React, {use, useEffect, useState} from "react"
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -317,6 +317,7 @@ export default function Workflow({type = "new"}: {type: "new" | "edit"}) {
         setHour(Math.floor(data.frequency / 3600));
         setMin(Math.floor((data.frequency % 3600) / 60));
         setTitle(data.name);
+        setIsPub(data.public);
 
         let parsedParams: any = {};
         if (data.params) {
@@ -358,7 +359,6 @@ export default function Workflow({type = "new"}: {type: "new" | "edit"}) {
       fetchAREA();
     }
   }, [id, type])  // Add type as dependency
-
   useEffect(() => {
     const loadIcons = async () => {
       try {
@@ -410,6 +410,7 @@ export default function Workflow({type = "new"}: {type: "new" | "edit"}) {
           reaction: reactions[0].action,
           reaction_service: reactions[0].service,
           frequency: hour * 3600 + min * 60,
+          public: isPub,
         });
         if (res && res.data) {
           router.push('/main/workflows/');
@@ -423,6 +424,7 @@ export default function Workflow({type = "new"}: {type: "new" | "edit"}) {
           reaction: reactions[0].action,
           reaction_service: reactions[0].service,
           frequency: hour * 3600 + min * 60,
+          public: isPub,
         });
         if (res && res.data) {
           router.push('/main/workflows/');
@@ -434,7 +436,7 @@ export default function Workflow({type = "new"}: {type: "new" | "edit"}) {
       console.log("error posting areas", err);
     }
   };
-
+  const [isPub, setIsPub] = useState(false);
   return (
     <ScrollView className="border-b border-gray-300 mb-4" contentContainerStyle={{ paddingBottom: 80 }}>
       <View className="flex flex-row w-full justify-between">
@@ -483,25 +485,15 @@ export default function Workflow({type = "new"}: {type: "new" | "edit"}) {
           </Pressable>
         </View>
       ))}
-
-      {/* <View className="flex-row justify-center space-x-20 mt-4">
-        <Pressable 
-          className="bg-green-600 rounded-full p-4 mr-5"
-          onPress={() => addWorkflow("actions")}
-        >
-          <Text className="text-white">Add Action</Text>
+      <View className="flex-row m-auto">
+        <Pressable className="bg-blue-900 rounded-full p-4 w-1/4 m-auto" onPress={save}>
+          <Text className="text-white text-center">Save</Text>
         </Pressable>
-        <Pressable 
-          className="bg-blue-600 rounded-full p-4 right ml-5"
-          onPress={() => addWorkflow("reactions")}
-        >
-          <Text className="text-white">Add Reaction</Text>
-        </Pressable>
-      </View> */}
-
-      <Pressable className="bg-blue-900 rounded-full p-4 w-1/4 m-auto" onPress={save}>
-        <Text className="text-white text-center">Save</Text>
-      </Pressable>
+        <View className="items-center ml-6">
+          <Text>Public Workflow</Text>
+          <Switch onValueChange={()=> setIsPub(!isPub)} value={isPub} className="w-10" thumbColor={isPub ? "#57c229" : 'grey'} trackColor={{true: 'green', false: 'grey'}}/>
+        </View>
+      </View>
     </ScrollView>
   );
 }
