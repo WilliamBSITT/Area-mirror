@@ -154,7 +154,8 @@ export default function AreasCreationDialog({ onCreated }: { onCreated?: () => v
                             </div>
                         </div>
 
-                        <div className="flex flex-col gap-3 px-14">
+                        <div className="flex flex-col gap-2 px-14">
+                            <br/>
                             <Label htmlFor="time-picker" className="px-1">
                                 Frequency
                             </Label>

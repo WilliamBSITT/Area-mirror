@@ -1,4 +1,3 @@
-// src/hooks/useServices.ts
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { Service } from '@/types/service';
 
