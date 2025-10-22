@@ -8,7 +8,7 @@ import AuthCodeReader from "@/hooks/auth/useSearchParams";
 
 export default function Home() {
   return (
-    <main className="py-8 bg-sky-100">
+    <main className="py-8">
         <AuthCodeReader />
         <section className="grid md:grid-cols-2">
             <div>

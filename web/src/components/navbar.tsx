@@ -46,7 +46,7 @@ export function Navbar() {
     const commonClassName = "lg:text-md xl:text-2xl"
 
     return (
-        <nav className="p-2 bg-primary text-secondary">
+        <nav className="p-2">
             <div className="flex justify-between items-center">
                 <NavigationMenu>
                     <NavigationMenuList>
