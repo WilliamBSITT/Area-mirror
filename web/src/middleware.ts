@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 const COOKIE_NAME = process.env.SESSION_COOKIE_NAME || "session";
 
 export const config = {
-    matcher: ["/workflows", "/workflows/:path*"],
+    matcher: ["/workflows", "/workflows/:path*", "/profile", "/profile/:path*", "/settings", "/settings/:path*"],
 };
 
 export default async function middleware(req: NextRequest) {
