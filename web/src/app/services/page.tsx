@@ -8,7 +8,7 @@ export default function Page() {
 
     if (isLoading) {
         return (
-            <main className="py-8 bg-sky-100">
+            <main className="py-8">
                 <div className="container mx-auto px-4">Chargement…</div>
             </main>
         );
@@ -16,7 +16,7 @@ export default function Page() {
 
     if (error) {
         return (
-            <main className="py-8 bg-sky-100">
+            <main className="py-8">
                 <div className="container mx-auto px-4">
                     <p className="text-red-600">Erreur: {error.message}</p>
                     <button onClick={refetch} className="underline">Réessayer</button>
@@ -27,7 +27,7 @@ export default function Page() {
 
     if (!data?.length) {
         return (
-            <main className="py-8 bg-sky-100">
+            <main className="py-8">
                 <div className="container mx-auto px-4">Aucun service.</div>
             </main>
         );
@@ -39,7 +39,7 @@ export default function Page() {
     const byId = new Map<number, Services>(data.map((s) => [s.id, s]));
 
     return (
-        <main className="py-8 bg-sky-100">
+        <main className="py-8">
             <div className="container mx-auto px-4">
                 <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                     {ids.map((id) => (
