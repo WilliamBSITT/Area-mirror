@@ -1,14 +1,19 @@
 import { Text, View, Pressable, Image } from "react-native";
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useState, useRef } from 'react';
+import { useFocusEffect } from "expo-router";
 import { router } from "expo-router";
 import { workflowProps } from "./newWorkflow";
 import api from "@/utils/api.js";
 import showToast from "@/utils/showToast";
 import { useSharedValue } from "react-native-reanimated";
 import Switch from "@/components/mySwitch";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { WorkflowWithImage } from "../publics";
+import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 
 function WorkflowTile({title, id, data, setData}: {title: string, id: number, data: workflowProps[] | null, setData: React.Dispatch<React.SetStateAction<workflowProps[] | null>>}) {
   const isOn = useSharedValue(data?.find((area) => area.id === id)?.enabled || false);
+  // console.log("image from async storage:", data?.find((area) => area.id === id)?.icon);
   const toggleSwitch = async () => {
     isOn.value = !isOn.value;
     const res = await api.put(`/areas/${id}`, {
@@ -37,14 +42,23 @@ function WorkflowTile({title, id, data, setData}: {title: string, id: number, da
   }
 
   return (
-    <Pressable className="bg-blue-900 w-3/4 h-20 ml-10 mr-10 m-4 rounded-2xl p-3" onPress={() => router.push(`/main/workflows/${id}`)}>
-      <View className="flex flex-row">
-        <Text className="text-xl h-full flex-1 text-white">{title}</Text>
-        <View className="flex flex-row justify-between h-full gap-2 items-center">
-          <Switch onPress={toggleSwitch} value={isOn} />
-          <Pressable onPress={handleDelete}>
-            <Image source={require('../../../images/trash-white.png')} className="w-10 h-10 m-auto"/>
-          </Pressable>
+    <Pressable className="bg-slate-400 w-3/4 h-32 ml-10 mr-10 m-4 rounded-2xl p-3 shadow-4xl" onPress={() => router.push(`/main/workflows/${id}`)}>
+      <View className="flex-1 flex-col">
+        <Text className="text-xl text-white mb-2">{title}</Text>
+
+        <View className="flex-1 flex-row items-center justify-between">
+          <View className="flex flex-row gap-2 items-center">
+            <Image source={{ uri: `data:image/png;base64,${data?.find((area) => area.id === id)?.icon_action}` }} className="w-10 h-10 m-auto mr-4"/>
+            <FontAwesome5 name="long-arrow-alt-right" size={24} color="white" />
+            <Image source={{ uri: `data:image/png;base64,${data?.find((area) => area.id === id)?.icon_reaction}` }} className="w-10 h-10 m-auto ml-4"/>
+          </View>
+
+          <View className="flex flex-row items-center gap-2">
+            <Switch onPress={toggleSwitch} value={isOn} />
+            <Pressable onPress={handleDelete}>
+              <Image source={require('../../../images/trash-white.png')} className="w-10 h-10 m-auto"/>
+            </Pressable>
+          </View>
         </View>
       </View>
     </Pressable>
@@ -53,19 +67,39 @@ function WorkflowTile({title, id, data, setData}: {title: string, id: number, da
 
 export default function Index() {
   const [data, setData] = useState<workflowProps[] | null>(null)
+  // const [refreshing, setRefreshing] = useState(false);
 
-  useEffect(() => {
-    const fetchAREA = async () => {
-      const res = await api.get(`/areas`).catch((error: any) => {
-        showToast("error", "Failed to load areas", "There was an error loading areas.");
-      });
-      if (res && res.data) {
-        setData(res.data);
-      }
+  const fetchAREA = async () => {
+    const res = await api.get(`/areas`).catch((error: any) => {
+      showToast("error", "Failed to load areas", "There was an error loading areas.");
+    });
+    if (res && res.data) {
+      const enriched = await Promise.all(
+        res.data.map(async (area: any) => {
+          try {
+        const icon_action = await AsyncStorage.getItem(`icon_${area.action_service}`);
+        const icon_reaction = await AsyncStorage.getItem(`icon_${area.reaction_service}`);
+        return { ...area, icon_action, icon_reaction }; // icon is a base64 string or null
+          } catch {
+        return { ...area, icon_action: null, icon_reaction: null };
+          }
+        })
+      );
+      setData(enriched);
     }
+  };
 
-    fetchAREA()
-  }, [])
+    // const onRefresh = useCallback(async () => {
+    //     setRefreshing(true);
+    //     await fetchAREA();
+    //     setRefreshing(false);
+    // }, []);
+
+    useFocusEffect(
+        useCallback(() => {
+            fetchAREA();
+        }, [])
+    );
 
   return (
     <View className="w-full h-full">

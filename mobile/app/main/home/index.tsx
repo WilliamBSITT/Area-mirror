@@ -58,7 +58,7 @@ export default function Home() {
 
         resJson.map( async (service: service) => {
           try {
-            await AsyncStorage.setItem(`icon_${service.name}`, service.image);
+            await AsyncStorage.setItem(`icon_${(service.name).toLowerCase()}`, service.image);
           } catch (error) {
             console.log("error", error)
           }

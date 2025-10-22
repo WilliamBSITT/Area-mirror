@@ -12,7 +12,6 @@ import showToast from "@/utils/showToast";
 
 WebBrowser.maybeCompleteAuthSession();
 
-// Endpoint
 export default function Login() {
   const [success, setSuccess] = useState(false);
   const [Ip, setIp] = useState(process.env.EXPO_PUBLIC_IP || "10.18.208.13");
@@ -115,7 +114,7 @@ export default function Login() {
       }}
       testID="login-root"
       >
-      <Image source={require('../../images/logo.png')} className="w-1/2 h-1/4 mt-20 mb-10"/>
+      <Image source={require('../../images/logo.png')} className="w-1/2 h-1/4 mt-20 mb-5"/>
       <View className="flex flex-row">
         <TextInput className="border-2 border-solid rounded-full w-1/4 mb-5 p-1 border-blue-900 text-l" placeholder={Ip} onChangeText={setIp} defaultValue={""} onSubmitEditing={storeData}/>
         <Pressable className="bg-blue-900 rounded-full p-1 mb-5 ml-1 text-sm" onPress={storeData} disabled={(password !== confirmPwd) && (mode == 'register')}>

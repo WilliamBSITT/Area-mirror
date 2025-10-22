@@ -1,51 +1,44 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, Pressable, Image } from 'react-native';
+import React, { useState, useRef, useCallback } from 'react';
+import { View, Text, Pressable, Image, RefreshControl, ScrollView } from 'react-native';
 import api from '@/utils/api';
-import { service } from '../home/index';
-import { router } from "expo-router";
+import { workflowProps } from './workflows/newWorkflow';
+import { router, useFocusEffect } from "expo-router";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import showToast from '@/utils/showToast';
 
+export type WorkflowWithImage = workflowProps & { image: string };
 
 export default function Publics() {
-    const [publicAreas, setPublicAreas] = useState<service[]>([]);
-    const [data, setData] = useState<service[]>([]);
+    const [publicAreas, setPublicAreas] = useState<workflowProps[]>([]);
+    const [refreshing, setRefreshing] = useState(false);
+    const isFirstMount = useRef(true);
 
-    useEffect(() => {
-        const fetchPublicAreas = async () => {
-            try {
-                const response = await api.get('/areas/public');
-                setPublicAreas(response.data);
-            } catch (error) {
-                console.error("There was an error fetching the public areas!", error);
-            }
-        };
-        fetchPublicAreas();
-    }, []);
+    const fetchData = async () => {
+        await Promise.all([fetchPublicAreas()]);
+        console.log("image in async storage:", await AsyncStorage.getItem("i_Discord"));
+    };
 
-    useEffect(() => {
-      const fetchServices = async () => {
+    const fetchPublicAreas = async () => {
         try {
-          const res = await api.get(`/services`);
-          const resJson = await res.data;
-          setData(resJson);
-          console.log("Available services:", resJson.map((s: service) => s.name));
-
-          resJson.map( async (service: service) => {
-            try {
-              await AsyncStorage.setItem(`icon_${service.name}`, service.image);
-            } catch (error) {
-              console.log("error", error)
-            }
-          })
-        } catch (err) {
-          console.error("failed to load services", err);
+            const response = await api.get('/areas/public');
+            const enriched = await Promise.all(
+              response.data.map(async (area: any) => {
+                try {
+              const icon_action = await AsyncStorage.getItem(`icon_${area.action_service}`);
+              const icon_reaction = await AsyncStorage.getItem(`icon_${area.reaction_service}`);
+              return { ...area, icon_action, icon_reaction }; // icon is a base64 string or null
+                } catch {
+              return { ...area, icon_action: null, icon_reaction: null };
+                }
+              })
+            );
+            setPublicAreas(enriched);
+        } catch (error) {
+            showToast("error", "Failed to load public areas", "There was an error loading public areas.");
         }
-      };
+    };
 
-      fetchServices();
-    }, []);
-
-    const save = async (area: service) => {
+    const save = async (area: workflowProps) => {
         try {
             const { name, action, action_service, reaction, reaction_service, params, frequency } = area;
 
@@ -65,14 +58,29 @@ export default function Publics() {
             }
 
         } catch (err) {
-            console.log("error posting area", err);
+            showToast("error", "Error adding area", "Failed to add the selected area. Please try again.");
         }
     };
-    const findService = (serviceName: string) => {
-        return data.find(s => s.name.toLowerCase() === serviceName.toLowerCase());
-    };
+
+    const onRefresh = useCallback(async () => {
+        setRefreshing(true);
+        await fetchData();
+        setRefreshing(false);
+    }, []);
+
+    // Use useFocusEffect for automatic refresh
+    useFocusEffect(
+        useCallback(() => {
+            fetchData();
+        }, [])
+    );
+
     return (
-        <View>
+        <ScrollView
+            refreshControl={
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
+        >
             {publicAreas.map(area => (
                 <Pressable
                     key={area.id}
@@ -81,44 +89,20 @@ export default function Publics() {
                 >
                 <Text className='text-white'>{area.name}</Text>
                 <View className='flex-row items-center'>
-                      {data && data.length > 0 && (
-                        (() => {
-                          const matchedService = findService(area.action_service);
-                          if (matchedService) {
-                            return (
-                              <Image
-                                key={`img-${matchedService.name}`}
-                                source={{uri: `data:image/png;base64,${matchedService.image}`}}
-                                style={{ width: 44, height: 44, marginRight: 6 }}
-                              />
-                            );
-                          } else {
-                            console.log("No match for:", area.action_service);
-                            return null;
-                          }
-                        })()
-                      )}
+                    <Image
+                      key={`img-${area.name}`}
+                      source={{uri: `data:image/png;base64,${area.icon_action}`}}
+                      style={{ width: 44, height: 44, marginRight: 6 }}
+                    />
                       <Text className='text-white'>{area.action}</Text>
                     </View>
                     <Text className='text-white'> | </Text>
                     <View className='flex-row items-center'>
-                      {data && data.length > 0 && (
-                        (() => {
-                          const matchedService = findService(area.reaction_service);
-                          if (matchedService) {
-                            return (
-                              <Image
-                                key={`img-${matchedService.name}`}
-                                source={{uri: `data:image/png;base64,${matchedService.image}`}}
-                                style={{ width: 44, height: 44, marginRight: 6 }}
-                              />
-                            );
-                          } else {
-                            console.log("No match for:", area.reaction_service);
-                            return null;
-                          }
-                        })()
-                        )}
+                    <Image
+                      key={`img-${area.name}`}
+                      source={{uri: `data:image/png;base64,${area.icon_reaction}`}}
+                      style={{ width: 44, height: 44, marginRight: 6 }}
+                    />
                         <Text className='text-white'>{area.reaction}</Text>
                     </View>
                     <Image 
@@ -127,6 +111,6 @@ export default function Publics() {
                     />
                 </Pressable>
             ))}
-        </View>
+        </ScrollView>
     );
 };

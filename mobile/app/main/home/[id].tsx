@@ -113,7 +113,7 @@ export default function ServiceScreen() {
         setData(resJson);
         
         try {
-          let icon = await AsyncStorage.getItem(`icon_${id}`);
+          let icon = await AsyncStorage.getItem(`icon_${(id)?.toString().toLowerCase()}`);
           setIcon(icon);
         } catch (error) {
           console.log("error", error);

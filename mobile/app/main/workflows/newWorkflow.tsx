@@ -16,7 +16,9 @@ export interface workflowProps {
     "name": string,
     "params": string,
     "reaction": string,
-    "reaction_service": string
+    "reaction_service": string,
+    "public": boolean,
+    "frequency": number
 }
 
 const minutes = [...Array(60).keys()].map((index) => ({
@@ -456,7 +458,7 @@ export default function Workflow({type = "new"}: {type: "new" | "edit"}) {
   return (
     <ScrollView className="bg-gray-50" contentContainerStyle={{ paddingBottom: 100 }}>
       {/* Header Section */}
-      <View className="bg-white px-5 pt-2 pb-2 shadow-sm">
+      <View className="px-5 pt-2">
         <TextInput 
           className="text-3xl font-bold text-gray-900 mb-4" 
           onChangeText={setTitle} 
@@ -466,7 +468,7 @@ export default function Workflow({type = "new"}: {type: "new" | "edit"}) {
         />
         
         {/* Frequency Picker */}
-        <View style={{ backgroundColor: '#EFF6FF' }} className="rounded-xl px-4 py-2">
+        <View className="bg-white rounded-xl shadow-md p-4 items-center">
           <Text className="text-sm font-medium text-gray-600">Run Every</Text>
           <View className="flex flex-row items-center justify-center">
             <View className="items-center mr-2">

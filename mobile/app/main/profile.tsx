@@ -15,7 +15,7 @@ export default function Profile() {
     const [newEmail, setNewEmail] = useState("")
     const [newPwd, setNewPwd] = useState("")
     const [oldPwd, setOldPwd] = useState("")
-    const [Mail, setMail] = useState();
+    const [Mail, setMail] = useState<string>('');
     const [Edit, setEdit] = useState(false);
 
     const [image, setImage] = useState<string | null>(null);
@@ -31,7 +31,7 @@ export default function Profile() {
 
         const id = await SecureStore.getItemAsync("id");
         api.put(`/users/${id}`, {
-            pictures: result.assets[0].base64 || "undefined"
+            pictures: result?.assets?.[0].base64 || "undefined"
         }).then(() => {
             showToast("success", "Profile picture updated", "Your profile picture has been updated successfully.");
             if (!result.canceled) {
@@ -217,7 +217,7 @@ export default function Profile() {
         {/* Logout Section */}
         <View className="mx-4 mt-8">
             <Pressable 
-                className="bg-red-300 rounded-2xl py-4 shadow-lg flex-row items-center justify-center"
+                className="bg-red-400 rounded-2xl py-4 shadow-lg flex-row items-center justify-center"
                 onPress={logout}
             >
                 <MaterialIcons name="logout" size={22} color="white" />
