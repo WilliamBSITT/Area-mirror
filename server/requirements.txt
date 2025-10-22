@@ -13,4 +13,4 @@ cryptography
 pytest 
 pytest-flask 
 pytest-mock
-
+exponent-server-sdk

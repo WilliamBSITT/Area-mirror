@@ -66,6 +66,11 @@ def seed_services():
             "description": "TMDB (The Movie Database) is a community-driven platform that provides detailed information about movies and TV shows. You can discover popular films, upcoming releases, and top-rated content. It offers rich metadata, including cast, crew, reviews, and trailers. Perfect for movie enthusiasts looking to explore and stay updated on entertainment.",
             "image": image_to_binary("movie_db"),
         },
+        {
+            "name": "Notifications",
+            "description": "Service permettant d'envoyer des notifications push aux applications mobiles connectées.",
+            "image": image_to_binary("android"),
+        }
     ]
     for s in services:
         if not Service.query.filter_by(name=s["name"]).first():
