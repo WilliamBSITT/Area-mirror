@@ -5,6 +5,7 @@ import { AuthProvider, AuthContext } from "../utils/AuthProvider";
 import { ErrorBoundary } from 'react-error-boundary';
 import '../global.css';
 import Header from "@/components/Header";
+import { Toast } from "react-native-toast-message/lib/src/Toast";
 
 function ErrorFallback({error}: {error: Error}) {
   return (
@@ -29,16 +30,19 @@ function RootLayoutNav() {
   }
 
   return (
-    <Stack >
-      <Stack.Protected guard={auth.isAuthenticated}>
-        <Stack.Screen name="main" options={{headerTitle: (props) => <Header />,
-        }}/>
-      </Stack.Protected>
-      <Stack.Protected guard={!auth.isAuthenticated}>
-        <Stack.Screen name="auth" options={{headerShown: false}}/>
-      </Stack.Protected>
-      <Stack.Screen name="index" options={{headerTitle: (props) => <Header />}}/>
-    </Stack>
+    <>
+      <Stack >
+        <Stack.Protected guard={auth.isAuthenticated}>
+          <Stack.Screen name="main" options={{headerTitle: (props) => <Header />,
+          }}/>
+        </Stack.Protected>
+        <Stack.Protected guard={!auth.isAuthenticated}>
+          <Stack.Screen name="auth" options={{headerShown: false}}/>
+        </Stack.Protected>
+        <Stack.Screen name="index" options={{headerTitle: (props) => <Header />}}/>
+      </Stack>
+      <Toast />
+    </>
   );
 }
 

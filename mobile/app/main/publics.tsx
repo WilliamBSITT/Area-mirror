@@ -3,6 +3,7 @@ import { View, Text, Pressable, Image } from 'react-native';
 import api from '@/utils/api';
 import { service } from '../home/index';
 import { router } from "expo-router";
+import showToast from '@/utils/showToast';
 
 export default function Publics() {
     const [publicAreas, setPublicAreas] = useState<service[]>([]);
@@ -39,7 +40,7 @@ export default function Publics() {
             }
 
         } catch (err) {
-            console.log("error posting area", err);
+            showToast("error", "Failed to save area", "There was an error saving the area. Please try again.");
         }
     };
 

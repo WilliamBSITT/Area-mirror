@@ -1,20 +1,23 @@
-import { Text, View, Switch, Pressable, Image } from "react-native";
+import { Text, View, Pressable, Image } from "react-native";
 import React, { useEffect, useState } from 'react'
 import { router } from "expo-router";
 import { workflowProps } from "./newWorkflow";
 import api from "@/utils/api.js";
+import showToast from "@/utils/showToast";
+import { useSharedValue } from "react-native-reanimated";
+import Switch from "@/components/mySwitch";
 
 function WorkflowTile({title, id, data, setData}: {title: string, id: number, data: workflowProps[] | null, setData: React.Dispatch<React.SetStateAction<workflowProps[] | null>>}) {
-  const [isEnabled, setIsEnabled] = useState(data?.find((area) => area.id === id)?.enabled || false);
+  const isOn = useSharedValue(data?.find((area) => area.id === id)?.enabled || false);
   const toggleSwitch = async () => {
-    setIsEnabled(previousState => !previousState)
+    isOn.value = !isOn.value;
     const res = await api.put(`/areas/${id}`, {
-        enabled: !isEnabled
+        enabled: isOn.value
     }).catch((error: any) => {
-      console.log("Error editing workflow:", error);
+      showToast("error", "Failed to update workflow", "There was an error updating the workflow. Please try again later.");
     });
     if (res && res.status === 200) {
-      console.log("Workflow updated successfully");
+      showToast("success", "Workflow updated", `The workflow has been ${isOn.value ? "enabled" : "disabled"} successfully.`);
       setData(data?.map((area) => area.id === id ? { ...area, enabled: !area.enabled } : area) || null);
     }
   };
@@ -23,13 +26,13 @@ function WorkflowTile({title, id, data, setData}: {title: string, id: number, da
     try {
       const res = await api.delete(`/areas/${id}`);
       if (res.status === 200) {
-        console.log("Workflow deleted successfully");
         setData(data?.filter((area) => area.id !== id) || null);
+        showToast("success", "Workflow deleted", `Workflow ${title} has been deleted.`);
       } else {
-        console.log("Failed to delete workflow");
+        showToast("error", "Failed to delete workflow", "Please try again later.");
       }
-    } catch (error) {
-      console.log("Error deleting workflow:", error);
+    } catch (error: any) {
+      showToast("error", "Error deleting workflow", error?.message || "An unknown error occurred.");
     }
   }
 
@@ -37,8 +40,8 @@ function WorkflowTile({title, id, data, setData}: {title: string, id: number, da
     <Pressable className="bg-blue-900 w-3/4 h-20 ml-10 mr-10 m-4 rounded-2xl p-3" onPress={() => router.push(`/main/workflows/${id}`)}>
       <View className="flex flex-row">
         <Text className="text-xl h-full flex-1 text-white">{title}</Text>
-        <View className="flex flex-row justify-between h-full gap-2">
-          <Switch onValueChange={toggleSwitch} value={isEnabled} className="w-10" thumbColor={isEnabled ? "#57c229" : 'grey'} trackColor={{true: 'green', false: 'grey'}}/>
+        <View className="flex flex-row justify-between h-full gap-2 items-center">
+          <Switch onPress={toggleSwitch} value={isOn} />
           <Pressable onPress={handleDelete}>
             <Image source={require('../../../images/trash-white.png')} className="w-10 h-10 m-auto"/>
           </Pressable>
@@ -54,7 +57,7 @@ export default function Index() {
   useEffect(() => {
     const fetchAREA = async () => {
       const res = await api.get(`/areas`).catch((error: any) => {
-        console.log("Error fetching areas:", error);
+        showToast("error", "Failed to load areas", "There was an error loading areas.");
       });
       if (res && res.data) {
         setData(res.data);

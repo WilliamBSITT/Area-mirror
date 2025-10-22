@@ -11,7 +11,8 @@ const api = axios.create({
 api.interceptors.request.use(async (config) => {
   const token = await SecureStore.getItemAsync("jwt");
   const ip = await AsyncStorage.getItem("ip");
-  config.baseURL = `http://${ip || process.env.EXPO_PUBLIC_IP}:8080`;
+  // config.baseURL = `http://${ip || process.env.EXPO_PUBLIC_IP}:8080`;
+  config.baseURL = "https://avowedly-uncomputed-velvet.ngrok-free.dev/"
   if (token) {
     config.headers["Content-Type"] = "application/json";
     config.headers.Accept = "application/json";

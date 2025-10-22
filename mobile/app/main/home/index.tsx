@@ -4,6 +4,7 @@ import { Text, Image, View, ScrollView, Pressable, StyleSheet } from 'react-nati
 import {Link} from 'expo-router'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import api from '@/utils/api';
+import showToast from '@/utils/showToast';
 
 function Card({name, path, id}: {name:string, path:any, id:number} ) {
   return (
@@ -13,7 +14,7 @@ function Card({name, path, id}: {name:string, path:any, id:number} ) {
         params: { id: name },
       }}
     asChild>
-      <Pressable className="bg-[#F4FBFB] w-70 h-70 rounded-2xl flex">
+      <Pressable className="bg-[#F4FBFB] w-70 h-70 rounded-2xl flex" style={{shadowColor: '#000', shadowOpacity: 0.8, elevation: 6,}}>
         <View className="items-start">
           <Text className="text-black font-bold ml-4 mt-2 justify-start">
             {name}
@@ -64,6 +65,7 @@ export default function Home() {
         })
       } catch (err) {
         console.error("failed to load services", err);
+        showToast("error", "Failed to load services", "There was an error loading services.");
       }
     };
 

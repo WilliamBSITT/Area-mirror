@@ -28,7 +28,7 @@ export default function TabBarButton({
 }) {
   const icons: Record<string, (props: any) => JSX.Element> = {
     home: (props) => <MaterialIcons name="home" size={28} {...props} />,
-    workflows: (props) => <Octicons name="workflow" size={28} {...props} />,
+    workflows: (props) => <Octicons name="workflow" size={24} {...props} />,
     publics: (props) => <MaterialIcons name="public" size={28} {...props} />,
     profile: (props) => <AntDesign name="user" size={28} {...props} />,
   };

@@ -1,5 +1,5 @@
 import React, { useContext} from "react";
-import { Text, View, Pressable, Image, TextInput } from "react-native";
+import { Text, View, Pressable, Image, TextInput} from "react-native";
 import { useState } from "react";
 import { router } from "expo-router";
 import { AuthContext } from "@/utils/AuthProvider";
@@ -8,7 +8,7 @@ import { useEffect } from 'react';
 import * as WebBrowser from 'expo-web-browser';
 import * as AuthSession from "expo-auth-session";
 import api from "@/utils/api";
-import { colorScheme } from "nativewind";
+import showToast from "@/utils/showToast";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -17,8 +17,6 @@ export default function Login() {
   const [success, setSuccess] = useState(false);
   const [Ip, setIp] = useState(process.env.EXPO_PUBLIC_IP || "10.18.208.13");
   const { login } = useContext(AuthContext)!;
-  const [msg, setMsg] = useState('');
-    // console.log("theme", colorScheme.get());
   const discovery = {
     authorizationEndpoint: 'https://github.com/login/oauth/authorize',
     tokenEndpoint: 'https://github.com/login/oauth/access_token',
@@ -54,7 +52,6 @@ export default function Login() {
       }
 
       const data = await res.data;
-      console.log('response', data);
       {mode == 'login' ? router.push('/main/home') :
         setMode('login');
         setSuccess(true);
@@ -77,7 +74,7 @@ export default function Login() {
       "password": password
     }).catch((error: any) => {
       console.log("Error posting login:", error);
-      setMsg("Invalid password or email");
+      showToast("error", "Login failed", error.message);
       setSuccess(false);
     });
 
@@ -90,18 +87,19 @@ export default function Login() {
     {mode == 'login' ? router.push('/main/home') :
       setMode('login');
       setSuccess(true);
-      storeData()
       login(data.access_token, data.id)
     }
   }
 
   const storeData = async () => {
-      try {
-        await AsyncStorage.setItem('ip', Ip);
-        console.log("login ip: ", Ip)
-      } catch (error) {
-        console.log("error", error)
-      }
+    try {
+      if (!Ip) return;
+      await AsyncStorage.setItem('ip', Ip);
+      console.log("login ip: ", Ip);
+      showToast("success", "IP changed", Ip);
+    } catch (error) {
+      console.log("error", error);
+    }
   }
 
   const [mode, setMode] = useState('login');
@@ -115,6 +113,7 @@ export default function Login() {
         flex: 1,
         alignItems: "center",
       }}
+      testID="login-root"
       >
       <Image source={require('../../images/logo.png')} className="w-1/2 h-1/4 mt-20 mb-10"/>
       <View className="flex flex-row">
@@ -128,9 +127,8 @@ export default function Login() {
         placeholder="email"
         onChangeText={(text) => {
           setMail(text);
-          if (mode !== 'login' && (!text.includes("@") || !text.includes("."))) {
-            setMsg("Adresse email invalide");
-            setMail("");
+          if (mode !== 'login' && text.length > 0 && (!text.includes("@") || !text.includes("."))) {
+            showToast("error", "Invalid email", "Please enter a valid email address.");
           }
         }}
         defaultValue={mail}
@@ -140,7 +138,6 @@ export default function Login() {
         {(password !== confirmPwd && confirmPwd) && <Text className="text-red-600">Password don't match</Text>}
         <TextInput secureTextEntry className="border-2 border-solid rounded-full w-1/2 mb-5 p-4 border-blue-900" placeholder="Confirm your password" onChangeText={setConfirmPwd} defaultValue={confirmPwd}/>
       </View>)}
-      {msg &&<Text className="text-red-600 mb-5">{msg}</Text>}
       <Pressable className="bg-blue-900 rounded-full p-6 mb-30 text-2xl" onPress={handleCallDB} disabled={(password !== confirmPwd) && (mode == 'register')}>
         <Text className="text-white text-2xl">
           {mode == 'register' ? 'Register' : 'Login'}
@@ -151,7 +148,7 @@ export default function Login() {
           {mode == 'register' ? 'Or login' : "I don't have an account"}
         </Text>
       </Pressable>
-      <Pressable onPress={() => {promptAsync()}} className="bg-black rounded-full p-2 flex flex-row">
+      <Pressable testID="login-button" onPress={() => {promptAsync()}} className="bg-black rounded-full p-2 flex flex-row">
         <Text className="text-white text-xl m-2">Login</Text>
         <Image source={require('../../images/github-white-icon.png')} className="w-10 h-10 m-auto"/>
       </Pressable>

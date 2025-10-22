@@ -5,7 +5,7 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import { router, useLocalSearchParams } from "expo-router";
 import api from "@/utils/api";
 import WheelPicker from '@quidone/react-native-wheel-picker';
-import { setParams } from "expo-router/build/global-state/routing";
+import showToast from "@/utils/showToast";
 
 export interface workflowProps {
     "action": string,
@@ -30,19 +30,24 @@ function ArgList({args, paramsValues, setParamsValues}: {args: {name: string, ty
   };
 
   return (
-    <View className="mt-4 flex flex-row w-full">
-      {args.map((arg) => (
-        <View key={arg.name} style={{ width: "45%" }} className="flex flex-column mb-4 ml-5">
-          <Text className="text-lg">{arg.name}:<Text className="text-red-700">{arg.required ? "*" : ""}</Text></Text>
-          <TextInput
-            style={{ width: "100%" }}
-            className="border border-gray-300 rounded-full p-2"
-            value={paramsValues[arg.name] || ""}
-            onChangeText={text => handleChange(arg.name, text)}
-            placeholder={arg.type}
-          />
-        </View>
-      ))}
+    <View className="mt-6 px-5">
+      <View className="flex flex-row flex-wrap justify-between">
+        {args.map((arg) => (
+          <View key={arg.name} style={{ width: "48%" }} className="mb-4">
+            <Text className="text-sm font-medium text-gray-700 mb-2">
+              {arg.name}
+              {arg.required && <Text className="text-red-500 ml-1">*</Text>}
+            </Text>
+            <TextInput
+              className="bg-white border border-gray-200 rounded-xl px-4 py-3 text-gray-800 shadow-sm"
+              value={paramsValues[arg.name] || ""}
+              onChangeText={text => handleChange(arg.name, text)}
+              placeholder={arg.type}
+              placeholderTextColor="#9CA3AF"
+            />
+          </View>
+        ))}
+      </View>
     </View>
   );
 }
@@ -55,8 +60,8 @@ function MultiSelect({
   onParamsChange,
   paramsValues,
   setParamsValues,
-  initialService,  // Add this prop
-  initialAction    // Add this prop
+  initialService,
+  initialAction
 }: {
   type: "actions" | "reactions",
   services?: { label: string; value: string; icon: (() => React.JSX.Element) | undefined }[],
@@ -65,19 +70,18 @@ function MultiSelect({
   onParamsChange: (params: any) => void,
   paramsValues: { [key: string]: string },
   setParamsValues: React.Dispatch<React.SetStateAction<{ [key: string]: string }>>,
-  initialService?: string | null,  // Add these to the interface
+  initialService?: string | null,
   initialAction?: string | null
 }) {
   const [actionOpen, setActionOpen] = useState(false);
-  const [valueAction, setValueAction] = useState<string>(initialAction || "");  // Use initial value
+  const [valueAction, setValueAction] = useState<string>(initialAction || "");
   const [action, setAction] = useState<any[]>([]);
 
-  const [valueService, setValueServices] = useState<string>(initialService || "");  // Use initial value
+  const [valueService, setValueServices] = useState<string>(initialService || "");
   const [servicesOpen, setServicesOpen] = useState(false);
   const [newServices, setServices] = useState<{ label: string; value: string; icon: (() => React.JSX.Element) | undefined }[]>(services ?? []);
   const [params, setParams] = useState<{name: string, type: string, required: boolean}[]>([]);
 
-  // Set initial values when they change
   useEffect(() => {
     if (initialService) {
       setValueServices(initialService);
@@ -100,10 +104,8 @@ function MultiSelect({
       if (match) {
         setValueServices(match.value);
       } else if (initialService !== "") {
-        // append a fallback item so the picker can display it
         const fallback = { label: String(initialService), value: String(initialService), icon: undefined };
         setServices(prev => {
-          // avoid duplicates
           if (prev.find(p => p.value === fallback.value)) return prev;
           return [...prev, fallback];
         });
@@ -115,7 +117,7 @@ function MultiSelect({
   useEffect(() => {
     const fetchActions = async () => {
       const res = await api.get(`/services/${valueService}`).catch((error: any) => {
-        console.log("Error fetching actions:", error);
+        showToast("error", "Failed to load actions/reactions", "There was an error loading actions/reactions for the selected service.");
       });
       if (res && res.data) {
         const data = await res.data;
@@ -137,7 +139,6 @@ function MultiSelect({
       });
       if (res && res.data) {
         const data = await res.data;
-        console.log("data", data.params);
         setParams(data.params.map((param: { name: string; type: string; required: boolean }) => ({ name: param.name, type: param.type, required: param.required })));
       }
     }
@@ -160,7 +161,6 @@ function MultiSelect({
     }
   }, [action, initialAction]);
 
-  // Fetch outputs for the selected service/action and type
   const [outputs, setOutputs] = useState<{name: string, type: string, required: boolean}[]>([]);
   useEffect(() => {
     const fetchOutputs = async () => {
@@ -173,7 +173,6 @@ function MultiSelect({
       });
       if (res && res.data) {
         const data = await res.data;
-        // Expect data.outputs to be an array like [{ name, type, required }]
         setOutputs((data.outputs || []).map((out: { name: string; type: string; required?: boolean }) => ({ name: out.name, type: out.type, required: !!out.required })));
       }
     }
@@ -201,11 +200,21 @@ function MultiSelect({
   };
 
   return (
-    <View>
-      <View className="flex flex-row mt-10 justify-center mb-10">
-        {type == "actions" ? <Text className="text-2xl font-semibold mt-4">If:</Text> : <Text className="text-2xl font-semibold mt-4">Then:</Text>}
+    <View className="bg-white rounded-2xl shadow-md mx-4 my-3 p-5">
+      <View className="flex flex-row items-center mb-4">
+        <View className={`w-12 h-12 rounded-full items-center justify-center ${type === "actions" ? "bg-blue-100" : "bg-purple-100"}`}>
+          <Text className={`text-base font-bold ${type === "actions" ? "text-blue-600" : "text-purple-600"}`}>
+            {type === "actions" ? "IF" : "THEN"}
+          </Text>
+        </View>
+        <Text className={`text-lg font-semibold ml-3 ${type === "actions" ? "text-blue-800" : "text-purple-800"}`}>
+          {type === "actions" ? "Trigger" : "Action"}
+        </Text>
+      </View>
 
-        <View style={{ zIndex: 4000 }} className="mx-4">
+      <View className="flex flex-row justify-between items-center mb-4">
+        <View style={{ zIndex: 4000, flex: 1, marginRight: 8 }}>
+          <Text className="text-xs font-medium text-gray-500 mb-2 ml-1">SERVICE</Text>
           <DropDownPicker
             open={servicesOpen}
             value={valueService}
@@ -218,18 +227,30 @@ function MultiSelect({
               value: "value",
               icon: "icon"
             }}
-            labelStyle={{ marginLeft: 5 }}
-            listItemLabelStyle={{ marginLeft: 5, height: 30 }}
+            labelStyle={{ marginLeft: 8, fontSize: 14, fontWeight: "500" }}
+            listItemLabelStyle={{ marginLeft: 8 }}
             autoScroll={true}
-            placeholder="Select a service"
-            showArrowIcon={false}
-            style={{ width: 150, alignSelf: "center" }}
-            dropDownContainerStyle={{ width: 150, alignSelf: "center" }}
+            placeholder="Select service"
+            showArrowIcon={true}
+            style={{ 
+              borderColor: "#E5E7EB",
+              borderRadius: 12,
+              paddingVertical: 12,
+              backgroundColor: "#F9FAFB"
+            }}
+            dropDownContainerStyle={{ 
+              borderColor: "#E5E7EB",
+              borderRadius: 12,
+              marginTop: 4
+            }}
             listMode="MODAL"
           />
         </View>
 
-        <View style={{ zIndex: 3000 }}>
+        <View style={{ zIndex: 3000, flex: 1, marginLeft: 8 }}>
+          <Text className="text-xs font-medium text-gray-500 mb-2 ml-1">
+            {type === "actions" ? "EVENT" : "TASK"}
+          </Text>
           <DropDownPicker
             open={actionOpen}
             value={valueAction}
@@ -241,36 +262,42 @@ function MultiSelect({
               label: "label",
               value: "value",
             }}
-            style={{ width: 150, alignSelf: "center" }}
-            dropDownContainerStyle={{ width: 150, alignSelf: "center" }}
-            placeholder={type == "actions" ? "Select an action" : "Select a reaction"}
-            showArrowIcon={false}
+            style={{ 
+              borderColor: "#E5E7EB",
+              borderRadius: 12,
+              paddingVertical: 12,
+              backgroundColor: "#F9FAFB"
+            }}
+            dropDownContainerStyle={{ 
+              borderColor: "#E5E7EB",
+              borderRadius: 12,
+              marginTop: 4
+            }}
+            labelStyle={{ marginLeft: 8, fontSize: 14, fontWeight: "500" }}
+            placeholder={type === "actions" ? "Select event" : "Select task"}
+            showArrowIcon={true}
             listMode="MODAL"
           />
         </View>
       </View>
+
       <ArgList args={params} paramsValues={paramsValues} setParamsValues={setParamsValues} />
 
-      <View className="mt-6">
-        {type === "actions" && (
-          <View>
-            <Text className="text-xl font-semibold ml-5">Outputs:</Text>
-            <View className="mt-2">
-          {outputs.length === 0 ? (
-            <Text className="ml-5 text-gray-500">No outputs available</Text>
-          ) : (
-            <View className="mt-2 flex flex-row">
-              {outputs.map((out) => (
-                <View key={out.name} className="flex flex-row mb-4 ml-5 w-90%">
-                  <Text className="text-lg">{out.name}: <Text className="text-gray-600">{out.type}</Text></Text>
-                </View>
-              ))}
-            </View>
-          )}
-            </View>
+      {type === "actions" && outputs.length > 0 && (
+        <View className="mt-6 pt-4 border-t border-gray-100">
+          <Text className="text-sm font-semibold text-gray-700 mb-3">Available Outputs</Text>
+          <View className="flex flex-row flex-wrap">
+            {outputs.map((out) => (
+              <View key={out.name} className="bg-gray-50 rounded-lg px-3 py-2 mr-2 mb-2">
+                <Text className="text-sm">
+                  <Text className="font-medium text-gray-800">{out.name}</Text>
+                  <Text className="text-gray-500"> • {out.type}</Text>
+                </Text>
+              </View>
+            ))}
           </View>
-        )}
-      </View>
+        </View>
+      )}
     </View>
   )
 }
@@ -278,7 +305,6 @@ function MultiSelect({
 export default function Workflow({type = "new"}: {type: "new" | "edit"}) {
   const { id } = useLocalSearchParams();
   const [title, setTitle] = useState("");
-  // const [data, setData] = useState<workflowProps | null>(null)
   const [services, setServices] = useState<{ label: string; value: string; icon: (() => React.JSX.Element) | undefined }[]>([]);
   const [workflows, setWorkflows] = useState<Array<{
     type: "actions" | "reactions",
@@ -289,6 +315,7 @@ export default function Workflow({type = "new"}: {type: "new" | "edit"}) {
   const [paramsValues, setParamsValues] = useState<{ [key: string]: string }>({});
   const [min, setMin] = useState<number>(0);
   const [hour, setHour] = useState<number>(1);
+  const [isPub, setIsPub] = useState(false);
 
   const addWorkflow = (type: "actions" | "reactions") => {
     setWorkflows([...workflows, { type, service: null, action: null, params: {} }]);
@@ -304,7 +331,7 @@ export default function Workflow({type = "new"}: {type: "new" | "edit"}) {
     setWorkflows(newWorkflows);
   };
 
-    useEffect(() => {
+  useEffect(() => {
     const fetchAREA = async () => {
       try {
         const res = await api.get(`/areas/${id}`);
@@ -313,7 +340,6 @@ export default function Workflow({type = "new"}: {type: "new" | "edit"}) {
         }
   
         const data = await res.data;
-        console.log("data", data);
         setHour(Math.floor(data.frequency / 3600));
         setMin(Math.floor((data.frequency % 3600) / 60));
         setTitle(data.name);
@@ -334,7 +360,6 @@ export default function Workflow({type = "new"}: {type: "new" | "edit"}) {
         }
         setParamsValues(parsedParams || {});
 
-        // Ensure we're setting the workflows after the data is loaded
         setWorkflows([
           { 
             type: "actions",
@@ -358,7 +383,8 @@ export default function Workflow({type = "new"}: {type: "new" | "edit"}) {
     if (type === "edit" && id) {
       fetchAREA();
     }
-  }, [id, type])  // Add type as dependency
+  }, [id, type])
+
   useEffect(() => {
     const loadIcons = async () => {
       try {
@@ -388,18 +414,9 @@ export default function Workflow({type = "new"}: {type: "new" | "edit"}) {
   }, []);
 
   const save = async () => {
-
     try {
       const actions = workflows.filter(w => w.type === "actions");
       const reactions = workflows.filter(w => w.type === "reactions");
-      console.log("actions", {
-        name: title,
-        action: actions[0].action,
-        action_service: actions[0].service,
-        params: paramsValues,
-        reaction: reactions[0].action,
-        reaction_service: reactions[0].service,
-      });
 
       if (type === "edit" && id) {
         const res = await api.put(`/areas/${id}`, {
@@ -414,6 +431,7 @@ export default function Workflow({type = "new"}: {type: "new" | "edit"}) {
         });
         if (res && res.data) {
           router.push('/main/workflows/');
+          showToast("success", "Workflow updated", "The workflow has been updated successfully.");
         }
       } else {
         const res = await api.post('/areas', {
@@ -430,69 +448,112 @@ export default function Workflow({type = "new"}: {type: "new" | "edit"}) {
           router.push('/main/workflows/');
         }
       }
-
-      
     } catch(err) {
       console.log("error posting areas", err);
     }
   };
-  const [isPub, setIsPub] = useState(false);
+
   return (
-    <ScrollView className="border-b border-gray-300 mb-4" contentContainerStyle={{ paddingBottom: 80 }}>
-      <View className="flex flex-row w-full justify-between">
-      <TextInput className="text-4xl font-bold ml-5" onChangeText={setTitle} value={title} placeholder="title"></TextInput>            
-      <View className="flex flex-row items-center mr-5">
-        <WheelPicker
-          data={minutes}
-          value={hour}
-          onValueChanged={({ item: { value } }) => setHour(value)}
-          enableScrollByTapOnItem={true}
-          width={50}
-          itemHeight={20}
-          style={{ alignSelf: "center"}}
+    <ScrollView className="bg-gray-50" contentContainerStyle={{ paddingBottom: 100 }}>
+      {/* Header Section */}
+      <View className="bg-white px-5 pt-2 pb-2 shadow-sm">
+        <TextInput 
+          className="text-3xl font-bold text-gray-900 mb-4" 
+          onChangeText={setTitle} 
+          value={title} 
+          placeholder="Workflow Name"
+          placeholderTextColor="#9CA3AF"
         />
-        <Text className="font-bold">h</Text>
-        <WheelPicker
-            data={minutes}
-            value={min}
-            onValueChanged={({ item: { value } }) => setMin(value)}
-            enableScrollByTapOnItem={true}
-            width={50}
-            itemHeight={20}
-            style={{ alignSelf: "center"}}
-        />
-        <Text className="font-bold">min</Text>
+        
+        {/* Frequency Picker */}
+        <View style={{ backgroundColor: '#EFF6FF' }} className="rounded-xl px-4 py-2">
+          <Text className="text-sm font-medium text-gray-600">Run Every</Text>
+          <View className="flex flex-row items-center justify-center">
+            <View className="items-center mr-2">
+              <WheelPicker
+                data={minutes}
+                value={hour}
+                onValueChanged={({ item: { value } }) => setHour(value)}
+                enableScrollByTapOnItem={true}
+                width={60}
+                itemHeight={25}
+                style={{ alignSelf: "center" }}
+              />
+              <Text className="text-sm font-semibold text-gray-700">hours</Text>
+            </View>
+            
+            <Text className="text-xl font-bold text-gray-400 mx-2">:</Text>
+            
+            <View className="items-center ml-2">
+              <WheelPicker
+                data={minutes}
+                value={min}
+                onValueChanged={({ item: { value } }) => setMin(value)}
+                enableScrollByTapOnItem={true}
+                width={60}
+                itemHeight={25}
+                style={{ alignSelf: "center" }}
+              />
+              <Text className="text-sm font-semibold text-gray-700">minutes</Text>
+            </View>
+          </View>
         </View>
+
       </View>
-      {workflows.map((workflow, index) => (
-        <View key={index} className="relative">
-          <MultiSelect 
-            type={workflow.type}
-            services={services}
-            onServiceChange={(service) => updateWorkflow(index, { service })}
-            onActionChange={(action) => updateWorkflow(index, { action })}
-            onParamsChange={(params) => updateWorkflow(index, { params })}
-            paramsValues={paramsValues || {}}
-            setParamsValues={setParamsValues}
-            initialService={workflow.service}
-            initialAction={workflow.action}
-          />
-          <Pressable 
-            className="absolute right-4 top-4 bg-red-500 p-2 rounded-full"
-            onPress={() => removeWorkflow(index)}
-          >
-            <Text className="text-white">×</Text>
-          </Pressable>
+
+      {/* Workflow Cards */}
+      <View className="mt-4">
+        {workflows.map((workflow, index) => (
+          <View key={index} className="relative">
+            <MultiSelect 
+              type={workflow.type}
+              services={services}
+              onServiceChange={(service) => updateWorkflow(index, { service })}
+              onActionChange={(action) => updateWorkflow(index, { action })}
+              onParamsChange={(params) => updateWorkflow(index, { params })}
+              paramsValues={paramsValues || {}}
+              setParamsValues={setParamsValues}
+              initialService={workflow.service}
+              initialAction={workflow.action}
+            />
+            {workflows.length > 2 && (
+              <Pressable 
+                className="absolute right-6 top-5 bg-red-500 rounded-full w-8 h-8 items-center justify-center shadow-md"
+                onPress={() => removeWorkflow(index)}
+              >
+                <Text className="text-white text-xl font-bold">×</Text>
+              </Pressable>
+            )}
+          </View>
+        ))}
+      </View>
+
+      {/* Bottom Actions */}
+      <View className="px-4 mt-6">
+        <View className="bg-white rounded-2xl shadow-md p-5 mb-4">
+          <View className="flex-row items-center justify-between">
+            <View className="flex-1">
+              <Text className="text-base font-semibold text-gray-800">Public Workflow</Text>
+              <Text className="text-sm text-gray-500 mt-1">Share with community</Text>
+            </View>
+            <Switch 
+              onValueChange={() => setIsPub(!isPub)} 
+              value={isPub} 
+              thumbColor={isPub ? "#10B981" : "#D1D5DB"} 
+              trackColor={{true: '#86EFAC', false: '#E5E7EB'}}
+              style={{ transform: [{ scaleX: 1.1 }, { scaleY: 1.1 }] }}
+            />
+          </View>
         </View>
-      ))}
-      <View className="flex-row m-auto">
-        <Pressable className="bg-blue-900 rounded-full p-4 w-1/4 m-auto" onPress={save}>
-          <Text className="text-white text-center">Save</Text>
+
+        <Pressable
+          className="rounded-2xl py-4 shadow-lg active:opacity-80 bg-blue-900"
+          onPress={save}
+        >
+          <Text className="text-white text-center text-lg font-bold">
+            {type === "edit" ? "Update Workflow" : "Create Workflow"}
+          </Text>
         </Pressable>
-        <View className="items-center ml-6">
-          <Text>Public Workflow</Text>
-          <Switch onValueChange={()=> setIsPub(!isPub)} value={isPub} className="w-10" thumbColor={isPub ? "#57c229" : 'grey'} trackColor={{true: 'green', false: 'grey'}}/>
-        </View>
       </View>
     </ScrollView>
   );
