@@ -143,6 +143,15 @@ F --> G{Python Flask}
 C[App web] --> D{Next with expo}
 ```
 
+### How work TriggerHub
+```mermaid
+graph LR
+A --> B
+A((Api)) --> C
+B[App mobile] --> A
+C[App web] --> A
+```
+
 ### Other kind of documentation
 You can find some other documentation in the github repository in the documentation directory. In this directory you can fin some information about the style guide used by TriggerHub, the user journey or why we use this techno.
 
