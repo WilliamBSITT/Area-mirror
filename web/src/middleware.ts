@@ -9,9 +9,16 @@ export const config = {
 export default async function middleware(req: NextRequest) {
     const { pathname } = req.nextUrl;
 
-    if (!pathname.startsWith("/workflows")) {
+    if (
+        !(
+            pathname.startsWith("/workflows") ||
+            pathname.startsWith("/profile") ||
+            pathname.startsWith("/settings")
+        )
+    ) {
         return NextResponse.next();
     }
+
 
     const token = req.cookies.get(COOKIE_NAME)?.value;
     if (!token) {
