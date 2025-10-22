@@ -150,6 +150,7 @@ A --> B
 A((Api)) --> C
 B[App mobile] --> A
 C[App web] --> A
+D{Data base} -> A
 ```
 
 ### Other kind of documentation
