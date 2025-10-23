@@ -7,6 +7,7 @@ import api from "@/utils/api";
 import WheelPicker from '@quidone/react-native-wheel-picker';
 import showToast from "@/utils/showToast";
 import * as Linking from 'expo-linking';
+import { callSpotify, openGithub} from "../home/[id]";
 
 
 export interface workflowProps {
@@ -238,6 +239,12 @@ function MultiSelect({
     }
     if (valueService != initialService)
       setValueAction("");
+    console.log("valueService changed:", valueService);
+    if (valueService == "spotify") {
+      callSpotify();
+    } else if (valueService == "github") {
+      openGithub();
+    }
     fetchOutputs();
   }, [valueService, valueAction]);
 
