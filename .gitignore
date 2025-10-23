@@ -95,3 +95,6 @@ mobile/android
 .env
 __pycache__/
 /server/logs
+
+mobile/eas.json
+mobile/area-secrets.json

@@ -6,8 +6,9 @@ import Octicons from "@expo/vector-icons/Octicons";
 import Animated, {
   interpolate,
   useSharedValue,
-  withSpring,
+  withTiming,
   useAnimatedStyle,
+  Easing,
 } from "react-native-reanimated";
 
 export default function TabBarButton({
@@ -28,6 +29,7 @@ export default function TabBarButton({
   const icons: Record<string, (props: any) => JSX.Element> = {
     home: (props) => <MaterialIcons name="home" size={28} {...props} />,
     workflows: (props) => <Octicons name="workflow" size={24} {...props} />,
+    publics: (props) => <MaterialIcons name="public" size={28} {...props} />,
     profile: (props) => <AntDesign name="user" size={28} {...props} />,
   };
 
@@ -36,9 +38,9 @@ export default function TabBarButton({
   const scale = useSharedValue(0);
 
   useEffect(() => {
-    scale.value = withSpring(isFocused ? 1 : 0, {
-      damping: 15,
-      stiffness: 120,
+    scale.value = withTiming(isFocused ? 1 : 0, {
+      duration: 250,
+      easing: Easing.out(Easing.cubic),
     });
   }, [isFocused]);
 
