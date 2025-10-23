@@ -6,6 +6,8 @@ import { router, useLocalSearchParams } from "expo-router";
 import api from "@/utils/api";
 import WheelPicker from '@quidone/react-native-wheel-picker';
 import showToast from "@/utils/showToast";
+import * as Linking from 'expo-linking';
+
 
 export interface workflowProps {
     "action": string,
@@ -83,6 +85,7 @@ function MultiSelect({
   const [servicesOpen, setServicesOpen] = useState(false);
   const [newServices, setServices] = useState<{ label: string; value: string; icon: (() => React.JSX.Element) | undefined }[]>(services ?? []);
   const [params, setParams] = useState<{name: string, type: string, required: boolean}[]>([]);
+  const [authCode, setAuthCode] = useState<string | null>(null);
 
   useEffect(() => {
     if (initialService) {
@@ -133,6 +136,61 @@ function MultiSelect({
     }
     fetchActions();
   }, [valueService]);
+
+    useEffect(() => {
+    if (!authCode) return;
+      
+    const handleAuthCallback = async () => {
+      try {
+        // For Spotify
+        if (valueService === "spotify") {
+          const res = await api.post('/spotify/exchange_token', { code: authCode });
+          if (res.status === 200 || res.status === 201) {
+            console.log("Spotify connected successfully");
+            console.log(res.data);
+          }
+        }
+        // For GitHub
+        else if (valueService === "github") {
+          const res = await api.post('/git/exchange_token', { code: authCode });
+          if (res.status === 200 || res.status === 201) {
+            console.log("GitHub connected successfully");
+            console.log(res.data);
+          }
+        }
+      } catch (error) {
+        console.error("Error in auth callback:", error);
+      }
+    };
+
+    handleAuthCallback();
+  }, [authCode, valueService]);
+
+    useEffect(() => {
+      const handleDeepLink = (event: Linking.EventType) => {
+        const { queryParams } = Linking.parse(event.url);
+        if (queryParams?.code) {
+          console.log("Received auth code:", queryParams.code);
+          setAuthCode(queryParams.code as string);
+        }
+      };
+  
+      const subscription = Linking.addEventListener('url', handleDeepLink);
+  
+      Linking.getInitialURL().then((url) => {
+        if (url) {
+          const { queryParams } = Linking.parse(url);
+          if (queryParams?.code) {
+            console.log("Initial URL auth code:", queryParams.code);
+            setAuthCode(queryParams.code as string);
+          }
+        }
+      });
+  
+      return () => {
+        subscription.remove();
+      };
+    }, []);
 
   useEffect(() => {
     const fetchActions = async () => {

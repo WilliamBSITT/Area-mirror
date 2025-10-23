@@ -1,9 +1,9 @@
 import { Text, Image, Pressable, View } from "react-native";
-import React, { use, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useLocalSearchParams } from 'expo-router';
 import { service } from "."
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useRouter, router } from "expo-router";
+import { router } from "expo-router";
 import api from "@/utils/api";
 import * as Linking from 'expo-linking';
 import * as WebBrowser from 'expo-web-browser';
@@ -40,7 +40,6 @@ export default function ServiceScreen() {
     };
   }, []);
 
-    // const getInitialURL = async () => {
   const callSpotify = async () => {
     try {
       // Always open the Spotify auth URL
