@@ -236,6 +236,8 @@ function MultiSelect({
         setOutputs((data.outputs || []).map((out: { name: string; type: string; required?: boolean }) => ({ name: out.name, type: out.type, required: !!out.required })));
       }
     }
+    if (valueService != initialService)
+      setValueAction("");
     fetchOutputs();
   }, [valueService, valueAction]);
 
