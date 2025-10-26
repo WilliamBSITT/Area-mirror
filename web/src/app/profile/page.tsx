@@ -5,7 +5,10 @@ import { Button } from "@/components/ui/button";
 import Avatar from "@/components/Avatar";
 import { toast } from "sonner";
 import { useUser } from "@/hooks/user/useUser";
+import { useDeleteUser } from "@/hooks/user/useDeleteUser";
 import { User } from "@/types/user";
+import { useRouter } from "next/navigation";
+import { useLogout } from "@/hooks/auth/useLogout";
 
 export default function page() {
     const [user, setUser] = useState<User | null>(null);
@@ -14,8 +17,11 @@ export default function page() {
     const [password, setPassword] = useState("");
     const [passwordEdit, setPasswordEdit] = useState(false);
     const [newPassword, setnewPassword] = useState("");
+    const { logout, loading: loggingOut } = useLogout()
 
     const fetchUser = useUser();
+    const deleteUser = useDeleteUser();
+    const router = useRouter();
 
     useEffect(() => {
         const fetchUserProfile = async () => {
@@ -45,6 +51,18 @@ export default function page() {
         setTimeout(() => {
             toast.success("Email changed!", { id: tid });
         }, 1000);
+    }
+
+    const handleDeleteAccount = async () => {
+        const tid = toast.loading("Deleting account...");
+        try {
+            await deleteUser();
+            await logout();
+            toast.success("Account deleted successfully!", { id: tid });
+            router.push("/");
+        } catch (error) {
+            toast.error(error instanceof Error ? error.message : "Failed to delete account", { id: tid });
+        }
     }
 
     if (isLoading) {
@@ -114,8 +132,14 @@ export default function page() {
                         </Button>
                     </div>
                 </div>
+
+                <Button
+                    className="mt-8 bg-red-500 hover:bg-red-600"
+                    onClick={handleDeleteAccount}
+                >
+                    Delete Account
+                </Button>
             </div>
         </div>
     )
-
 }

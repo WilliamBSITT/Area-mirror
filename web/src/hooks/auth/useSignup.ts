@@ -11,6 +11,7 @@ export function useSignup() {
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
     const { setUser } = useSession()
+    const { refresh } = useSession()
 
     const signup = async (email: string, password: string) => {
         setLoading(true)
@@ -38,7 +39,8 @@ export function useSignup() {
                 serverMsg = json?.error ?? null
                 if (res.ok) {
                     setUser({ email })
-                    router.push("/")
+                    router.push("/login")
+                    await refresh()
                     return true
                 }
             } else {
