@@ -38,7 +38,15 @@ export async function POST(req: NextRequest) {
     try {
         const payload = JSON.parse(text)
         const token = payload?.token ?? payload?.access_token ?? payload?.jwt
-        if (token) res.headers.append("set-cookie", cookieFromToken(token))
+        const userId = payload?.id
+
+        if (token) {
+            res.headers.append("set-cookie", cookieFromToken(token))
+        }
+
+        if (userId) {
+            res.headers.append("set-cookie", `user_id=${userId}; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=604800`)
+        }
     } catch { /* payload pas JSON : OK */ }
 
     return res

@@ -4,79 +4,118 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import Avatar from "@/components/Avatar";
 import { toast } from "sonner";
+import { useUser } from "@/hooks/user/useUser";
+import { User } from "@/types/user";
 
 export default function page() {
-  const [email, setEmail] = useState("");
-  const [emailEdit, setEmailEdit] = useState(false);
-  const [password, setPassword] = useState("");
-  const [passwordEdit, setPasswordEdit] = useState(false);
-  const [newPassword, setnewPassword] = useState("");
+    const [user, setUser] = useState<User | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const [emailEdit, setEmailEdit] = useState(false);
+    const [password, setPassword] = useState("");
+    const [passwordEdit, setPasswordEdit] = useState(false);
+    const [newPassword, setnewPassword] = useState("");
 
-  useEffect(() => {
-    const fetchUserProfile = () => {
-      setEmail("e@epitech.eu");
-    };
-    fetchUserProfile();
-  }, []);
+    const fetchUser = useUser();
 
-  const modifPwd = () => {
-    const tid = toast.loading("Changing password...");
-    setTimeout(() => {
-      toast.success("Password changed!", { id: tid });
-    }, 1000);
-  }
-  
-  const modifEmail = () => {
-    const tid = toast.loading("Changing email...");
-    setTimeout(() => {
-      toast.success("Email changed!", { id: tid });
-    }, 1000);
-  }
+    useEffect(() => {
+        const fetchUserProfile = async () => {
+            try {
+                setIsLoading(true);
+                const userData = await fetchUser();
+                setUser(userData);
+            } catch (error) {
+                console.error("Erreur lors du chargement du profil:", error);
+                toast.error("Impossible de charger le profil");
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        fetchUserProfile();
+    }, [fetchUser]);
 
-  return (
-    <div className="flex flex-col m-2">
-      <h1 className="text-3xl m-5">Profile</h1>
-      <Avatar />
-      {/* Email Section */}
-      <div>
-        <p className="m-5 font-bold">Email</p>
-        <div className="flex justify-between w-3/12 m-5">
-          {emailEdit ? (
-            <Input placeholder="enter your email" defaultValue={email} className="w-40" onChange={(e) => setEmail(e.target.value)}/>
-          ) : (
-            <div>
-            <p>{email}</p>
+    const modifPwd = () => {
+        const tid = toast.loading("Changing password...");
+        setTimeout(() => {
+            toast.success("Password changed!", { id: tid });
+        }, 1000);
+    }
+
+    const modifEmail = () => {
+        const tid = toast.loading("Changing email...");
+        setTimeout(() => {
+            toast.success("Email changed!", { id: tid });
+        }, 1000);
+    }
+
+    if (isLoading) {
+        return <div className="flex items-center justify-center m-5">Loading...</div>;
+    }
+
+    if (!user) {
+        return <div className="flex items-center justify-center m-5">No user data</div>;
+    }
+
+    return (
+        <div className="flex items-start justify-center min-h-screen pt-10">
+            <div className="flex flex-col items-center w-full max-w-md">
+                <h1 className="text-3xl mb-5">Profile</h1>
+                <Avatar />
+
+                {/* Email Section */}
+                <div className="w-full mt-5">
+                    <p className="mb-3 font-bold text-center">Email</p>
+                    <div className="flex justify-between items-center gap-4">
+                        {emailEdit ? (
+                            <Input
+                                placeholder="enter your email"
+                                defaultValue={user.email}
+                                className="flex-1"
+                                onChange={(e) => setUser({ ...user, email: e.target.value })}
+                            />
+                        ) : (
+                            <p className="flex-1">{user.email}</p>
+                        )}
+                        <Button
+                            className="hover:cursor-pointer"
+                            onClick={() => {emailEdit ? modifEmail() : setEmailEdit(!emailEdit)}}
+                        >
+                            {emailEdit ? "Save" : "Edit"}
+                        </Button>
+                    </div>
+                </div>
+
+                {/* Password Section */}
+                <div className="w-full mt-5">
+                    <p className="mb-3 font-bold text-center">Password</p>
+                    <div className="flex justify-between items-start gap-4">
+                        {passwordEdit ? (
+                            <div className="flex flex-col gap-2 flex-1">
+                                <Input
+                                    placeholder="enter your current password"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    type="password"
+                                />
+                                <Input
+                                    placeholder="enter your new password"
+                                    value={newPassword}
+                                    onChange={(e) => setnewPassword(e.target.value)}
+                                    type="password"
+                                />
+                            </div>
+                        ) : (
+                            <p className="flex-1">*************</p>
+                        )}
+                        <Button
+                            className="hover:cursor-pointer"
+                            onClick={() => {passwordEdit ? modifPwd() : setPasswordEdit(!passwordEdit)}}
+                        >
+                            {passwordEdit ? "Save" : "Edit"}
+                        </Button>
+                    </div>
+                </div>
             </div>
-          )}
-          <Button className="hover:cursor-pointer"
-            onClick={() => {emailEdit ? modifEmail() : setEmailEdit(!emailEdit)}}
-          >
-            {emailEdit ? "Save" : "Edit"}
-          </Button>
         </div>
-      </div>
-      {/* Password Section */}
-      <div>
-        <p className="m-5 font-bold">Password</p>
-        <div className="flex justify-between w-3/12 m-5">
-          {passwordEdit ? (
-            <div className="flex flex-col gap-2">
-              <Input placeholder="enter your current password" className="w-40" value={password} onChange={(e) => setPassword(e.target.value)} type="password"/>
-              <Input placeholder="enter your new password" className="w-40" value={newPassword} onChange={(e) => setnewPassword(e.target.value)} type="password"/>
-            </div>
-          ) : (
-            <div>
-            <p>*************</p>
-            </div>
-          )}
-          <Button className="hover:cursor-pointer"
-            onClick={() => {passwordEdit ? modifPwd() : setPasswordEdit(!passwordEdit)}}
-          >
-            {passwordEdit ? "Save" : "Edit"}
-          </Button>
-        </div>
-      </div>
-    </div>
-  )
+    )
+
 }
-

@@ -25,7 +25,6 @@ export default function OAuthCodeHandler() {
                 await refresh();
             } else {
                 const data = await res.json();
-                console.log("Réponse JSON:", data);
                 router.replace("/login?error=oauth_exchange_failed");
             }
         })();

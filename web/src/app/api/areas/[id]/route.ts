@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 const BACKEND_URL = process.env.BACKEND_URL!
-const COOKIE_NAME = process.env.SESSION_COOKIE_NAME || "session";
+const COOKIE_NAME = "session";
 
 export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
     const token = req.cookies.get(COOKIE_NAME)?.value
