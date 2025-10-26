@@ -1,6 +1,6 @@
 from werkzeug.security import generate_password_hash, check_password_hash
 from extensions import db
-import os
+import binascii
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -15,4 +15,4 @@ class User(db.Model):
         return check_password_hash(self.password_hash, password)
     
     def to_dict(self):
-        return {"id": self.id, "email": self.email}
+        return {"id": self.id, "email": self.email, "pictures": binascii.b2a_base64(self.pictures).decode('utf-8') if self.pictures else None}

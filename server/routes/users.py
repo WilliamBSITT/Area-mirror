@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from extensions import db
 from models.user import User
+import base64
 
 bp = Blueprint("users", __name__, url_prefix="/users")
 
@@ -134,7 +135,7 @@ def create_user():
 
   
 @bp.route("/<int:user_id>", methods=["PUT"])
-@jwt_required()
+# @jwt_required()
 def update_user(user_id):
     """
     Met à jour un utilisateur
@@ -156,7 +157,11 @@ def update_user(user_id):
             properties:
               email:
                 type: string
+                example: test@mail.com
               password:
+                type: string
+                example: secret123
+              picture:
                 type: string
     responses:
       200:
@@ -172,18 +177,28 @@ def update_user(user_id):
                 email:
                   type: string
                   example: test@mail.com
+                picture:
+                  type: string
+                  example: https://exemple.com/image.jpg
       404:
         description: Utilisateur non trouvé
     """
+
     user = User.query.get_or_404(user_id)
     data = request.get_json()
     email = data.get("email")
     password = data.get("password")
+    pictures = data.get("pictures")
 
     if email:
         user.email = email
     if password:
         user.set_password(password)
+    if pictures:
+        if isinstance(pictures, str):
+          user.pictures = base64.b64decode(pictures)
+        else:
+          user.pictures = pictures
     
     db.session.commit()
     return jsonify(user.to_dict()), 200

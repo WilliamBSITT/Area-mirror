@@ -119,4 +119,36 @@ class YOUR SERVICE(BaseService):
 ```
 
 ### API documentation
-Api documentation can be found on the http://localhost:8080
+Api documentation can be found on the http://localhost:8080 or if you want to use the online documentation https://avowedly-uncomputed-velvet.ngrok-free.dev/
+
+### Stack Documentation
+
+- **Front** :
+```mermaid
+graph LR
+A --> B
+A((AREA)) --> C
+B[App mobile] --> E{React native}
+C[App web] --> D{Next with expo}
+```
+
+- **Back** :
+```mermaid
+graph LR
+A --> B
+A((AREA)) --> C
+B[App mobile] --> E{React native}
+A --> F[Api]
+F --> G{Python Flask}
+C[App web] --> D{Next with expo}
+```
+
+### Other kind of documentation
+You can find some other documentation in the github repository in the documentation directory. In this directory you can fin some information about the style guide used by TriggerHub, the user journey or why we use this techno.
+
+### Logs
+For the server part you can find a logs about what append on the server in the logs directory.
+
+
+### Test
+For the server, their is a test policy integrated you just have to navigate to server/app.py and edit the create_app function to replace **default** by **test**.
