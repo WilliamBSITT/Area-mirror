@@ -93,6 +93,13 @@ export function Navbar() {
                         </NavigationMenuItem>
                         <NavigationMenuItem className="hidden md:flex">
                             <NavigationMenuLink asChild>
+                                <Link href="/templates" className={commonClassName}>
+                                    Templates
+                                </Link>
+                            </NavigationMenuLink>
+                        </NavigationMenuItem>
+                        <NavigationMenuItem className="hidden md:flex">
+                            <NavigationMenuLink asChild>
                                 <Link href="/about" className={commonClassName}>
                                     About
                                 </Link>

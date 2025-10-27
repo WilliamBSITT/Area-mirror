@@ -2,6 +2,16 @@
 import { Input } from "@/components/ui/input"
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
+import {
+    Dialog,
+    DialogClose,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog";
 import Avatar from "@/components/Avatar";
 import { toast } from "sonner";
 import { useUser } from "@/hooks/user/useUser";
@@ -9,6 +19,7 @@ import { useDeleteUser } from "@/hooks/user/useDeleteUser";
 import { User } from "@/types/user";
 import { useRouter } from "next/navigation";
 import { useLogout } from "@/hooks/auth/useLogout";
+import * as React from "react";
 
 export default function page() {
     const [user, setUser] = useState<User | null>(null);
@@ -79,7 +90,6 @@ export default function page() {
                 <h1 className="text-3xl mb-5">Profile</h1>
                 <Avatar />
 
-                {/* Email Section */}
                 <div className="w-full mt-5">
                     <p className="mb-3 font-bold text-center">Email</p>
                     <div className="flex justify-between items-center gap-4">
@@ -102,7 +112,6 @@ export default function page() {
                     </div>
                 </div>
 
-                {/* Password Section */}
                 <div className="w-full mt-5">
                     <p className="mb-3 font-bold text-center">Password</p>
                     <div className="flex justify-between items-start gap-4">
@@ -133,12 +142,35 @@ export default function page() {
                     </div>
                 </div>
 
-                <Button
-                    className="mt-8 bg-red-500 hover:bg-red-600"
-                    onClick={handleDeleteAccount}
-                >
-                    Delete Account
-                </Button>
+                <Dialog>
+                    <DialogTrigger asChild>
+                        <Button
+                            className="mt-8 bg-red-500 hover:bg-red-600"
+                        >
+                            Delete Account
+                        </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                        <DialogHeader>
+                            <DialogTitle>Are you absolutely sure?</DialogTitle>
+                            <DialogDescription>
+                                This action cannot be undone. This will permanently delete your
+                                account and remove all your data from our servers.
+                            </DialogDescription>
+                        </DialogHeader>
+                        <DialogFooter>
+                            <DialogClose asChild>
+                                <Button variant="outline">Cancel</Button>
+                            </DialogClose>
+                            <Button
+                                onClick={handleDeleteAccount}
+                                className="bg-red-500 hover:bg-red-600"
+                            >
+                                Delete Account
+                            </Button>
+                        </DialogFooter>
+                    </DialogContent>
+                </Dialog>
             </div>
         </div>
     )

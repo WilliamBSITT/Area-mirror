@@ -8,6 +8,7 @@ export type AreaPayload = {
     params: Record<string, string>;
     reaction: string;
     reaction_service: string;
+    public: boolean;
 };
 
 export function usePostArea() {

@@ -12,7 +12,7 @@ import { Label } from "@/components/ui/label";
 import { PlusIcon, X } from "lucide-react";
 import AreasActionSelect from "@/components/areas/create/areasActionSelect";
 import AreasReactionSelect from "@/components/areas/create/areasReactionSelect";
-
+import { Checkbox } from "@/components/ui/checkbox"
 import { usePostArea } from "@/hooks/areas/useCreateAreas";
 
 type ActionItem = { id: number; left: string | null; right: string | null };
@@ -21,8 +21,10 @@ type ReactionItem = { id: number; left: string | null; right: string | null };
 export default function AreasCreationDialog({ onCreated }: { onCreated?: () => void }) {
     const [open, setOpen] = React.useState(false);
     const [name, setName] = React.useState("");
+    const [frequency, setFrequency] = React.useState("01:30:00");
     const { postArea, loading, error, data } = usePostArea();
     const router = useRouter();
+    const [isPublic, setIsPublic] = React.useState(false);
 
     const [actions, setActions] = React.useState<ActionItem[]>([
         { id: 1, left: null, right: null },
@@ -78,6 +80,15 @@ export default function AreasCreationDialog({ onCreated }: { onCreated?: () => v
         }
     };
 
+    // Fonction pour convertir HH:MM:SS en secondes
+    const timeToSeconds = (timeString: string): number => {
+        const parts = timeString.split(':');
+        const hours = parseInt(parts[0], 10) || 0;
+        const minutes = parseInt(parts[1], 10) || 0;
+        const seconds = parseInt(parts[2], 10) || 0;
+        return hours * 3600 + minutes * 60 + seconds;
+    };
+
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
@@ -86,7 +97,10 @@ export default function AreasCreationDialog({ onCreated }: { onCreated?: () => v
             return;
         }
 
+        const frequencyInSeconds = timeToSeconds(frequency);
+
         console.log("Name:", name);
+        console.log("Frequency (seconds):", frequencyInSeconds);
         console.log("Actions:", actions.map(a => ({
             left: a.left,
             right: a.right,
@@ -97,6 +111,7 @@ export default function AreasCreationDialog({ onCreated }: { onCreated?: () => v
             right: r.right,
             params: reactionsParams[r.id] ?? {}
         })));
+        console.log(isPublic)
 
         try {
             for (const a of actions) {
@@ -104,7 +119,7 @@ export default function AreasCreationDialog({ onCreated }: { onCreated?: () => v
                     await postArea({
                         action: a.right ?? "",
                         action_service: a.left ?? "",
-                        frequency: 3600,
+                        frequency: frequencyInSeconds,
                         name,
                         params: {
                             ...actionsParams[a.id],
@@ -112,6 +127,7 @@ export default function AreasCreationDialog({ onCreated }: { onCreated?: () => v
                         },
                         reaction: r.right ?? "",
                         reaction_service: r.left ?? "",
+                        public: isPublic,
                     });
                 }
             }
@@ -150,7 +166,7 @@ export default function AreasCreationDialog({ onCreated }: { onCreated?: () => v
                                     name="name"
                                     value={name}
                                     onChange={(e) => setName(e.target.value)}
-                                    className="px-2 md:px-"
+                                    className="px-2 md:px-3"
                                 />
                             </div>
                         </div>
@@ -164,13 +180,22 @@ export default function AreasCreationDialog({ onCreated }: { onCreated?: () => v
                                 type="time"
                                 id="time-picker"
                                 step="1"
-                                defaultValue="10:30:00"
+                                value={frequency}
+                                onChange={(e) => setFrequency(e.target.value)}
                                 className="bg-background appearance-none [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none w-35"
                             />
                         </div>
                     </section>
 
                     <br />
+                    <div className="flex items-center gap-2">
+                        <Checkbox
+                            checked={isPublic}
+                            onCheckedChange={(checked) => setIsPublic(checked as boolean)}
+                        />
+                        <label className="max-w-lg">Public Workflow</label>
+                    </div>
+                    <br/>
 
                     {/* Actions */}
                     <div className="space-y-3">
