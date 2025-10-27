@@ -51,7 +51,7 @@ def create_area():
               example: "send_message"
             params:
               type: object
-              example: { "city": "Nancy", "message": "Météo {city} : {temp}°C, {desc}", "channel_id": "1424684119471689759" }
+              example: { "city": "Nancy", "message": "🌦️ Météo {city} : {temp}°C, {desc}", "channel_id": "1424684119471689759" }
     responses:
       201:
         description: AREA créé avec succès
@@ -61,35 +61,32 @@ def create_area():
     user_id = int(get_jwt_identity())
     data = request.get_json()
 
-    actions = data.get("actions")
-    reactions = data.get("reactions")
-
-    if not actions or not reactions:
-        return jsonify({"error": "Les champs 'actions' et 'reactions' sont obligatoires"}), 400
-
     area, err = area_manager.create_area(
         user_id,
-        actions=actions,
-        reactions=reactions,
+        data.get("action_service").lower(),
+        data.get("action"),
+        data.get("reaction_service").lower(),
+        data.get("reaction"),
+        params=data.get("params", {}),
         enabled=data.get("enabled", True),
         name=data.get("name", "My AREA"),
         frequency=data.get("frequency", 3600),
-        public=data.get("public", False)
     )
 
     if err:
         return jsonify({"error": err}), 400
 
     return jsonify({
-        "id": area.id,
         "name": area.name,
-        "actions": area.actions,
-        "reactions": area.reactions,
+        "id": area.id,
+        "action_service": area.action_service,
+        "action": area.action,
+        "reaction_service": area.reaction_service,
+        "reaction": area.reaction,
+        "params": area.params,
         "enabled": area.enabled,
         "frequency": int(area.frequency),
-        "public": area.public
     }), 201
-
 
 @bp.route("/<int:area_id>", methods=["GET"])
 @jwt_required()
@@ -129,9 +126,12 @@ def get_area(area_id):
     return jsonify({
           "id": result[0].id,
           "name": result[0].name,
-          "actions": result[0].actions,
-          "reaction": result[0].reactions,
+          "action_service": result[0].action_service,
+          "action": result[0].action,
+          "reaction_service": result[0].reaction_service,
+          "reaction": result[0].reaction,
           "frequency": result[0].frequency,
+          "params": result[0].params,
           "last_run": result[0].last_run.isoformat() if result[0].last_run else None,
           "enabled": result[0].enabled,
           "public": result[0].public
@@ -163,8 +163,10 @@ def list_public_areas():
         {
           "id": a.id,
           "name": a.name,
-          "action": a.actions,
-          "reaction": a.reactions,
+          "action_service": a.action_service,
+          "action": a.action,
+          "reaction_service": a.reaction_service,
+          "reaction": a.reaction,
           "frequency": a.frequency
         } for a in areas if a.public
     ])
@@ -196,8 +198,8 @@ def list_areas():
         {
             "id": a.id,
             "name": a.name,
-            "actions": a.actions,
-            "reactions": a.reactions,
+            "action_service": a.action_service,
+            "reaction_service": a.reaction_service,
             "enabled": a.enabled
         } for a in areas
     ])
@@ -306,10 +308,16 @@ def update_area(area_id):
     area.enabled = data["enabled"]
   if "name" in data:
     area.name = data["name"]
-  if "actions" in data:
-    area.actions = data["actions"]
-  if "reactions" in data:
-    area.reactions = data["reactions"]
+  if "action_service" in data:
+    area.action_service = data["action_service"].lower()
+  if "action" in data:
+    area.action = data["action"]
+  if "reaction_service" in data:
+    area.reaction_service = data["reaction_service"].lower()
+  if "reaction" in data:
+    area.reaction = data["reaction"]
+  if "params" in data:
+    area.params = data["params"]
   if "frequency" in data:
     area.frequency = data["frequency"]
   if "public" in data:

@@ -64,11 +64,11 @@ class GmailService(BaseService):
                 print("[GmailService] Paramètres manquants")
                 return False
 
-            # try:
-            #     password = crypto.decrypt(password_enc)
-            # except Exception as e:
-            #     print(f"[GmailService] Erreur de déchiffrement: {e}")
-            #     return False
+            try:
+                password = crypto.decrypt(password_enc)
+            except Exception as e:
+                print(f"[GmailService] Erreur de déchiffrement: {e}")
+                return False
 
             if not self.validate_email(to_address):
                 print(f"[GmailService] Adresse email invalide: {to_address}")
@@ -88,7 +88,7 @@ class GmailService(BaseService):
                 content = content_template
 
             msg = self.create_email(from_address, to_address, subject, content)
-            return self.send_email(from_address, password_enc, to_address, msg)
+            return self.send_email(from_address, password, to_address, msg)
 
         else:
             print(f"[GmailService] Réaction inconnue: {reaction}")
