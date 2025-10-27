@@ -71,6 +71,7 @@ def create_area():
         enabled=data.get("enabled", True),
         name=data.get("name", "My AREA"),
         frequency=data.get("frequency", 3600),
+        
     )
 
     if err:
