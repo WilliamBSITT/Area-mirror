@@ -75,21 +75,22 @@ export default function AreasActionSelect({ leftValue, onLeftChange, rightValue,
     }, [formValues, onParamsChange]);
 
     return (
-        <section className="grid md:grid-cols-3 gap-4">
-            {/* Colonne gauche : service */}
-            <div>
-                <div className="px-30">
-                    <h1 className="font-bold text-4xl">If</h1>
+        <section className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {/* Colonne gauche : titre "If" */}
+            <div className="md:col-span-1">
+                <div className="px-4 md:px-30">
+                    <h1 className="font-bold text-2xl md:text-4xl">If</h1>
                 </div>
             </div>
 
-            <div>
+            {/* Colonne du milieu : service */}
+            <div className="md:col-span-1">
                 <Select
                     value={leftValue}
                     onValueChange={onLeftChange ?? (() => {})}
                     disabled={loading || !!error}
                 >
-                    <SelectTrigger className="w-[200px]">
+                    <SelectTrigger className="w-full md:w-[200px]">
                         <SelectValue
                             placeholder={
                                 loading
@@ -118,13 +119,13 @@ export default function AreasActionSelect({ leftValue, onLeftChange, rightValue,
             </div>
 
             {/* Colonne droite : action */}
-            <div>
+            <div className="md:col-span-1">
                 <Select
                     value={rightValue}
                     onValueChange={onRightChange ?? (() => {})}
                     disabled={detailsLoading || !!detailsError || !details}
                 >
-                    <SelectTrigger className="w-[200px]">
+                    <SelectTrigger className="w-full md:w-[200px]">
                         <SelectValue
                             placeholder={
                                 !leftValue
@@ -152,20 +153,20 @@ export default function AreasActionSelect({ leftValue, onLeftChange, rightValue,
 
             {/* Liste dynamique des paramètres */}
             {leftValue && rightValue && (
-                <div className="col-span-3">
+                <div className="col-span-1 md:col-span-3">
                     {paramsLoading && <p>Chargement des paramètres…</p>}
                     {paramsError && <p>Erreur : {paramsError.message}</p>}
                     {!paramsLoading && !paramsError && paramsData?.params?.length === 0 && (
                         <p>Aucun paramètre requis pour cette action.</p>
                     )}
 
-                    <div className="flex flex-col gap-3 px-20">
+                    <div className="flex flex-col gap-3 px-4 md:px-20">
                         {paramsData?.params.map((p) => (
                             <div
                                 key={p.name}
-                                className="flex items-center justify-between gap-4"
+                                className="flex flex-col md:flex-row md:items-center md:justify-between gap-2 md:gap-4"
                             >
-                                <label htmlFor={p.name} className="w-1/3 text-sm font-medium">
+                                <label htmlFor={p.name} className="text-sm font-medium md:w-1/3">
                                     {p.name}
                                     {p.required ? " *" : ""}
                                 </label>
@@ -177,7 +178,7 @@ export default function AreasActionSelect({ leftValue, onLeftChange, rightValue,
                                     placeholder={p.description}
                                     required={p.required}
                                     type={p.type === "number" ? "number" : "text"}
-                                    className="w-2/3"
+                                    className="w-full md:w-2/3 text-sm md:text-base h-8 md:h-10 px-2 md:px-3"
                                 />
                             </div>
                         ))}

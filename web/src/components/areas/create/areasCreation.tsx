@@ -150,6 +150,7 @@ export default function AreasCreationDialog({ onCreated }: { onCreated?: () => v
                                     name="name"
                                     value={name}
                                     onChange={(e) => setName(e.target.value)}
+                                    className="px-2 md:px-"
                                 />
                             </div>
                         </div>
