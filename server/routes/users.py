@@ -164,18 +164,20 @@ def update_user(user_id):
         type: integer
         required: true
         description: ID de l'utilisateur
-      - name: password
-        in: body
-        description: mot de passe de l'utilisater
-        required: false
-      - name: email
-        in: body
-        description: email de l'utilisateur
-        required: false
-      - name: picture
-        in: body
-        description: picture de l'utilisateur
-        required: false
+      - in: body
+        name: body
+        required: true
+        schema:
+          type: object
+          properties:
+            email:
+              type: string
+              example: "test@mail.com"
+            password:
+              type: string
+              example: "secret123"
+            picture:
+              type: string
     requestBody:
       required: true
       content:

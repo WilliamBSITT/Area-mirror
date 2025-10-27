@@ -292,6 +292,9 @@ def update_area(area_id):
             params:
               type: object
               example: { "city": "Nancy", "message": "🌦️ Météo" }
+            public:
+              type: boolean
+              example: false
     responses:
       200:
         description: AREA mis à jour
