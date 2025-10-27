@@ -129,12 +129,9 @@ def get_area(area_id):
     return jsonify({
           "id": result[0].id,
           "name": result[0].name,
-          "action_service": result[0].action_service,
-          "action": result[0].action,
-          "reaction_service": result[0].reaction_service,
-          "reaction": result[0].reaction,
+          "actions": result[0].actions,
+          "reaction": result[0].reactions,
           "frequency": result[0].frequency,
-          "params": result[0].params,
           "last_run": result[0].last_run.isoformat() if result[0].last_run else None,
           "enabled": result[0].enabled,
           "public": result[0].public
@@ -166,10 +163,8 @@ def list_public_areas():
         {
           "id": a.id,
           "name": a.name,
-          "action_service": a.action_service,
-          "action": a.action,
-          "reaction_service": a.reaction_service,
-          "reaction": a.reaction,
+          "action": a.actions,
+          "reaction": a.reactions,
           "frequency": a.frequency
         } for a in areas if a.public
     ])
@@ -201,8 +196,8 @@ def list_areas():
         {
             "id": a.id,
             "name": a.name,
-            "action_service": a.action_service,
-            "reaction_service": a.reaction_service,
+            "actions": a.actions,
+            "reactions": a.reactions,
             "enabled": a.enabled
         } for a in areas
     ])
@@ -308,16 +303,10 @@ def update_area(area_id):
     area.enabled = data["enabled"]
   if "name" in data:
     area.name = data["name"]
-  if "action_service" in data:
-    area.action_service = data["action_service"].lower()
-  if "action" in data:
-    area.action = data["action"]
-  if "reaction_service" in data:
-    area.reaction_service = data["reaction_service"].lower()
-  if "reaction" in data:
-    area.reaction = data["reaction"]
-  if "params" in data:
-    area.params = data["params"]
+  if "actions" in data:
+    area.actions = data["actions"]
+  if "reactions" in data:
+    area.reactions = data["reactions"]
   if "frequency" in data:
     area.frequency = data["frequency"]
   if "public" in data:
