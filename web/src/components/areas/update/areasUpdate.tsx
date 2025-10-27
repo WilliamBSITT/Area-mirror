@@ -51,47 +51,47 @@ export function AreasUpdateDialog({ areaId, onCreated }: AreasUpdateDialogProps)
 
     const [showExtras, setShowExtras] = React.useState(false);
 
-    // Charger les données quand le dialog s'ouvre
     React.useEffect(() => {
         if (open && areaId) {
+
+            setActions([{ id: 1, left: null, right: null }]);
+            setReactions([{ id: 1, left: null, right: null }]);
 
             const loadAreaData = async () => {
                 try {
                     const areaData = await fetchArea(areaId.toString());
 
-
-
                     setName(areaData.name || "");
                     const frequencyFormatted = secondsToTime(areaData.frequency || 3600);
                     setFrequency(frequencyFormatted);
-
                     setIsPublic(areaData.public || false);
 
-                    if (areaData.action_service && areaData.action) {
-                        const actionItem = {
-                            id: 1,
-                            left: areaData.action_service,
-                            right: areaData.action
-                        };
-                        setActions([actionItem]);
-                    } else {
-                    }
+                    setTimeout(() => {
+                        if (areaData.action_service && areaData.action) {
+                            const actionItem = {
+                                id: 1,
+                                left: areaData.action_service,
+                                right: areaData.action
+                            };
+                            setActions([actionItem]);
+                        }
 
-                    if (areaData.reaction_service && areaData.reaction) {
-                        const reactionItem = {
-                            id: 1,
-                            left: areaData.reaction_service,
-                            right: areaData.reaction
-                        };
-                        setReactions([reactionItem]);
-                    } else {
-                    }
+                        if (areaData.reaction_service && areaData.reaction) {
+                            const reactionItem = {
+                                id: 1,
+                                left: areaData.reaction_service,
+                                right: areaData.reaction
+                            };
+                            setReactions([reactionItem]);
+                        }
+                    }, 100);
 
-                } catch (error) {}
+                } catch (error) {
+                    console.error("❌ Erreur:", error);
+                }
             };
 
             loadAreaData();
-        } else {
         }
     }, [open, areaId, fetchArea]);
 
@@ -248,12 +248,13 @@ export function AreasUpdateDialog({ areaId, onCreated }: AreasUpdateDialogProps)
                         <br/>
 
                         {/* Actions et Reactions - reste identique */}
+                        {/* Actions */}
                         <div className="space-y-3">
                             {actions.map((a, idx) => (
                                 <div key={a.id} className="flex items-center gap-2">
                                     <div className="flex-1">
                                         <AreasActionSelect
-                                            key={a.id}
+                                            key={`action-${a.id}-${a.left}-${a.right}`}  // Clé dynamique basée sur les valeurs
                                             leftValue={a.left ?? undefined}
                                             onLeftChange={v => setActionLeft(a.id, v)}
                                             rightValue={a.right ?? undefined}
@@ -279,12 +280,13 @@ export function AreasUpdateDialog({ areaId, onCreated }: AreasUpdateDialogProps)
 
                         <br />
 
+                        {/* Reactions */}
                         <div className="space-y-3">
                             {reactions.map((r, idx) => (
                                 <div key={r.id} className="flex items-center gap-2">
                                     <div className="flex-1">
                                         <AreasReactionSelect
-                                            key={r.id}
+                                            key={`reaction-${r.id}-${r.left}-${r.right}`}  // Clé dynamique basée sur les valeurs
                                             leftValue={r.left ?? undefined}
                                             onLeftChange={v => setReactionLeft(r.id, v)}
                                             rightValue={r.right ?? undefined}

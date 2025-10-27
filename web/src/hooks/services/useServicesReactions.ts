@@ -33,9 +33,6 @@ export function useServiceReactionParams(
         setError(null);
 
         try {
-            console.log("here");
-            console.log(serviceName, reactionName);
-            console.log("here");
             const res = await fetch(
                 `/api/services/${encodeURIComponent(serviceName)}/reactions/${encodeURIComponent(reactionName)}/params`,
                 { signal: controller.signal }
