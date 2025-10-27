@@ -10,8 +10,8 @@ logger = logging.getLogger("AREA-App")
 
 def check_hooks(app=None):
     """
-    Parcourt tous les Area activés, vérifie les actions
-    et exécute les réactions correspondantes si une action est déclenchée.
+    Parcourt tous les Area activés, exécute toutes les actions et 
+    agrège leurs résultats avant de déclencher toutes les réactions.
     """
     ctx = app.app_context() if app else current_app.app_context()
     with ctx:
@@ -27,48 +27,64 @@ def check_hooks(app=None):
                 if not user:
                     continue
 
-                if area.last_run and area.frequency != 60:
+                # Gestion de la fréquence
+                if area.last_run:
                     last_run = area.last_run.replace(tzinfo=timezone.utc)
                     if (now - last_run) < timedelta(seconds=area.frequency):
                         continue
 
-                triggered_data = None
-                triggered = False
+                combined_data = {}
+                has_triggered = False
 
+                # === MULTI-ACTIONS ===
                 for action_def in (area.actions or []):
-                    logger.info(action_def)
-                    act_srv = services_map.get(action_def.get("service"))
-                    action_name = action_def.get("name")
-                    params = action_def.get("params", {})
+                    try:
+                        act_srv = services_map.get(action_def.get("service"))
+                        action_name = action_def.get("name")
+                        params = action_def.get("params", {})
 
-                    if not act_srv:
-                        logger.warning(f"[check_hooks] Unknown action service: {action_def.get('service')}")
-                        continue
+                        logger.info(f"[check_hooks] Checking action {action_def}")
 
-                    data = act_srv.check_action(user, action_name, params=params)
-                    if data:
-                        triggered = True
-                        triggered_data = data
-                        logger.info(f"[check_hooks] AREA {area.id} triggered via {action_def['service']}.{action_name}")
-                        break
+                        if not act_srv:
+                            logger.warning(f"[check_hooks] Unknown action service: {action_def.get('service')}")
+                            continue
 
-                if not triggered:
+                        data = act_srv.check_action(user, action_name, params=params)
+                        if data:
+                            has_triggered = True
+                            combined_data.update(data)
+                            logger.info(f"[check_hooks] AREA {area.id} triggered via {action_def['service']}.{action_name}")
+
+                    except Exception as e:
+                        logger.error(f"[check_hooks] Action {action_def.get('service')} failed: {e}", exc_info=True)
+                        continue  # continue avec les autres actions
+
+                if not has_triggered:
                     continue
 
+                # Marquer comme exécuté
                 area.last_run = now
                 db.session.commit()
 
+                # === MULTI-RÉACTIONS ===
                 for reaction_def in (area.reactions or []):
-                    logger.info(reaction_def)
-                    rea_srv = services_map.get(reaction_def.get("service"))
-                    reaction_name = reaction_def.get("name")
-                    params = reaction_def.get("params", {})
+                    try:
+                        rea_srv = services_map.get(reaction_def.get("service"))
+                        reaction_name = reaction_def.get("name")
+                        params = reaction_def.get("params", {})
 
-                    if not rea_srv:
-                        logger.warning(f"[check_hooks] Unknown reaction service: {reaction_def.get('service')}")
-                        continue
+                        logger.info(f"[check_hooks] Executing reaction {reaction_def}")
 
-                    reaction_executor(user, rea_srv, reaction_name, params=params, data=triggered_data)
+                        if not rea_srv:
+                            logger.warning(f"[check_hooks] Unknown reaction service: {reaction_def.get('service')}")
+                            continue
+
+                        reaction_executor(user, rea_srv, reaction_name, params=params, data=combined_data)
+
+                    except Exception as e:
+                        logger.error(f"[check_hooks] Reaction {reaction_def.get('service')} failed: {e}", exc_info=True)
+                        continue  # continue même si une réaction plante
 
             except Exception as e:
-                logger.exception(f"[check_hooks] Error AREA {area.id if 'area' in locals() else '?'}: {e}")
+                logger.exception(f"[check_hooks] Error AREA {getattr(area, 'id', '?')}: {e}")
+

@@ -51,7 +51,7 @@ def create_area():
               example: "send_message"
             params:
               type: object
-              example: { "city": "Nancy", "message": "🌦️ Météo {city} : {temp}°C, {desc}", "channel_id": "1424684119471689759" }
+              example: { "city": "Nancy", "message": "Météo {city} : {temp}°C, {desc}", "channel_id": "1424684119471689759" }
     responses:
       201:
         description: AREA créé avec succès
@@ -61,33 +61,35 @@ def create_area():
     user_id = int(get_jwt_identity())
     data = request.get_json()
 
+    actions = data.get("actions")
+    reactions = data.get("reactions")
+
+    if not actions or not reactions:
+        return jsonify({"error": "Les champs 'actions' et 'reactions' sont obligatoires"}), 400
+
     area, err = area_manager.create_area(
         user_id,
-        data.get("action_service").lower(),
-        data.get("action"),
-        data.get("reaction_service").lower(),
-        data.get("reaction"),
-        params=data.get("params", {}),
+        actions=actions,
+        reactions=reactions,
         enabled=data.get("enabled", True),
         name=data.get("name", "My AREA"),
         frequency=data.get("frequency", 3600),
-        
+        public=data.get("public", False)
     )
 
     if err:
         return jsonify({"error": err}), 400
 
     return jsonify({
-        "name": area.name,
         "id": area.id,
-        "action_service": area.action_service,
-        "action": area.action,
-        "reaction_service": area.reaction_service,
-        "reaction": area.reaction,
-        "params": area.params,
+        "name": area.name,
+        "actions": area.actions,
+        "reactions": area.reactions,
         "enabled": area.enabled,
         "frequency": int(area.frequency),
+        "public": area.public
     }), 201
+
 
 @bp.route("/<int:area_id>", methods=["GET"])
 @jwt_required()
