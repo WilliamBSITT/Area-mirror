@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import { Button } from "@/components/ui/button";
 import {
@@ -17,7 +17,7 @@ type AreasDeletionDialogProps = {
     title?: string;
     description?: string;
     onConfirm: () => Promise<void> | void;
-    children: React.ReactNode; // le trigger (ex: bouton trash)
+    children: React.ReactNode;
 };
 
 export function AreasDeletionDialog({ title = "Delete Workflows",

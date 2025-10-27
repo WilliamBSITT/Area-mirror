@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
 
-export type AreaPayloadCreate = {
+export type AreaPayloadUpdate = {
     action: string;
     action_service: string;
     frequency: number;
@@ -11,17 +11,17 @@ export type AreaPayloadCreate = {
     public: boolean;
 };
 
-export function usePostArea() {
+export function usePutArea() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [data, setData] = useState<any>(null);
 
-    const postArea = useCallback(async (payload: AreaPayloadCreate) => {
+    const postArea = useCallback(async (payload: AreaPayloadUpdate) => {
         setLoading(true);
         setError(null);
         try {
             const res = await fetch("/api/areas", {
-                method: "POST",
+                method: "Put",
                 credentials: "include",
                 headers: { "Content-Type": "application/json", Accept: "application/json" },
                 body: JSON.stringify(payload),
