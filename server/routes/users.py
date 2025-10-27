@@ -14,6 +14,12 @@ def get_users():
     ---
     tags:
       - Users
+    parameters:
+      - in: header
+        name: Authorization
+        type: string
+        required: true
+        description: "JWT token au format: Bearer <access_token>"
     responses:
       200:
         description: list all users
@@ -43,6 +49,11 @@ def get_user(user_id):
     tags:
       - Users
     parameters:
+      - in: header
+        name: Authorization
+        type: string
+        required: true
+        description: "JWT token au format: Bearer <access_token>"
       - name: user_id
         in: path
         type: integer
@@ -143,11 +154,28 @@ def update_user(user_id):
     tags:
       - Users
     parameters:
+      - in: header
+        name: Authorization
+        type: string
+        required: true
+        description: "JWT token au format: Bearer <access_token>"
       - name: user_id
         in: path
         type: integer
         required: true
         description: ID de l'utilisateur
+      - name: password
+        in: body
+        description: mot de passe de l'utilisater
+        required: false
+      - name: email
+        in: body
+        description: email de l'utilisateur
+        required: false
+      - name: picture
+        in: body
+        description: picture de l'utilisateur
+        required: false
     requestBody:
       required: true
       content:
@@ -212,6 +240,11 @@ def delete_user(user_id):
     tags:
       - Users
     parameters:
+      - in: header
+        name: Authorization
+        type: string
+        required: true
+        description: "JWT token au format: Bearer <access_token>"
       - name: user_id
         in: path
         type: integer
