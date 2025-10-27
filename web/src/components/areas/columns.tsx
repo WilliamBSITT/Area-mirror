@@ -102,7 +102,7 @@ export function createAreaColumns(
                             onCheckedChange={onChange}
                             aria-label={`Toggle ${area.name}`}
                         />
-                        <AreasUpdateDialog/>
+                        <AreasUpdateDialog areaId={area.id} />
                         <AreasDeletionDialog onConfirm={onDelete}>
                             <Button
                                 variant="ghost"

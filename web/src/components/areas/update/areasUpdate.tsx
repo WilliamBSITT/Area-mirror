@@ -20,7 +20,7 @@ type ActionItem = { id: number; left: string | null; right: string | null };
 type ReactionItem = { id: number; left: string | null; right: string | null };
 
 interface AreasUpdateDialogProps {
-    areaId: string;
+    areaId: string | number;  // Accepte les deux types
     onCreated?: () => void;
 }
 
@@ -51,37 +51,47 @@ export function AreasUpdateDialog({ areaId, onCreated }: AreasUpdateDialogProps)
 
     const [showExtras, setShowExtras] = React.useState(false);
 
+    // Charger les données quand le dialog s'ouvre
     React.useEffect(() => {
         if (open && areaId) {
+
             const loadAreaData = async () => {
                 try {
-                    const areaData = await fetchArea(areaId);
+                    const areaData = await fetchArea(areaId.toString());
+
+
 
                     setName(areaData.name || "");
-                    setFrequency(secondsToTime(areaData.frequency || 3600));
+                    const frequencyFormatted = secondsToTime(areaData.frequency || 3600);
+                    setFrequency(frequencyFormatted);
+
                     setIsPublic(areaData.public || false);
 
                     if (areaData.action_service && areaData.action) {
-                        setActions([{
+                        const actionItem = {
                             id: 1,
                             left: areaData.action_service,
                             right: areaData.action
-                        }]);
+                        };
+                        setActions([actionItem]);
+                    } else {
                     }
 
                     if (areaData.reaction_service && areaData.reaction) {
-                        setReactions([{
+                        const reactionItem = {
                             id: 1,
                             left: areaData.reaction_service,
                             right: areaData.reaction
-                        }]);
+                        };
+                        setReactions([reactionItem]);
+                    } else {
                     }
-                } catch (error) {
-                    console.error("Erreur lors du chargement de l'area:", error);
-                }
+
+                } catch (error) {}
             };
 
             loadAreaData();
+        } else {
         }
     }, [open, areaId, fetchArea]);
 
@@ -129,6 +139,7 @@ export function AreasUpdateDialog({ areaId, onCreated }: AreasUpdateDialogProps)
         }
     };
 
+    // Fonction pour convertir HH:MM:SS en secondes
     const timeToSeconds = (timeString: string): number => {
         const parts = timeString.split(':');
         const hours = parseInt(parts[0], 10) || 0;
@@ -183,19 +194,19 @@ export function AreasUpdateDialog({ areaId, onCreated }: AreasUpdateDialogProps)
             </DialogTrigger>
 
             <DialogContent className="sm:max-w-[700px] h-[70vh] overflow-y-auto overflow-x-hidden">
+                <DialogHeader>
+                    <DialogTitle>Edit Workflow</DialogTitle>
+                    <DialogDescription>
+                        Update your workflow here. Click save when you&apos;re done.
+                    </DialogDescription>
+                </DialogHeader>
+
                 {loadingArea ? (
                     <div className="flex items-center justify-center p-8">
                         <p>Chargement...</p>
                     </div>
                 ) : (
                     <form onSubmit={handleSubmit}>
-                        <DialogHeader>
-                            <DialogTitle>Edit Workflow</DialogTitle>
-                            <DialogDescription>
-                                Update your workflow here. Click save when you&apos;re done.
-                            </DialogDescription>
-                        </DialogHeader>
-
                         <section className="grid md:grid-cols-2">
                             <div className="grid gap-4">
                                 <div className="grid gap-3">
@@ -236,6 +247,7 @@ export function AreasUpdateDialog({ areaId, onCreated }: AreasUpdateDialogProps)
                         </div>
                         <br/>
 
+                        {/* Actions et Reactions - reste identique */}
                         <div className="space-y-3">
                             {actions.map((a, idx) => (
                                 <div key={a.id} className="flex items-center gap-2">
