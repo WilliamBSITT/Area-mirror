@@ -23,41 +23,39 @@ class OpenWeatherService(BaseService):
         if action != "get_weather":
             return None
 
-        interval = 3600
-
-        last = params.get("last_triggered_at")
-        if last:
-            if isinstance(last, str):
-                last = datetime.fromisoformat(last)
-
-            if datetime.now(timezone.utc) - last < timedelta(seconds=interval):
-                return None
-
-        city = (params or {}).get("city", "Paris")
+        params = params or {}
+        city = params.get("city", "Paris")
         weather = self.fetch_weather(city)
+
         if not weather:
+            print(f"[OpenWeatherService] Failed to fetch weather for city: {city}")
             return None
-
-        params["last_triggered_at"] = datetime.now(timezone.utc).isoformat()
-
+        
         return {
             "city": city,
             "temp": weather["main"]["temp"],
             "desc": weather["weather"][0]["description"]
         }
     
+    
     def execute_reaction(self, user, reaction, params=None, data=None):
         pass
 
     def fetch_weather(self, city):
+        if not self.api_key:
+            raise ValueError("OPENWEATHER_API_KEY manquant dans le .env")
+
         resp = requests.get(self.base_url, params={
             "q": city,
             "appid": self.api_key,
             "units": "metric",
             "lang": "fr"
         })
+
         if resp.status_code != 200:
+            print(f"[OpenWeatherService] API error: {resp.text}")
             return None
+
         return resp.json()
     
     def get_actions_params(self, action_name):
