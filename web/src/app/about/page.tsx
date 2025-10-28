@@ -2,7 +2,12 @@
 
 import Image from "next/image";
 import triggerhubImage from "@/../public/logo_trigger_hub.png"
+
+import serverDev01 from "@/../public/developers/back01.png"
+import mobilDev from "@/../public/developers/mobil.png"
 import webDev from "@/../public/developers/web.png"
+import serverDev02 from "@/../public/developers/back02.png"
+import uxdesigner from "@/../public/developers/ux.png"
 
 import Link from 'next/link'
 import AuthCodeReader from "@/hooks/auth/useSearchParams";
@@ -37,7 +42,7 @@ export default function Page() {
                 <PixelTransition
                     firstContent={
                         <img
-                            src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Cat03.jpg/1200px-Cat03.jpg"
+                            src={serverDev01.src}
                             alt="default pixel transition content, a cat!"
                             style={{ width: "100%", height: "100%", objectFit: "cover" }}
                         />
@@ -52,7 +57,7 @@ export default function Page() {
                                 backgroundColor: "#111"
                             }}
                         >
-                            <p style={{ fontWeight: 900, fontSize: "3rem", color: "#ffffff" }}>Meow!</p>
+                            <p style={{ fontWeight: 900, fontSize: "2rem", color: "#ffffff" }}>Mobile Developer</p>
                         </div>
                     }
                     gridSize={12}
@@ -64,7 +69,7 @@ export default function Page() {
                 <PixelTransition
                     firstContent={
                         <img
-                            src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Cat03.jpg/1200px-Cat03.jpg"
+                            src={mobilDev.src}
                             alt="default pixel transition content, a cat!"
                             style={{ width: "100%", height: "100%", objectFit: "cover" }}
                         />
@@ -79,7 +84,7 @@ export default function Page() {
                                 backgroundColor: "#111"
                             }}
                         >
-                            <p style={{ fontWeight: 900, fontSize: "3rem", color: "#ffffff" }}>Meow!</p>
+                            <p style={{ fontWeight: 900, fontSize: "2rem", color: "#ffffff" }}>Backend Developer</p>
                         </div>
                     }
                     gridSize={12}
@@ -106,7 +111,7 @@ export default function Page() {
                                 backgroundColor: "#111"
                             }}
                         >
-                            <p style={{ fontWeight: 900, fontSize: "3rem", color: "#ffffff" }}>Meow!</p>
+                            <p  style={{ fontWeight: 900, fontSize: "2rem", color: "#ffffff" }}>Web Developer</p>
                         </div>
                     }
                     gridSize={12}
@@ -118,7 +123,7 @@ export default function Page() {
                 <PixelTransition
                     firstContent={
                         <img
-                            src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Cat03.jpg/1200px-Cat03.jpg"
+                            src={serverDev02.src}
                             alt="default pixel transition content, a cat!"
                             style={{ width: "100%", height: "100%", objectFit: "cover" }}
                         />
@@ -133,7 +138,7 @@ export default function Page() {
                                 backgroundColor: "#111"
                             }}
                         >
-                            <p style={{ fontWeight: 900, fontSize: "3rem", color: "#ffffff" }}>Meow!</p>
+                            <p style={{ fontWeight: 900, fontSize: "2rem", color: "#ffffff" }}>Backend Developer</p>
                         </div>
                     }
                     gridSize={12}
@@ -145,7 +150,7 @@ export default function Page() {
                 <PixelTransition
                     firstContent={
                         <img
-                            src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Cat03.jpg/1200px-Cat03.jpg"
+                            src={uxdesigner.src}
                             alt="default pixel transition content, a cat!"
                             style={{ width: "100%", height: "100%", objectFit: "cover" }}
                         />
@@ -160,7 +165,7 @@ export default function Page() {
                                 backgroundColor: "#111"
                             }}
                         >
-                            <p style={{ fontWeight: 900, fontSize: "3rem", color: "#ffffff" }}>Meow!</p>
+                            <p style={{ fontWeight: 900, fontSize: "2rem", color: "#ffffff" }}>UX Designer</p>
                         </div>
                     }
                     gridSize={12}
