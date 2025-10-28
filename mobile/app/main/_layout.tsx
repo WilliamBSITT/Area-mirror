@@ -10,43 +10,15 @@ export default function TabsLayout() {
     <Tabs screenOptions={{ headerShown: false }} tabBar={props => <MyTabBar {...props}/>}>
       <Tabs.Screen
         name="home"
-        options={{
-          title: "home",
-          tabBarIcon: ({ color }) => (
-            <MaterialIcons name="home" size={28} color={color} />
-          ),
-        }}
       />
       <Tabs.Screen
         name="workflows"
-        options={{
-          title: "Workflows",
-          tabBarIcon: ({ color }) => (
-            <Octicons name="workflow" size={24} color={color} />
-          ),
-        }}
+      />
+      <Tabs.Screen
+        name="publics"
       />
       <Tabs.Screen
         name="profile"
-        options={{
-          title: "profile",
-          tabBarIcon: ({ color }) => (
-            <AntDesign name="user" size={28} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="services/[id]"
-        options={{
-            href: null
-        }} 
-      />
-      <Tabs.Screen
-        name="workflow"
-        options={{
-          href: null,
-          headerShown: false,
-        }}
       />
     </Tabs>
   );
