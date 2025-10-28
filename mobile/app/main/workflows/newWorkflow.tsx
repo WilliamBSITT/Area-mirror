@@ -488,30 +488,30 @@ export default function Workflow({type = "new"}: {type: "new" | "edit"}) {
     }
     loadIcons();
   }, []);
-  
+
     const test_alpha = () => {
-    const { city, message, channel_id, from, password, to } = paramsValues;
-    
+
     const isAlpha = (str) => /^[A-Za-z-]+$/.test(str);
     const isAlphanumeric = (str) => /^[A-Za-z0-9]+$/.test(str);
     const isEmailLike = (str) => str.includes('@') && str.includes('.');
-    
-    // Vérifie la ville
-    if (city && !isAlpha(city)) return false;
-    
-    // Vérifie message et channel_id
-    if (message != null) {
-      if (message === "" || channel_id === "") return false;
-      if (!isAlphanumeric(channel_id)) return false;
+
+    if (paramsValues.city && !isAlpha(paramsValues.city))
+      return false;
+    if (paramsValues.message != null) {
+      if (paramsValues.message === "" || paramsValues.channel_id === "")
+        return false;
+      if (!isAlphanumeric(paramsValues.channel_id))
+        return false;
     }
-  
-    // Vérifie from/to/password
-    if (from != null) {
-      if (from === "" || password === "") return false;
-      if (!isEmailLike(from)) return false;
-      if (to !== "" && !isEmailLike(to)) return false;
+    if (paramsValues.from != null) {
+      if (paramsValues.from === "" || paramsValues.password === "")
+        return false;
+      if (!isEmailLike(paramsValues.from))
+        return false;
+      if (paramsValues.to !== "" && !isEmailLike(paramsValues.to))
+        return false;
     }
-  
+
     return true;
   };
 
