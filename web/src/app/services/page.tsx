@@ -1,10 +1,53 @@
-import Image from "next/image";
-import Link from 'next/link'
+"use client";
+
+import { useServices } from "@/hooks/services/useServices";
+import type { Service } from "@/types/service";  // Importe Service depuis types
+import { CardServices } from "@/components/cardServices";
 
 export default function Page() {
+    const { data, loading, error, refetch } = useServices();
+
+    if (loading) {
+        return (
+            <main className="py-8">
+                <div className="container mx-auto px-4">Chargement…</div>
+            </main>
+        );
+    }
+
+    if (error) {
+        return (
+            <main className="py-8">
+                <div className="container mx-auto px-4">
+                    <p className="text-red-600">Erreur: {error.message}</p>
+                    <button onClick={refetch} className="underline">Réessayer</button>
+                </div>
+            </main>
+        );
+    }
+
+    if (!data?.length) {
+        return (
+            <main className="py-8">
+                <div className="container mx-auto px-4">Aucun service.</div>
+            </main>
+        );
+    }
+
+    const maxId = Math.max(...data.map((s) => s.id));
+    const ids = Array.from({ length: maxId }, (_, i) => i + 1);
+
+    const byId = new Map<number, Service>(data.map((s) => [s.id, s]));  // Service au lieu de Services
+
     return (
-        <main className="py-8 bg-sky-100">
-            <h1>toto</h1>
+        <main className="py-8">
+            <div className="container mx-auto px-4">
+                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                    {ids.map((id) => (
+                        <CardServices key={id} id={id} service={byId.get(id)} />
+                    ))}
+                </div>
+            </div>
         </main>
     );
 }
