@@ -1,0 +1,6 @@
+Update version 1 -> 2 maquette figma 22 octobre 2025
+
+Changements -> UI/UX
+    Modification de certains code couleur afin de rentre le disign de l'app plus agreable
+    Modification de l'agencement de certaint pages (Profil, + workflow) -> afin de rendre
+        l'experience utilisateur plus facile et intuitive

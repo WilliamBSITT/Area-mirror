@@ -1,4 +1,4 @@
-import { View, Text, TextInput, Pressable, Image, ScrollView, Switch} from "react-native"
+import { View, Text, TextInput, Pressable, Image, ScrollView, Switch, CodegenTypes} from "react-native"
 import React, {use, useEffect, useState} from "react"
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -66,7 +66,8 @@ function MultiSelect({
   paramsValues,
   setParamsValues,
   initialService,
-  initialAction
+  initialAction,
+  setEventFill,
 }: {
   type: "actions" | "reactions",
   services?: { label: string; value: string; icon: (() => React.JSX.Element) | undefined }[],
@@ -76,7 +77,8 @@ function MultiSelect({
   paramsValues: { [key: string]: string },
   setParamsValues: React.Dispatch<React.SetStateAction<{ [key: string]: string }>>,
   initialService?: string | null,
-  initialAction?: string | null
+  initialAction?: string | null,
+  setEventFill: React.Dispatch<React.SetStateAction<boolean>>,
 }) {
   const [actionOpen, setActionOpen] = useState(false);
   const [valueAction, setValueAction] = useState<string>(initialAction || "");
@@ -237,8 +239,13 @@ function MultiSelect({
         setOutputs((data.outputs || []).map((out: { name: string; type: string; required?: boolean }) => ({ name: out.name, type: out.type, required: !!out.required })));
       }
     }
-    if (valueService != initialService)
+    if (valueService != initialService) {
       setValueAction("");
+    }
+    if(valueAction == "")
+      setEventFill(false);
+    else
+      setEventFill(true);
     console.log("valueService changed:", valueService);
     if (valueService == "spotify") {
       callSpotify();
@@ -482,7 +489,30 @@ export default function Workflow({type = "new"}: {type: "new" | "edit"}) {
     loadIcons();
   }, []);
 
+  const test_alpha = () => {
+
+    if (paramsValues.city != null)
+      for (let i = 0; i != paramsValues.city.length; i++) {
+        if (!(paramsValues.city[i] >= 'a' && paramsValues.city[i] <= 'z') && !(paramsValues.city[i] >= 'A'
+          && paramsValues.city[i] <= 'Z') && paramsValues.city[i] != '-')
+          return false;
+      }
+    if (paramsValues.message != null) {
+      if (paramsValues.message == "" || paramsValues.channel_id == "")
+        return false;
+      for (let i = 0; i != paramsValues.channel_id.length; i++)
+        if (!(paramsValues.channel_id[i] >= 'a' && paramsValues.channel_id[i] <= 'z') && !(paramsValues.channel_id[i] >= 'A' 
+          && paramsValues.channel_id[i] <= 'Z') && !(paramsValues.channel_id[i] >= '0' && paramsValues.channel_id[i] <= '9'))
+          return false;
+    }
+    return true;
+  }
+
   const save = async () => {
+    if (test_alpha() == false) {
+          showToast("error", "Bad Parameters", "Argument Missing or Bad type argument");
+          return;
+    }
     try {
       const actions = workflows.filter(w => w.type === "actions");
       const reactions = workflows.filter(w => w.type === "reactions");
@@ -521,7 +551,10 @@ export default function Workflow({type = "new"}: {type: "new" | "edit"}) {
       console.log("error posting areas", err);
     }
   };
-
+  const [EventFill, setEventFill] = useState(false);
+  const TestArgs = () => {
+    EventFill?save():showToast("error", "Bad Parameters", "Argument Missing or Bad type argument");
+  }
   return (
     <ScrollView className="bg-gray-50" contentContainerStyle={{ paddingBottom: 100 }}>
       {/* Header Section */}
@@ -584,6 +617,7 @@ export default function Workflow({type = "new"}: {type: "new" | "edit"}) {
               setParamsValues={setParamsValues}
               initialService={workflow.service}
               initialAction={workflow.action}
+              setEventFill={setEventFill}
             />
             {workflows.length > 2 && (
               <Pressable 
@@ -614,15 +648,14 @@ export default function Workflow({type = "new"}: {type: "new" | "edit"}) {
             />
           </View>
         </View>
-
-        <Pressable
+          <Pressable
           className="rounded-2xl py-4 shadow-lg active:opacity-80 bg-blue-900"
-          onPress={save}
-        >
-          <Text className="text-white text-center text-lg font-bold">
-            {type === "edit" ? "Update Workflow" : "Create Workflow"}
-          </Text>
-        </Pressable>
+          onPress={TestArgs}
+          >
+            <Text className="text-white text-center text-lg font-bold">
+              {type === "edit" ? "Update Workflow" : "Create Workflow"}
+            </Text>
+          </Pressable>
       </View>
     </ScrollView>
   );
