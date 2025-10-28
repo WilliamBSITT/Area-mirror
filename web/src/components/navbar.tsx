@@ -177,6 +177,10 @@ export function Navbar() {
                                     About
                                 </Link>
                                 <br/>
+                                <Button asChild>
+                                    <Link href="/download">Download</Link>
+                                </Button>
+                                <br/>
                                 <Switch defaultChecked={darkTheme} onCheckedChange={setDarkTheme} />
                             </nav>
 
