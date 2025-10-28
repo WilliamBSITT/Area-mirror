@@ -488,33 +488,32 @@ export default function Workflow({type = "new"}: {type: "new" | "edit"}) {
     }
     loadIcons();
   }, []);
-
-  const test_alpha = () => {
-
-    if (paramsValues.city != null)
-      for (let i = 0; i != paramsValues.city.length; i++) {
-        if (!(paramsValues.city[i] >= 'a' && paramsValues.city[i] <= 'z') && !(paramsValues.city[i] >= 'A'
-          && paramsValues.city[i] <= 'Z') && paramsValues.city[i] != '-')
-          return false;
-      }
-    if (paramsValues.message != null) {
-      if (paramsValues.message == "" || paramsValues.channel_id == "")
-        return false;
-      for (let i = 0; i != paramsValues.channel_id.length; i++)
-        if (!(paramsValues.channel_id[i] >= 'a' && paramsValues.channel_id[i] <= 'z') && !(paramsValues.channel_id[i] >= 'A' 
-          && paramsValues.channel_id[i] <= 'Z') && !(paramsValues.channel_id[i] >= '0' && paramsValues.channel_id[i] <= '9'))
-          return false;
+  
+    const test_alpha = () => {
+    const { city, message, channel_id, from, password, to } = paramsValues;
+    
+    const isAlpha = (str) => /^[A-Za-z-]+$/.test(str);
+    const isAlphanumeric = (str) => /^[A-Za-z0-9]+$/.test(str);
+    const isEmailLike = (str) => str.includes('@') && str.includes('.');
+    
+    // Vérifie la ville
+    if (city && !isAlpha(city)) return false;
+    
+    // Vérifie message et channel_id
+    if (message != null) {
+      if (message === "" || channel_id === "") return false;
+      if (!isAlphanumeric(channel_id)) return false;
     }
-    if (paramsValues.from != null) {
-      if (paramsValues.from == "" || paramsValues.password == "")
-        return false;
-      if ((!paramsValues.from.includes("@") || !paramsValues.from.includes('.')))
-        return false;
-      if (paramsValues.to != "" && ((!paramsValues.to.includes("@") || !paramsValues.to.includes('.'))))
-        return false;
+  
+    // Vérifie from/to/password
+    if (from != null) {
+      if (from === "" || password === "") return false;
+      if (!isEmailLike(from)) return false;
+      if (to !== "" && !isEmailLike(to)) return false;
     }
+  
     return true;
-  }
+  };
 
   const save = async () => {
     if (test_alpha() == false) {
