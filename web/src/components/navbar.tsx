@@ -109,6 +109,9 @@ export function Navbar() {
                 </NavigationMenu>
 
                 <div className="hidden md:flex flex items-center gap-2">
+                    <Button asChild>
+                        <Link href="/download">Download</Link>
+                    </Button>
                     <Switch defaultChecked={darkTheme} onCheckedChange={setDarkTheme} />
                     {loading ? (
                         <div className="h-9 w-32 rounded-md bg-gray-200 animate-pulse" />
