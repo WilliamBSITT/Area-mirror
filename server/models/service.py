@@ -11,7 +11,7 @@ class Service(db.Model):
     auth_url = db.Column(db.String(255), nullable=True)
 
     def to_dict(self):
-        return {"id": self.id, "name": self.name, "description": self.description, "image": binascii.b2a_base64(self.image).decode('utf-8') if self.image else None}
+        return {"id": self.id, "name": self.name.lower(), "description": self.description, "image": binascii.b2a_base64(self.image).decode('utf-8') if self.image else None}
 
 def image_to_binary(filename):
     base_dir = os.path.dirname(os.path.abspath(__file__))
