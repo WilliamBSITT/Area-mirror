@@ -505,6 +505,14 @@ export default function Workflow({type = "new"}: {type: "new" | "edit"}) {
           && paramsValues.channel_id[i] <= 'Z') && !(paramsValues.channel_id[i] >= '0' && paramsValues.channel_id[i] <= '9'))
           return false;
     }
+    if (paramsValues.from != null) {
+      if (paramsValues.from == "" || paramsValues.password == "")
+        return false;
+      if ((!paramsValues.from.includes("@") || !paramsValues.from.includes('.')))
+        return false;
+      if (paramsValues.to != "" && ((!paramsValues.to.includes("@") || !paramsValues.to.includes('.'))))
+        return false;
+    }
     return true;
   }
 
