@@ -19,7 +19,7 @@ export default function Page() {
                     className="custom-class"
                     color="cyan"
                     speed="5s"
-                    onClick={() => router.push('/client.apk')}
+                    onClick={() => window.location.href = '/client.apk'}
                 >
                     Download the app
                 </StarBorder>
