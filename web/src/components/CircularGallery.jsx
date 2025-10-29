@@ -334,14 +334,14 @@ class App {
   }
   createMedias(items, bend = 1, textColor, borderRadius, font) {
     const defaultItems = [
-      { image: `/web_pic/01.jpeg` , text: 'Bridge' },
-      { image: `/web_pic/02.jpeg`, text: 'Desk Setup' },
-      { image: `/web_pic/03.jpeg`, text: 'Waterfall' },
-      { image: `/web_pic/04.jpeg`, text: 'Strawberries' },
-      { image: `/web_pic/05.jpeg`, text: 'Deep Diving' },
-      { image: `/web_pic/06.jpeg`, text: 'Train Track' },
-      { image: `/web_pic/07.jpeg`, text: 'Santorini' },
-      { image: `/web_pic/08.jpeg`, text: 'Blurry Lights' },
+      { image: `/web_pic/01.jpeg` , text: 'Sleek' },
+      { image: `/web_pic/02.jpeg`, text: 'Intuitive' },
+      { image: `/web_pic/03.jpeg`, text: 'Responsive' },
+      { image: `/web_pic/04.jpeg`, text: 'User-friendly' },
+      { image: `/web_pic/05.jpeg`, text: 'Ergonomic' },
+      { image: `/web_pic/06.jpeg`, text: 'Seamless' },
+      { image: `/web_pic/07.jpeg`, text: 'Efficient' },
+      { image: `/web_pic/08.jpeg`, text: 'Polished' },
     ];
     const galleryItems = items && items.length ? items : defaultItems;
     this.mediasImages = galleryItems.concat(galleryItems);

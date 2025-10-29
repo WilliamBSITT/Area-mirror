@@ -57,7 +57,7 @@ export default function Page() {
                                 backgroundColor: "#111"
                             }}
                         >
-                            <p style={{ fontWeight: 900, fontSize: "2rem", color: "#ffffff" }}>Mobile Developer</p>
+                            <p style={{ fontWeight: 900, fontSize: "2rem", color: "#ffffff" }}>Backend Developer</p>
                         </div>
                     }
                     gridSize={12}
@@ -84,7 +84,7 @@ export default function Page() {
                                 backgroundColor: "#111"
                             }}
                         >
-                            <p style={{ fontWeight: 900, fontSize: "2rem", color: "#ffffff" }}>Backend Developer</p>
+                            <p style={{ fontWeight: 900, fontSize: "2rem", color: "#ffffff" }}>Mobile Developer</p>
                         </div>
                     }
                     gridSize={12}
