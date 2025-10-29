@@ -59,6 +59,7 @@ def spotify_callback():
         return jsonify({"error": res.text}), 400
 
     tokens = res.json()
+    return redirect(f"http://localhost:8081/services?tokens={tokens}")
     return jsonify({
         "message": "Spotify connected successfully!",
         "tokens": tokens
