@@ -20,15 +20,14 @@ def send_push_notification(user, message, title):
                 sound="default",
             )
         )
-        print("Push notification sent:", response)
     except PushServerError as exc:
-        print("Push server error:", exc)
+        return
     except (ConnectionError, HTTPError) as exc:
-        print("Connection error:", exc)
+        return
     except DeviceNotRegisteredError:
-        print("Device not registered, removing token")
+        return
     except InvalidCredentialsError:
-        print("Invalid Expo credentials")
+        return
 
 class NotificationService(BaseService):
     name = "notifications"
