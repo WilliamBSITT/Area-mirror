@@ -21,7 +21,7 @@ type ReactionItem = { id: number; left: string | null; right: string | null };
 export default function AreasCreationDialog({ onCreated }: { onCreated?: () => void }) {
     const [open, setOpen] = React.useState(false);
     const [name, setName] = React.useState("");
-    const [frequency, setFrequency] = React.useState("01:30:00");
+    const [frequency, setFrequency] = React.useState("01:30");
     const { postArea, loading, error, data } = usePostArea();
     const router = useRouter();
     const [isPublic, setIsPublic] = React.useState(false);
@@ -80,13 +80,11 @@ export default function AreasCreationDialog({ onCreated }: { onCreated?: () => v
         }
     };
 
-    // Fonction pour convertir HH:MM:SS en secondes
     const timeToSeconds = (timeString: string): number => {
         const parts = timeString.split(':');
         const hours = parseInt(parts[0], 10) || 0;
         const minutes = parseInt(parts[1], 10) || 0;
-        const seconds = parseInt(parts[2], 10) || 0;
-        return hours * 3600 + minutes * 60 + seconds;
+        return hours * 3600 + minutes * 60;
     };
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -177,12 +175,13 @@ export default function AreasCreationDialog({ onCreated }: { onCreated?: () => v
                                 Frequency
                             </Label>
                             <Input
-                                type="time"
+                                type="text"
                                 id="time-picker"
-                                step="1"
                                 value={frequency}
                                 onChange={(e) => setFrequency(e.target.value)}
-                                className="bg-background appearance-none [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none w-35"
+                                placeholder="HH:MM"
+                                pattern="^([0-1][0-9]|2[0-3]):[0-5][0-9]$"
+                                className="bg-background w-35"
                             />
                         </div>
                     </section>

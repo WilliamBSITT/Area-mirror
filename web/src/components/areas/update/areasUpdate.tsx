@@ -20,24 +20,22 @@ type ActionItem = { id: number; left: string | null; right: string | null };
 type ReactionItem = { id: number; left: string | null; right: string | null };
 
 interface AreasUpdateDialogProps {
-    areaId: string | number;  // Accepte les deux types
+    areaId: string | number;
     onCreated?: () => void;
 }
 
-// Fonction pour convertir les secondes en format HH:MM:SS
 const secondsToTime = (seconds: number): string => {
     const hours = Math.floor(seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
-    const secs = seconds % 60;
-    return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+    return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
 };
 
 export function AreasUpdateDialog({ areaId, onCreated }: AreasUpdateDialogProps) {
     const [open, setOpen] = React.useState(false);
     const [name, setName] = React.useState("");
-    const [frequency, setFrequency] = React.useState("01:30:00");
+    const [frequency, setFrequency] = React.useState("01:30");
     const [isPublic, setIsPublic] = React.useState(false);
-    const { postArea, loading, error, data } = usePutArea();
+    const { putArea, loading, error, data } = usePutArea();
     const { fetchArea, loading: loadingArea } = useAreaDetails();
     const router = useRouter();
 
@@ -139,13 +137,11 @@ export function AreasUpdateDialog({ areaId, onCreated }: AreasUpdateDialogProps)
         }
     };
 
-    // Fonction pour convertir HH:MM:SS en secondes
     const timeToSeconds = (timeString: string): number => {
         const parts = timeString.split(':');
         const hours = parseInt(parts[0], 10) || 0;
         const minutes = parseInt(parts[1], 10) || 0;
-        const seconds = parseInt(parts[2], 10) || 0;
-        return hours * 3600 + minutes * 60 + seconds;
+        return hours * 3600 + minutes * 60;
     };
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -161,7 +157,7 @@ export function AreasUpdateDialog({ areaId, onCreated }: AreasUpdateDialogProps)
         try {
             for (const a of actions) {
                 for (const r of reactions) {
-                    await postArea({
+                    await putArea(areaId, {  // Passe l'areaId en premier paramètre
                         action: a.right ?? "",
                         action_service: a.left ?? "",
                         frequency: frequencyInSeconds,
@@ -181,6 +177,7 @@ export function AreasUpdateDialog({ areaId, onCreated }: AreasUpdateDialogProps)
             if (onCreated) onCreated();
             setTimeout(() => router.refresh(), 300);
         } catch (err: any) {
+            console.error("Erreur complète:", err);
             setErrorMsg(err.message || "Une erreur s'est produite lors de la mise à jour.");
         }
     };
@@ -227,12 +224,13 @@ export function AreasUpdateDialog({ areaId, onCreated }: AreasUpdateDialogProps)
                                     Frequency
                                 </Label>
                                 <Input
-                                    type="time"
+                                    type="text"
                                     id="time-picker"
-                                    step="1"
                                     value={frequency}
                                     onChange={(e) => setFrequency(e.target.value)}
-                                    className="bg-background appearance-none [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none w-35"
+                                    placeholder="HH:MM"
+                                    pattern="^([0-1][0-9]|2[0-3]):[0-5][0-9]$"
+                                    className="bg-background w-35"
                                 />
                             </div>
                         </section>
