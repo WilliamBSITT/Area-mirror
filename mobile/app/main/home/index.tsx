@@ -1,10 +1,10 @@
-
-import React, { useEffect, useState, useRef } from 'react';
-import { Text, Image, View, ScrollView, Pressable, Button, Platform } from 'react-native';
-import {Link} from 'expo-router'
+import React, { useEffect, useState } from 'react';
+import { Text, Image, View, ScrollView, Pressable } from 'react-native';
+import { Link } from 'expo-router'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import api from '@/utils/api';
 import showToast from '@/utils/showToast';
+import * as Network from 'expo-network';
 
 function Card({name, path, id}: {name:string, path:any, id:number} ) {
   return (
@@ -13,7 +13,7 @@ function Card({name, path, id}: {name:string, path:any, id:number} ) {
         pathname: '/main/home/[id]',
         params: { id: name },
       }}
-    asChild>
+      asChild>
       <Pressable className="bg-[#F4FBFB] w-70 h-70 rounded-2xl flex" style={{shadowColor: '#000', shadowOpacity: 0.8, elevation: 6,}}>
         <View className="items-start">
           <Text className="text-black font-bold ml-4 mt-2 justify-start">
@@ -52,11 +52,14 @@ export default function Home() {
   useEffect(() => {
     const fetchServices = async () => {
       try {
+        const ip = await Network.getIpAddressAsync();
+        console.log("Device IP Address:", ip);
+
         const res = await api.get(`/services`);
         const resJson = await res.data;
         setData(resJson);
 
-        resJson.map( async (service: service) => {
+        resJson.map(async (service: service) => {
           try {
             await AsyncStorage.setItem(`icon_${(service.name).toLowerCase()}`, service.image);
           } catch (error) {
@@ -71,24 +74,24 @@ export default function Home() {
 
     fetchServices();
   }, []);
+
   return (
-  <View style={{ flex: 1 }}>
-    <ScrollView
-      className="flex-1"
-      contentContainerStyle={{ paddingBottom: 80 }}
-    >
-      <View className="flex flex-row flex-wrap ml-4">
-        {data.map((service: service) => (
-          <View className="w-1/2 p-5" key={service.name}>
-            <Card
-              name={service.name}
-              path={`data:image/png;base64,${service.image}`}
-              id={Number(service.id)}
-            />
-          </View>
-        ))}
-      </View>
-    </ScrollView>
-  </View>
-);
+    <View style={{ flex: 1 }}>
+      <ScrollView
+        contentContainerStyle={{ paddingBottom: 80 }}
+      >
+        <View className="flex flex-row flex-wrap ml-4">
+          {data.map((service: service) => (
+            <View className="w-1/2 p-5" key={service.name}>
+              <Card
+                name={service.name}
+                path={`data:image/png;base64,${service.image}`}
+                id={Number(service.id)}
+              />
+            </View>
+          ))}
+        </View>
+      </ScrollView>
+    </View>
+  );
 }

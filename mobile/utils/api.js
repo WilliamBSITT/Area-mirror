@@ -7,7 +7,7 @@ const api = axios.create({
   timeout: 10000,
 });
 
-// 🔐 Request interceptor: add token
+// Request interceptor: add token
 api.interceptors.request.use(async (config) => {
   const token = await SecureStore.getItemAsync("jwt");
   const ip = await AsyncStorage.getItem("ip");

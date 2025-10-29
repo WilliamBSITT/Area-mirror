@@ -1,6 +1,6 @@
 import { View, Text, Pressable, TextInput, Image, ScrollView } from "react-native";
 import React, { useContext, useState, useEffect } from "react";
-import { AuthContext } from "../../utils/AuthProvider";
+import { AuthContext } from "../../providers/AuthProvider";
 import { deleteToken } from "@/utils/secureStore";
 import { router } from "expo-router";
 import * as SecureStore from "expo-secure-store";
@@ -124,7 +124,7 @@ export default function Profile() {
     }, []);
 
     return (
-    <ScrollView className="bg-gray-50" contentContainerStyle={{ paddingBottom: 40 }}>
+    <ScrollView className="bg-background" contentContainerStyle={{ paddingBottom: 40 }}>
         {/* Header Section with Profile Picture */}
         <View className="bg-white px-6 pt-8 pb-6 shadow-sm">
             <View className="items-center mb-6">

@@ -2,7 +2,7 @@ import React, { useContext} from "react";
 import { Text, View, Pressable, Image, TextInput} from "react-native";
 import { useState } from "react";
 import { router } from "expo-router";
-import { AuthContext } from "@/utils/AuthProvider";
+import { AuthContext } from "@/providers/AuthProvider";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useEffect } from 'react';
 import * as WebBrowser from 'expo-web-browser';
