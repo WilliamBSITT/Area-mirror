@@ -10,8 +10,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { PlusIcon, X, PencilLine } from "lucide-react";
-import AreasActionSelect from "@/components/areas/create/areasActionSelect";
-import AreasReactionSelect from "@/components/areas/create/areasReactionSelect";
+import AreasActionSelect from "@/components/areas/update/areasActionSelect";
+import AreasReactionSelect from "@/components/areas/update/areasReactionSelect";
 import { usePutArea } from "@/hooks/areas/useUpdateAreas";
 import { useAreaDetails } from "@/hooks/areas/useAreasDetails";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -49,9 +49,22 @@ export function AreasUpdateDialog({ areaId, onCreated }: AreasUpdateDialogProps)
 
     const [showExtras, setShowExtras] = React.useState(false);
 
+    const [actionsParams, setActionsParams] = React.useState<Record<number, Record<string, string>>>({});
+    const [reactionsParams, setReactionsParams] = React.useState<Record<number, Record<string, string>>>({});
+
+    const actionsParamsRef = React.useRef(actionsParams);
+    const reactionsParamsRef = React.useRef(reactionsParams);
+
+    React.useEffect(() => {
+        actionsParamsRef.current = actionsParams;
+    }, [actionsParams]);
+
+    React.useEffect(() => {
+        reactionsParamsRef.current = reactionsParams;
+    }, [reactionsParams]);
+
     React.useEffect(() => {
         if (open && areaId) {
-
             setActions([{ id: 1, left: null, right: null }]);
             setReactions([{ id: 1, left: null, right: null }]);
 
@@ -72,6 +85,10 @@ export function AreasUpdateDialog({ areaId, onCreated }: AreasUpdateDialogProps)
                                 right: areaData.action
                             };
                             setActions([actionItem]);
+
+                            if (areaData.params && typeof areaData.params === 'object') {
+                                setActionsParams({ 1: areaData.params });
+                            }
                         }
 
                         if (areaData.reaction_service && areaData.reaction) {
@@ -84,11 +101,11 @@ export function AreasUpdateDialog({ areaId, onCreated }: AreasUpdateDialogProps)
                         }
                     }, 100);
 
+
                 } catch (error) {
-                    console.error("❌ Erreur:", error);
+                    console.error("Erreur:", error);
                 }
             };
-
             loadAreaData();
         }
     }, [open, areaId, fetchArea]);
@@ -125,9 +142,6 @@ export function AreasUpdateDialog({ areaId, onCreated }: AreasUpdateDialogProps)
         setReactions(prev => prev.map(r => (r.id === id ? { ...r, right: v } : r)));
     };
 
-    const [actionsParams, setActionsParams] = React.useState<Record<number, Record<string, string>>>({});
-    const [reactionsParams, setReactionsParams] = React.useState<Record<number, Record<string, string>>>({});
-
     const [errorMsg, setErrorMsg] = React.useState<string | null>(null);
 
     const handleOpenChange = (isOpen: boolean) => {
@@ -157,19 +171,26 @@ export function AreasUpdateDialog({ areaId, onCreated }: AreasUpdateDialogProps)
         try {
             for (const a of actions) {
                 for (const r of reactions) {
-                    await putArea(areaId, {  // Passe l'areaId en premier paramètre
+                    const actionParams = actionsParamsRef.current[a.id] || {};
+                    const reactionParams = reactionsParamsRef.current[r.id] || {};
+
+                    const combinedParams = {
+                        ...actionParams,
+                        ...reactionParams,
+                    };
+
+                    const payload = {
                         action: a.right ?? "",
                         action_service: a.left ?? "",
                         frequency: frequencyInSeconds,
                         name,
-                        params: {
-                            ...actionsParams[a.id],
-                            ...reactionsParams[r.id],
-                        },
+                        params: combinedParams,
                         reaction: r.right ?? "",
                         reaction_service: r.left ?? "",
                         public: isPublic,
-                    });
+                    };
+
+                    await putArea(areaId, payload);
                 }
             }
             setErrorMsg(null);
@@ -177,7 +198,8 @@ export function AreasUpdateDialog({ areaId, onCreated }: AreasUpdateDialogProps)
             if (onCreated) onCreated();
             setTimeout(() => router.refresh(), 300);
         } catch (err: any) {
-            console.error("Erreur complète:", err);
+            console.error("Erreur :", err);
+            setErrorMsg(err.message);
             setErrorMsg(err.message || "Une erreur s'est produite lors de la mise à jour.");
         }
     };
@@ -245,19 +267,18 @@ export function AreasUpdateDialog({ areaId, onCreated }: AreasUpdateDialogProps)
                         </div>
                         <br/>
 
-                        {/* Actions et Reactions - reste identique */}
-                        {/* Actions */}
                         <div className="space-y-3">
                             {actions.map((a, idx) => (
                                 <div key={a.id} className="flex items-center gap-2">
                                     <div className="flex-1">
                                         <AreasActionSelect
-                                            key={`action-${a.id}-${a.left}-${a.right}`}  // Clé dynamique basée sur les valeurs
+                                            key={`action-${areaId}-${a.id}-${a.left}-${a.right}`}
                                             leftValue={a.left ?? undefined}
                                             onLeftChange={v => setActionLeft(a.id, v)}
                                             rightValue={a.right ?? undefined}
                                             onRightChange={v => setActionRight(a.id, v)}
                                             onParamsChange={params => setActionsParams(prev => ({ ...prev, [a.id]: params }))}
+                                            initialParams={actionsParams[a.id]}
                                         />
                                     </div>
                                     {actions.length > 1 && (
@@ -278,18 +299,18 @@ export function AreasUpdateDialog({ areaId, onCreated }: AreasUpdateDialogProps)
 
                         <br />
 
-                        {/* Reactions */}
                         <div className="space-y-3">
                             {reactions.map((r, idx) => (
                                 <div key={r.id} className="flex items-center gap-2">
                                     <div className="flex-1">
                                         <AreasReactionSelect
-                                            key={`reaction-${r.id}-${r.left}-${r.right}`}  // Clé dynamique basée sur les valeurs
+                                            key={`reaction-${areaId}-${r.id}-${r.left}-${r.right}`}
                                             leftValue={r.left ?? undefined}
                                             onLeftChange={v => setReactionLeft(r.id, v)}
                                             rightValue={r.right ?? undefined}
                                             onRightChange={v => setReactionRight(r.id, v)}
                                             onParamsChange={params => setReactionsParams(prev => ({ ...prev, [r.id]: params }))}
+                                            initialParams={reactionsParams[r.id]}
                                         />
                                     </div>
                                     {reactions.length > 1 && (

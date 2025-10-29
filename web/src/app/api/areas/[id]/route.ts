@@ -37,12 +37,17 @@ export async function GET(
     return res;
 }
 
-export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
-    const token = req.cookies.get(COOKIE_NAME)?.value
+export async function PUT(
+    req: NextRequest,
+    { params }: { params: Promise<{ id: string }> }  // ✅ Type Promise
+) {
+    const { id } = await params;
+
+    const token = req.cookies.get(COOKIE_NAME)?.value;
     if (!token) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
 
     const body = await req.json();
-    const be = await fetch(`${BACKEND_URL}/areas/${params.id}`, {
+    const be = await fetch(`${BACKEND_URL}/areas/${id}`, {
         method: "PUT",
         headers: {
             Accept: "application/json",
@@ -68,6 +73,7 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
 
     return res;
 }
+
 
 export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
     const token = req.cookies.get(COOKIE_NAME)?.value;
