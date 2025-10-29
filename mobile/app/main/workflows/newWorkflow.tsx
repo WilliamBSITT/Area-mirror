@@ -491,8 +491,8 @@ export default function Workflow({type = "new"}: {type: "new" | "edit"}) {
 
     const test_alpha = () => {
 
-    const isAlpha = (str) => /^[A-Za-z-]+$/.test(str);
-    const isAlphanumeric = (str) => /^[A-Za-z0-9]+$/.test(str);
+    const isAlpha = (str) => /^[A-Za-z- ]+$/.test(str);
+    const isAlphanumeric = (str) => /^[A-Za-z0-9 ]+$/.test(str);
     const isEmailLike = (str) => str.includes('@') && str.includes('.');
 
     if (paramsValues.city && !isAlpha(paramsValues.city))
