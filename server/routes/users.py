@@ -123,14 +123,20 @@ def create_user():
     data = request.get_json()
     email = data.get("email")
     password = data.get("password")
+    expo_push_token = data.get("expo_push_token")
+    notif = False
 
     if not email or not password:
         return jsonify({"error": "email or password required"}), 400
     if User.query.filter_by(email=email).first():
         return jsonify({"error": "user already exist"}), 400
+    if expo_push_token:
+      notif = True
 
     user = User(email=email)
     user.set_password(password)
+    user.expo_push_token = expo_push_token
+    user.allow_notifications = notif
     db.session.add(user)
     db.session.commit()
     
@@ -219,6 +225,7 @@ def update_user(user_id):
     email = data.get("email")
     password = data.get("password")
     pictures = data.get("pictures")
+    allow_notifications = data.get("allow_notifications")
 
     if email:
         user.email = email
@@ -229,6 +236,8 @@ def update_user(user_id):
           user.pictures = base64.b64decode(pictures)
         else:
           user.pictures = pictures
+    if allow_notifications is not None:
+      user.allow_notifications = allow_notifications
     
     db.session.commit()
     return jsonify(user.to_dict()), 200

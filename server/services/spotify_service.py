@@ -42,6 +42,18 @@ class SpotifyService(BaseService):
             {"name": "previous", "description": "Retourne à la musique précédente"}
         ]
 
+    def get_reactions_params(self, reaction_name):
+        if reaction_name == "play":
+            return [
+                {"name": "track_uri", "type": "string", "description": "URI de la piste à jouer"},
+                {"name": "tokens", "type": "object", "description": "Tokens d'authentification de l'utilisateur (access_token et refresh_token)"},
+                {"name": "refresh_token", "type": "string", "description": "Token de rafraîchissement de l'utilisateur"}
+            ]
+        return [
+            {"name": "tokens", "type": "object", "description": "Tokens d'authentification de l'utilisateur (access_token et refresh_token)"},
+            {"name": "refresh_token", "type": "string", "description": "Token de rafraîchissement de l'utilisateur"}
+        ] 
+
     def check_action(self, user, action, params=None):
         tokens = params.get("tokens", {})
         access_token = tokens.get("access_token")

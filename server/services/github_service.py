@@ -31,6 +31,38 @@ class GithubService(BaseService):
             {"name": "create_issue", "description": "Crée une issue dans un dépôt GitHub"},
             {"name": "star_repo",    "description": "Ajoute une étoile à un dépôt GitHub"}
         ]
+    
+    def get_actions_params(self, action_name):
+        if action_name == "new_commit":
+            return [
+                {"name": "repo", "type": "string", "description": "Dépôt à surveiller au format 'owner/repo'"},
+                {"name": "token", "type": "string", "description": "Token d'accès GitHub avec les permissions nécessaires"},
+                {"name": "last_commit", "type": "string", "description": "SHA du dernier commit vu (utilisé pour le suivi)"}
+            ]
+        elif action_name == "new_issue":
+            return [
+                {"name": "repo", "type": "string", "description": "Dépôt à surveiller au format 'owner/repo'"},
+                {"name": "token", "type": "string", "description": "Token d'accès GitHub avec les permissions nécessaires"},
+                {"name": "last_issue", "type": "integer", "description": "ID de la dernière issue vue (utilisé pour le suivi)"}
+            ]
+        else:
+            return []
+    
+    def get_reactions_params(self, reaction_name):
+        if reaction_name == "create_issue":
+            return [
+                {"name": "repo", "type": "string", "description": "Dépôt cible au format 'owner/repo'"},
+                {"name": "title", "type": "string", "description": "Titre de l’issue"},
+                {"name": "body", "type": "string", "description": "Corps de l’issue (peut inclure des placeholders pour les données d’action)"},
+                {"name": "token", "type": "string", "description": "Token d'accès GitHub avec les permissions nécessaires"}
+            ]
+        elif reaction_name == "star_repo":
+            return [
+                {"name": "repo", "type": "string", "description": "Dépôt à étoiler au format 'owner/repo'"},
+                {"name": "token", "type": "string", "description": "Token d'accès GitHub avec les permissions nécessaires"}
+            ]
+        else:
+            return []
 
 
     def check_action(self, user, action, params=None):
