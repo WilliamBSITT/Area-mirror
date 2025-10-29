@@ -102,7 +102,11 @@ export default function ServiceDetailPage() {
                             className="w-full md:w-auto"
                         >
                             <a
-                                href={serviceDetails.auth_url}
+                                href={
+                                    service.name.toLowerCase() === "Spotify" || service.name.toLowerCase() === "Github"
+                                        ? `${serviceDetails.auth_url}?frontend=web`
+                                        : serviceDetails.auth_url
+                                }
                                 target="_blank"
                                 rel="noopener noreferrer"
                             >
