@@ -9,11 +9,74 @@ import * as WebBrowser from 'expo-web-browser';
 import * as AuthSession from "expo-auth-session";
 import api from "@/utils/api";
 import showToast from "@/utils/showToast";
+import * as Device from 'expo-device';
+import * as Notifications from 'expo-notifications';
+import Constants from 'expo-constants';
+import { Platform } from "react-native";
 
 WebBrowser.maybeCompleteAuthSession();
 
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldPlaySound: true,
+    shouldSetBadge: true,
+    shouldShowBanner: true,
+    shouldShowList: true,
+  }),
+});
+
+function handleRegistrationError(errorMessage: string) {
+  alert(errorMessage);
+  throw new Error(errorMessage);
+}
+
+async function registerForPushNotificationsAsync() {
+  if (Platform.OS === 'android') {
+    await Notifications.setNotificationChannelAsync('default', {
+      name: 'default',
+      importance: Notifications.AndroidImportance.MAX,
+      vibrationPattern: [0, 250, 250, 250],
+      lightColor: '#FF231F7C',
+    });
+  }
+
+  if (Device.isDevice) {
+    const { status: existingStatus } = await Notifications.getPermissionsAsync();
+    let finalStatus = existingStatus;
+    if (existingStatus !== 'granted') {
+      const { status } = await Notifications.requestPermissionsAsync();
+      finalStatus = status;
+    }
+    if (finalStatus !== 'granted') {
+      handleRegistrationError('Permission not granted to get push token for push notification!');
+      return;
+    }
+    const projectId =
+      Constants?.expoConfig?.extra?.eas?.projectId ?? Constants?.easConfig?.projectId;
+    if (!projectId) {
+      handleRegistrationError('Project ID not found');
+    }
+    try {
+      const pushTokenString = (
+        await Notifications.getExpoPushTokenAsync({
+          projectId,
+        })
+      ).data;
+      console.log(pushTokenString);
+      return pushTokenString;
+    } catch (e: unknown) {
+      handleRegistrationError(`${e}`);
+    }
+  } else {
+    handleRegistrationError('Must use physical device for push notifications');
+  }
+}
+
 export default function Login() {
-  const [success, setSuccess] = useState(false);
+  const [expoPushToken, setExpoPushToken] = useState('');
+  const [notification, setNotification] = useState<Notifications.Notification | undefined>(
+    undefined
+  );
   const [Ip, setIp] = useState(process.env.EXPO_PUBLIC_IP || "10.18.208.13");
   const { login } = useContext(AuthContext)!;
   const discovery = {
@@ -38,7 +101,6 @@ export default function Login() {
   }, []);
 
   useEffect(() => {
-
     const handleLoginGithub = async (code?: string) => {
       const res = await api.post(`/auth/github/token`, {
           "code": code
@@ -53,7 +115,6 @@ export default function Login() {
       const data = await res.data;
       {mode == 'login' ? router.push('/main/home') :
         setMode('login');
-        setSuccess(true);
         storeData()
         login(data.access_token, 2)
       }
@@ -67,14 +128,33 @@ export default function Login() {
     }
   }, [response]);
 
+    useEffect(() => {
+    registerForPushNotificationsAsync()
+      .then(token => setExpoPushToken(token ?? ''))
+      .catch((error: any) => setExpoPushToken(`${error}`));
+
+    const notificationListener = Notifications.addNotificationReceivedListener(notification => {
+      setNotification(notification);
+    });
+
+    const responseListener = Notifications.addNotificationResponseReceivedListener(response => {
+      console.log(response);
+    });
+
+    return () => {
+      notificationListener.remove();
+      responseListener.remove();
+    };
+  }, []);
+
   const handleCallDB = async () => {
     const res = await api.post(mode == 'login' ? `/auth/token` : `/users`, {
       "email": mail,
-      "password": password
+      "password": password,
+      ...(mode == 'register' && { "expo_push_token": expoPushToken })
     }).catch((error: any) => {
       console.log("Error posting login:", error);
       showToast("error", "Login failed", error.message);
-      setSuccess(false);
     });
 
     if (!res || (res.status !== 201 && res.status !== 200)) {
@@ -85,7 +165,6 @@ export default function Login() {
     console.log('response', data);
     {mode == 'login' ? router.push('/main/home') :
       setMode('login');
-      setSuccess(true);
       login(data.access_token, data.id)
     }
   }

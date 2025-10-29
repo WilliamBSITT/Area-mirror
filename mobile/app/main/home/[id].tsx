@@ -7,6 +7,7 @@ import { router } from "expo-router";
 import api from "@/utils/api";
 import * as Linking from 'expo-linking';
 import * as WebBrowser from 'expo-web-browser';
+import Feather from '@expo/vector-icons/Feather';
 
 export const callSpotify = async () => {
     try {
@@ -137,7 +138,7 @@ export default function ServiceScreen() {
                 </View>
           <Text className="text-black text-2xl font-bold ml-4 mt-2 justify-start"> {data?.description}</Text>
           <Pressable className="absolute bottom-40 right-14 bg-blue-900 w-16 h-16 rounded-full" onPress={() => router.push('/main/workflows/newWorkflow')} style={{shadowColor: '#000', shadowOpacity: 0.8, elevation: 6,}}>
-                  <Image source={require("../../../images/plus-white.png")} className="w-10 h-10 m-auto"/>
+            <Feather name="plus" size={48} color="white" style={{ margin: 'auto' }}/>
           </Pressable>
           {data?.auth_url != null && (
           <Pressable

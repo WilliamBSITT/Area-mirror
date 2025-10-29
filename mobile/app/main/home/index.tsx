@@ -1,6 +1,6 @@
 
-import React, { useEffect, useState } from 'react';
-import { Text, Image, View, ScrollView, Pressable, StyleSheet } from 'react-native';
+import React, { useEffect, useState, useRef } from 'react';
+import { Text, Image, View, ScrollView, Pressable, Button, Platform } from 'react-native';
 import {Link} from 'expo-router'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import api from '@/utils/api';

@@ -9,6 +9,8 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import * as ImagePicker from 'expo-image-picker';
 import showToast from "@/utils/showToast";
+import Switch from "@/components/mySwitch";
+import { useSharedValue } from "react-native-reanimated";
 
 export default function Profile() {
     const auth = useContext(AuthContext);
@@ -17,6 +19,18 @@ export default function Profile() {
     const [oldPwd, setOldPwd] = useState("")
     const [Mail, setMail] = useState<string>('');
     const [Edit, setEdit] = useState(false);
+    const isNotificationsEnabled = useSharedValue(false);
+    const toggleNotifications = async () => {
+        const id = await SecureStore.getItemAsync("id")
+        isNotificationsEnabled.value = !isNotificationsEnabled.value;
+        api.put(`/users/${id}`, {
+            allow_notifications: isNotificationsEnabled.value
+        }).then(() => {
+            showToast("success", "Notification setting updated", `Notifications have been ${isNotificationsEnabled.value ? "enabled" : "disabled"}.`);
+        }).catch((error: any) => {
+            showToast("error", "Failed to update notification settings", "There was an error updating your notification settings.");
+        });
+    };
 
     const [image, setImage] = useState<string | null>(null);
 
@@ -101,6 +115,7 @@ export default function Profile() {
               setImage(`data:image/png;base64,${res.data.pictures}`);
           }
           setMail(res.data.email);
+          isNotificationsEnabled.value = res.data.allow_notifications;
         } catch (err) {
           console.error("Échec du chargement de l'utilisateur :", err);
         }
@@ -212,6 +227,17 @@ export default function Profile() {
                     <Text className="text-base text-gray-700">••••••••</Text>
                 </View>
             )}
+        </View>
+
+        <View className="bg-white mx-4 mt-4 rounded-2xl shadow-md p-5">
+            <View className="flex-row items-center mb-3">
+                <MaterialIcons name="notifications" size={24} color="#6B7280" />
+                <Text className="text-xl font-bold text-gray-800 ml-2">Notifications</Text>
+            </View>
+            <View className="flex-row items-center justify-between">
+                <Text className="text-gray-700 text-base">When a workflow is running</Text>
+                <Switch value={isNotificationsEnabled} onPress={toggleNotifications} />
+            </View>
         </View>
 
         {/* Logout Section */}
