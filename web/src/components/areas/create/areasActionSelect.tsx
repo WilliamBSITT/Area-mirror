@@ -88,6 +88,7 @@ export default function AreasActionSelect({ leftValue, onLeftChange, rightValue,
                     value={leftValue}
                     onValueChange={onLeftChange ?? (() => {})}
                     disabled={loading || !!error}
+                    data-test="service-select-action"
                 >
                     <SelectTrigger className="w-[200px]">
                         <SelectValue
@@ -123,6 +124,7 @@ export default function AreasActionSelect({ leftValue, onLeftChange, rightValue,
                     value={rightValue}
                     onValueChange={onRightChange ?? (() => {})}
                     disabled={detailsLoading || !!detailsError || !details}
+                    data-test="action-select-action"
                 >
                     <SelectTrigger className="w-[200px]">
                         <SelectValue

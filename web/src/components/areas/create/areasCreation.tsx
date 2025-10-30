@@ -127,7 +127,7 @@ export default function AreasCreationDialog({ onCreated }: { onCreated?: () => v
     return (
         <Dialog open={open} onOpenChange={handleOpenChange}>
             <DialogTrigger asChild>
-                <Button variant="outline" size="icon" aria-label="Open creation dialog">
+                <Button variant="outline" size="icon" aria-label="Open creation dialog" id="create-area-button">
                     <PlusIcon />
                 </Button>
             </DialogTrigger>

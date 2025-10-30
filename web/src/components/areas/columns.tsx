@@ -109,6 +109,7 @@ export function createAreaColumns(
                                 size="icon"
                                 aria-label={`Supprimer ${area.name}`}
                                 className="text-destructive hover:text-destructive"
+                                id={`delete-area-button-${area.id}`}
                             >
                                 <Trash2 className="h-4 w-4" />
                             </Button>
