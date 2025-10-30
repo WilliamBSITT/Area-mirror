@@ -5,6 +5,8 @@ from flask import current_app
 from models.area import Area
 from services import get_all_services
 from core.reaction_executor import reaction_executor
+from services.notification_service import send_push_notification
+
 
 logger = logging.getLogger("AREA-App")
 
@@ -40,8 +42,11 @@ def check_hooks(app=None):
                     logger.info(f"[check_hooks] AREA {area.id} triggered")
                     area.last_run = now
                     db.session.commit()
-                    
+
                     reaction_executor(user, rea_srv, area.reaction, params=params, data=data)
+                    titre = "Workflows from area is running"
+                    description = area.name
+                    send_push_notification(user, description, titre)
 
             except Exception as e:
                 logger.exception(f"[check_hooks] Error AREA {area.id}: {e}")

@@ -31,7 +31,7 @@ def seed_services():
             "name": "Spotify",
             "description": "Spotify is a digital music platform where you can stream millions of songs and podcasts. It lets you create and share playlists for any mood or moment. Discover new artists and listen to your favorite albums anytime, anywhere. You can connect with friends and see what they’re listening to. Perfect for anyone who loves music and wants instant access to it.",
             "image": image_to_binary("spotify"),
-            "auth_url": "https://accounts.spotify.com/authorize?client_id=a63f13819159493eb695b3c16785aa55&response_type=code&redirect_uri=http%3A%2F%2F127.0.0.1%3A8080%2Fspotify%2Fcallback&scope=user-read-currently-playing+user-read-playback-state&show_dialog=true"
+            "auth_url": "http://127.0.0.1:8080/spotify/callback"
         },
         {
             "name": "OpenWeather",
