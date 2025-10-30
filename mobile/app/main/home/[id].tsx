@@ -127,7 +127,7 @@ export default function ServiceScreen() {
   }, [id]);
 
   return (
-    <View className="bg-[#F4FBFB] flex h-full w-full">
+    <View className="bg-background flex h-full w-full">
           <Text className="text-black text-4xl font-bold ml-4 mt-5 justify-start">{data?.name}</Text>
            <View className='items-center'>
                   <Image
@@ -138,7 +138,7 @@ export default function ServiceScreen() {
                 </View>
           <Text className="text-black text-2xl font-bold ml-4 mt-2 justify-start"> {data?.description}</Text>
           <Pressable className="absolute bottom-40 right-14 bg-blue-900 w-16 h-16 rounded-full" onPress={() => router.push('/main/workflows/newWorkflow')} style={{shadowColor: '#000', shadowOpacity: 0.8, elevation: 6,}}>
-            <Feather name="plus" size={48} color="white" style={{ margin: 'auto' }}/>
+            <Feather name="plus" size={48} color="white" style={{ margin: 'auto' }} className="fg-background"/>
           </Pressable>
           {data?.auth_url != null && (
           <Pressable

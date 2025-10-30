@@ -126,7 +126,7 @@ export default function Profile() {
     return (
     <ScrollView className="bg-background" contentContainerStyle={{ paddingBottom: 40 }}>
         {/* Header Section with Profile Picture */}
-        <View className="bg-white px-6 pt-8 pb-6 shadow-sm">
+        <View className="bg-background px-6 pt-8 pb-6 shadow-sm">
             <View className="items-center mb-6">
                 <Pressable onPress={pickImage} className="relative">
                     {image ? 

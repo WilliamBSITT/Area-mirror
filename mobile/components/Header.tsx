@@ -34,13 +34,8 @@ export default function Header() {
     }
   };
 
-  const handleToggleTheme = () => {
-    switchValue.value = !switchValue.value;
-    toggleTheme();
-  };
-
   return (
-    <View className="bg-blur flex-row justify-between items-center h-20 px-4">
+    <View className="bg-background w-full flex-row justify-between items-center h-20 px-4">
       <View className="w-8">
         {pathname !== '/main/home' && (
           <Pressable onPress={handleGoBack}>

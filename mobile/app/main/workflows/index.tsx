@@ -45,7 +45,7 @@ function WorkflowTile({title, id, data, setData}: {title: string, id: number, da
   return (
     <Pressable className="bg-slate-400 w-3/4 h-32 ml-10 mr-10 m-4 rounded-2xl p-3 shadow-4xl" onPress={() => router.push(`/main/workflows/${id}`)}>
       <View className="flex-1 flex-col">
-        <Text className="text-xl text-white mb-2">{title}</Text>
+        <Text className="text-xl text-primary mb-2">{title}</Text>
 
         <View className="flex-1 flex-row items-center justify-between">
           <View className="flex flex-row gap-2 items-center">
@@ -57,7 +57,7 @@ function WorkflowTile({title, id, data, setData}: {title: string, id: number, da
           <View className="flex flex-row items-center gap-2">
             <Switch onPress={toggleSwitch} value={isOn} />
             <Pressable onPress={handleDelete} className="ml-3">
-              <FontAwesome5 name="trash" size={24} color="white" style={{ margin: 'auto' }}/>
+              <FontAwesome5 name="trash" size={24} style={{ margin: 'auto' }} className="text-background"/>
             </Pressable>
           </View>
         </View>
@@ -102,14 +102,14 @@ export default function Index() {
     );
 
   return (
-    <View className="w-full h-full">
+    <View className="w-full h-full bg-background">
       <View className="items-center">
         {data?.map((area: WorkflowWithImage) => (
           <WorkflowTile title={area.name} id={area.id} key={area.id} data={data} setData={setData}/>
         ))}
       </View>
       <Pressable className="absolute bottom-32 right-14 bg-blue-900 w-16 h-16 rounded-full" onPress={() => router.push('/main/workflows/newWorkflow')}>
-        <Feather name="plus" size={48} color="white" style={{ margin: 'auto' }}/>
+        <Feather name="plus" size={48} style={{ margin: 'auto' }} className="fill-background"/>
       </Pressable>
     </View>
   );

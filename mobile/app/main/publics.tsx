@@ -81,6 +81,7 @@ export default function Publics() {
             refreshControl={
                 <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
             }
+            className='bg-background'
         >
             {publicAreas.map(area => (
                 <Pressable

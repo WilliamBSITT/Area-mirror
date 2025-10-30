@@ -10,7 +10,7 @@ export const themes = {
   dark: vars({
     "--color-primary": "#ffffff",
     "--color-secondary": "rgba(255, 255, 255, 0.2)",
-    "--color-background": "#110000",
+    "--color-background": "rgb(24, 28, 32)",
     "--color-text": "#ffffff",
   }),
-}; 
+};

@@ -76,11 +76,12 @@ export default function Home() {
   }, []);
 
   return (
-    <View style={{ flex: 1 }}>
+    <View className='flex-1 bg-background'>
       <ScrollView
         contentContainerStyle={{ paddingBottom: 80 }}
+        className='bg-background'
       >
-        <View className="flex flex-row flex-wrap ml-4">
+        <View className="flex flex-row flex-wrap ml-4 bg-background">
           {data.map((service: service) => (
             <View className="w-1/2 p-5" key={service.name}>
               <Card
