@@ -90,6 +90,7 @@ export default function AreasReactionSelect({ leftValue, onLeftChange, rightValu
                     value={leftValue}
                     onValueChange={onLeftChange ?? (() => {})}
                     disabled={loading || !!error}
+                    data-test="service-select-reaction"
                 >
                     <SelectTrigger className="w-full md:w-[200px]">
                         <SelectValue
@@ -125,6 +126,7 @@ export default function AreasReactionSelect({ leftValue, onLeftChange, rightValu
                     value={rightValue}
                     onValueChange={onRightChange ?? (() => {})}
                     disabled={detailsLoading || !!detailsError || !details}
+                    data-test="action-select-reaction"
                 >
                     <SelectTrigger className="w-full md:w-[200px]">
                         <SelectValue

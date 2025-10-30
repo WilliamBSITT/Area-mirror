@@ -13,7 +13,7 @@ export default function Home() {
         <section className="grid md:grid-cols-2">
             <div>
                 <div className="px-20">
-                    <h1 className="text-4xl">
+                    <h1 className="text-4xl" data-testid="landing-page-title">
                         Connect your apps and
                         <br />
                         <span className="font-bold text-blue-900">
@@ -21,7 +21,7 @@ export default function Home() {
                 </span>
                     </h1>
                     <br />
-                    <p className="max-w-lg">
+                    <p className="max-w-lg" data-testid="landing-page-description">
                         Our app makes automation easy and effortless. In just a few clicks,
                         connect your APIs and build smart workflows that run on their own.
                         No more repetitive tasks—save time, stay focused on what matters,
