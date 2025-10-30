@@ -15,8 +15,8 @@ def github_login():
     """
     Redirige l'utilisateur vers GitHub pour autorisation OAuth
     """
-    with open("oui.txt", "w") as f:
-        print(REDIRECT_URI, file=f)
+    # with open("oui.txt", "w") as f:
+        # print(REDIRECT_URI, file=f)
     frontend = request.args.get("frontend", "web")
     scope = "repo user"
     state = f"frontend:{frontend}"
@@ -30,7 +30,6 @@ def github_login():
     url = f"{AUTH_URL}?{urllib.parse.urlencode(params)}"
     return redirect(url)
 
-# --- 🟡 Étape 2 : callback GitHub après autorisation
 @bp.route("/callback", methods=["GET"])
 def github_callback():
     """
@@ -51,7 +50,6 @@ def github_callback():
         mobile_redirect_uri = "exp://10.18.208.5:8081"
         return redirect(f"{mobile_redirect_uri}?code={code}")
 
-    # --- 🌐 Sinon : flow classique web
     data = {
         "client_id": CLIENT_ID,
         "client_secret": CLIENT_SECRET,
@@ -66,12 +64,12 @@ def github_callback():
     if "access_token" not in tokens:
         return jsonify({"error": "GitHub OAuth failed", "details": tokens}), 400
 
+    return redirect(f"http://localhost:8081/services?tokens={tokens}")
     return jsonify({
         "message": "GitHub connected successfully!",
         "tokens": tokens
     })
 
-# --- 🔵 Étape 3 : échange du code (flow mobile)
 @bp.route("/exchange_token", methods=["POST"])
 def github_exchange_token():
     """
