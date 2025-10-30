@@ -41,7 +41,6 @@ def github_login():
     url = f"{AUTH_URL}?{urllib.parse.urlencode(params)}"
     return redirect(url)
 
-# --- 🟡 Étape 2 : callback GitHub après autorisation
 @bp.route("/callback", methods=["GET"])
 def github_callback():
     """
@@ -81,6 +80,7 @@ def github_callback():
     if "access_token" not in tokens:
         return jsonify({"error": "GitHub OAuth failed", "details": tokens}), 400
 
+    return redirect(f"http://localhost:8081/services?tokens={tokens}")
     return jsonify({
         "message": "GitHub connected successfully!",
         "tokens": tokens
