@@ -1,5 +1,7 @@
 from flask import Blueprint, jsonify, redirect, request
 import requests, urllib.parse, os
+from .ip_manager import decode_ip
+import json
 
 bp = Blueprint("github_service", __name__, url_prefix="/git")
 
@@ -15,11 +17,20 @@ def github_login():
     """
     Redirige l'utilisateur vers GitHub pour autorisation OAuth
     """
-    # with open("oui.txt", "w") as f:
-        # print(REDIRECT_URI, file=f)
+
     frontend = request.args.get("frontend", "web")
+    encoded_ip = request.args.get("ip", None)
+
+    if not encoded_ip:
+        return jsonify({"error": "Missing 'ip' parameter"}), 400
+    
+    ip = decode_ip(encoded_ip)
+
     scope = "repo user"
-    state = f"frontend:{frontend}"
+    state = json.dumps({
+        "frontend": frontend,
+        "ip": ip
+    })
 
     params = {
         "client_id": CLIENT_ID,
@@ -39,15 +50,20 @@ def github_callback():
         return jsonify({"error": request.args["error"]}), 400
 
     code = request.args.get("code")
-    state = request.args.get("state", "frontend:web")
+    state_str = request.args.get("state", '{"frontend":"web"}')
+
+    clean = state_str.replace('+', '')
+    data = json.loads(clean)
+    
+    frontend = data.get("frontend")
+    ip = data.get("ip")
 
     if not code:
         return jsonify({"error": "Missing authorization code"}), 400
 
-    frontend = state.split(":")[1]
 
     if frontend == "mobile":
-        mobile_redirect_uri = "exp://10.18.208.5:8081"
+        mobile_redirect_uri = f"exp://{ip}:8083"
         return redirect(f"{mobile_redirect_uri}?code={code}")
 
     data = {

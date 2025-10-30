@@ -3,6 +3,10 @@ import requests
 import urllib.parse
 import os
 from datetime import datetime
+from .ip_manager import decode_ip
+import json
+import re
+
 
 bp = Blueprint("spotify_auth", __name__)
 
@@ -15,8 +19,19 @@ TOKEN_URL = "https://accounts.spotify.com/api/token"
 @bp.route("/spotify/login", methods=["GET"])
 def spotify_login():
     frontend = request.args.get("frontend", "web")
+    encoded_ip = request.args.get("ip", None)
+
+    if not encoded_ip:
+        return jsonify({"error": "Missing 'ip' parameter"}), 400
+    
+    ip = decode_ip(encoded_ip)
+    if not ip:
+        return jsonify({"error": "Invalid or tampered 'ip' parameter"}), 400
     scope = "user-read-currently-playing user-read-playback-state"
-    state = f"frontend:{frontend}"
+    state = json.dumps({
+        "frontend": frontend,
+        "ip": ip
+    })
 
     params = {
         "client_id": CLIENT_ID,
@@ -34,15 +49,19 @@ def spotify_login():
 @bp.route("/spotify/callback")
 def spotify_callback():
     code = request.args.get("code")
-    state = request.args.get("state", "frontend:web")
+    state_str = request.args.get("state", '{"frontend":"web"}')
 
-    frontend = state.split(":")[1]
+    clean = state_str.replace('+', '')
+    data = json.loads(clean)
+    
+    frontend = data.get("frontend")
+    ip = data.get("ip")
 
     if not code:
         return jsonify({"error": "Missing authorization code"}), 400
 
     if frontend == "mobile":
-        mobile_redirect_uri = f"exp://10.18.208.5:8081?code={code}"
+        mobile_redirect_uri = f"exp://{ip}:8083?code={code}"
         print(f"Redirecting to mobile app: {mobile_redirect_uri}")
         return redirect(mobile_redirect_uri)
 
