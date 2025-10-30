@@ -220,3 +220,8 @@ def service_fetch_by_name(service_name):
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
+
+@bp.route("/db")
+def db():
+  return redirect("http://localhost:8082", code=302)
