@@ -1,9 +1,9 @@
 import {useCallback, useState} from "react";
 
-export type userUpdate = {
-    email: string;
-    password: string;
-    picture: string;
+export type UserUpdate = {
+    email?: string;
+    password?: string;
+    pictures?: string;
 };
 
 export function usePutUser() {
@@ -11,29 +11,60 @@ export function usePutUser() {
     const [error, setError] = useState<string | null>(null);
     const [data, setData] = useState<any>(null);
 
-    const putUser = useCallback(async (userid: number | string, payload: userUpdate) => {
+    const convertFileToBase64 = (file: File): Promise<string> => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => {
+                const result = reader.result as string;
+                resolve(result);
+            };
+            reader.onerror = (error) => {
+                reject(error);
+            };
+        });
+    };
+
+    const putUser = useCallback(async (payload: UserUpdate, imageFile?: File) => {
         setLoading(true);
         setError(null);
         try {
-            const res = await fetch(`/api/user/${userid}`, {
+            let finalPayload = { ...payload };
+
+            if (imageFile) {
+                const base64 = await convertFileToBase64(imageFile);
+                finalPayload.pictures = base64;
+            }
+
+            const res = await fetch(`/api/users`, {
                 method: "PUT",
                 credentials: "include",
-                headers: { "Content-Type": "application/json", Accept: "application/json" },
-                body: JSON.stringify(payload),
+                headers: {
+                    "Content-Type": "application/json",
+                    Accept: "application/json"
+                },
+                body: JSON.stringify(finalPayload),
             });
 
             const text = await res.text();
-            const json = text ? JSON.parse(text) : null;
+
+            let json = null;
+            if (text && text.trim()) {
+                try {
+                    json = JSON.parse(text);
+                } catch (e) {
+                    throw new Error(`Invalid response from server: ${text.substring(0, 100)}`);
+                }
+            }
 
             if (!res.ok) {
-                throw new Error(json?.error || "Erreur lors de la mise à jour de l'area");
+                throw new Error(json?.error || `Server error: ${res.status}`);
             }
 
             setData(json);
             return json;
         } catch (err: any) {
             setError(err.message);
-            console.error("Erreur PUT /areas :", err);
             throw err;
         } finally {
             setLoading(false);

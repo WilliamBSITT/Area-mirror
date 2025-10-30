@@ -16,22 +16,25 @@ import Avatar from "@/components/Avatar";
 import { toast } from "sonner";
 import { useUser } from "@/hooks/user/useUser";
 import { useDeleteUser } from "@/hooks/user/useDeleteUser";
+import { usePutUser } from "@/hooks/user/useUpdateUser";
 import { User } from "@/types/user";
 import { useRouter } from "next/navigation";
 import { useLogout } from "@/hooks/auth/useLogout";
 import * as React from "react";
 
-export default function page() {
+export default function Page() {
     const [user, setUser] = useState<User | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [emailEdit, setEmailEdit] = useState(false);
+    const [newEmail, setNewEmail] = useState("");
     const [password, setPassword] = useState("");
     const [passwordEdit, setPasswordEdit] = useState(false);
-    const [newPassword, setnewPassword] = useState("");
-    const { logout, loading: loggingOut } = useLogout()
+    const [newPassword, setNewPassword] = useState("");
+    const { logout, loading: loggingOut } = useLogout();
 
     const fetchUser = useUser();
     const deleteUser = useDeleteUser();
+    const { putUser, loading: updating } = usePutUser();
     const router = useRouter();
 
     useEffect(() => {
@@ -40,8 +43,8 @@ export default function page() {
                 setIsLoading(true);
                 const userData = await fetchUser();
                 setUser(userData);
+                setNewEmail(userData.email);
             } catch (error) {
-                console.error("Erreur lors du chargement du profil:", error);
                 toast.error("Impossible de charger le profil");
             } finally {
                 setIsLoading(false);
@@ -50,19 +53,51 @@ export default function page() {
         fetchUserProfile();
     }, [fetchUser]);
 
-    const modifPwd = () => {
-        const tid = toast.loading("Changing password...");
-        setTimeout(() => {
-            toast.success("Password changed!", { id: tid });
-        }, 1000);
-    }
+    const modifPwd = async () => {
+        if (!newPassword || !password) {
+            toast.error("Veuillez remplir tous les champs");
+            return;
+        }
 
-    const modifEmail = () => {
+        const tid = toast.loading("Changing password...");
+        try {
+            await putUser({ password: newPassword });
+            toast.success("Password changed!", { id: tid });
+            setPasswordEdit(false);
+            setPassword("");
+            setNewPassword("");
+        } catch (error) {
+            toast.error("Failed to change password", { id: tid });
+        }
+    };
+
+    const modifEmail = async () => {
+        if (!newEmail) {
+            toast.error("Veuillez entrer un email");
+            return;
+        }
+
         const tid = toast.loading("Changing email...");
-        setTimeout(() => {
+        try {
+            const updatedUser = await putUser({ email: newEmail });
+            setUser(updatedUser);
             toast.success("Email changed!", { id: tid });
-        }, 1000);
-    }
+            setEmailEdit(false);
+        } catch (error) {
+            toast.error("Failed to change email", { id: tid });
+        }
+    };
+
+    const handleImageUpload = async (file: File) => {
+        const tid = toast.loading("Uploading image...");
+        try {
+            const updatedUser = await putUser({}, file);
+            setUser(updatedUser);
+            toast.success("Image uploaded!", { id: tid });
+        } catch (error) {
+            toast.error("Failed to upload image", { id: tid });
+        }
+    };
 
     const handleDeleteAccount = async () => {
         const tid = toast.loading("Deleting account...");
@@ -74,7 +109,7 @@ export default function page() {
         } catch (error) {
             toast.error(error instanceof Error ? error.message : "Failed to delete account", { id: tid });
         }
-    }
+    };
 
     if (isLoading) {
         return <div className="flex items-center justify-center m-5">Loading...</div>;
@@ -88,7 +123,11 @@ export default function page() {
         <div className="flex items-start justify-center min-h-screen pt-10">
             <div className="flex flex-col items-center w-full max-w-md">
                 <h1 className="text-3xl mb-5">Profile</h1>
-                <Avatar />
+                <Avatar
+                    currentImage={user.pictures}
+                    onUpload={handleImageUpload}
+                    isLoading={updating}
+                />
 
                 <div className="w-full mt-5">
                     <p className="mb-3 font-bold text-center">Email</p>
@@ -96,16 +135,23 @@ export default function page() {
                         {emailEdit ? (
                             <Input
                                 placeholder="enter your email"
-                                defaultValue={user.email}
+                                value={newEmail}
                                 className="flex-1"
-                                onChange={(e) => setUser({ ...user, email: e.target.value })}
+                                onChange={(e) => setNewEmail(e.target.value)}
                             />
                         ) : (
                             <p className="flex-1">{user.email}</p>
                         )}
                         <Button
                             className="hover:cursor-pointer"
-                            onClick={() => {emailEdit ? modifEmail() : setEmailEdit(!emailEdit)}}
+                            onClick={() => {
+                                if (emailEdit) {
+                                    modifEmail();
+                                } else {
+                                    setEmailEdit(true);
+                                }
+                            }}
+                            disabled={updating}
                         >
                             {emailEdit ? "Save" : "Edit"}
                         </Button>
@@ -126,7 +172,7 @@ export default function page() {
                                 <Input
                                     placeholder="enter your new password"
                                     value={newPassword}
-                                    onChange={(e) => setnewPassword(e.target.value)}
+                                    onChange={(e) => setNewPassword(e.target.value)}
                                     type="password"
                                 />
                             </div>
@@ -135,7 +181,14 @@ export default function page() {
                         )}
                         <Button
                             className="hover:cursor-pointer"
-                            onClick={() => {passwordEdit ? modifPwd() : setPasswordEdit(!passwordEdit)}}
+                            onClick={() => {
+                                if (passwordEdit) {
+                                    modifPwd();
+                                } else {
+                                    setPasswordEdit(true);
+                                }
+                            }}
+                            disabled={updating}
                         >
                             {passwordEdit ? "Save" : "Edit"}
                         </Button>
@@ -173,5 +226,5 @@ export default function page() {
                 </Dialog>
             </div>
         </div>
-    )
+    );
 }
