@@ -12,11 +12,9 @@ export type WorkflowWithImage = workflowProps & { icon_action: string, icon_reac
 export default function Publics() {
     const [publicAreas, setPublicAreas] = useState<WorkflowWithImage[]>([]);
     const [refreshing, setRefreshing] = useState(false);
-    const isFirstMount = useRef(true);
 
     const fetchData = async () => {
         await Promise.all([fetchPublicAreas()]);
-        console.log("image in async storage:", await AsyncStorage.getItem("i_Discord"));
     };
 
     const fetchPublicAreas = async () => {

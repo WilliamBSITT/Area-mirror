@@ -8,25 +8,7 @@ import api from "@/utils/api";
 import * as Linking from 'expo-linking';
 import * as WebBrowser from 'expo-web-browser';
 import Feather from '@expo/vector-icons/Feather';
-
-export const callSpotify = async () => {
-    try {
-      // Always open the Spotify auth URL
-      await Linking.openURL(`https://avowedly-uncomputed-velvet.ngrok-free.dev/spotify/login?frontend=mobile`);
-      console.log("Opened Spotify auth URL");
-    } catch (error) {
-      console.error("Failed to open Spotify auth:", error);
-    }
-  };
-
-export const openGithub = async () => {
-    try {
-      // Use your backend GitHub auth URL instead of AuthSession
-      await Linking.openURL(`https://avowedly-uncomputed-velvet.ngrok-free.dev/git/login?frontend=mobile`);
-    } catch (error) {
-      console.error("Failed to open GitHub auth:", error);
-    }
-  };
+import { callSpotify, openGithub } from "@/utils/auth2handler";
 
 export default function ServiceScreen() {
   const { id } = useLocalSearchParams();
@@ -38,7 +20,6 @@ export default function ServiceScreen() {
     const handleDeepLink = (event: Linking.EventType) => {
       const { queryParams } = Linking.parse(event.url);
       if (queryParams?.code) {
-        console.log("Received auth code:", queryParams.code);
         setAuthCode(queryParams.code as string);
       }
     };
@@ -49,7 +30,6 @@ export default function ServiceScreen() {
       if (url) {
         const { queryParams } = Linking.parse(url);
         if (queryParams?.code) {
-          console.log("Initial URL auth code:", queryParams.code);
           setAuthCode(queryParams.code as string);
         }
       }

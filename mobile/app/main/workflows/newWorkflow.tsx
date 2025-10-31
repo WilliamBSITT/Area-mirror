@@ -7,7 +7,7 @@ import api from "@/utils/api";
 import WheelPicker from '@quidone/react-native-wheel-picker';
 import showToast from "@/utils/showToast";
 import * as Linking from 'expo-linking';
-import { callSpotify, openGithub} from "../home/[id]";
+import { callSpotify, openGithub} from "@/utils/auth2handler";
 
 
 export interface workflowProps {
@@ -29,10 +29,16 @@ const minutes = [...Array(60).keys()].map((index) => ({
     label: index.toString(),
 }));
 
-function ArgList({args, paramsValues, setParamsValues}: {args: {name: string, type: string, required: boolean}[], paramsValues: {[key: string]: string}, setParamsValues: React.Dispatch<React.SetStateAction<{[key: string]: string}>>}) {
+function ArgList({args, paramsValues, setParamsValues, tokens, serviceName}:
+  {args: {name: string, type: string, required: boolean}[], paramsValues: {[key: string]: string}, setParamsValues: React.Dispatch<React.SetStateAction<{[key: string]: string}>>,
+   tokens: {[key: string]: {[key: string]: string | null}},
+   serviceName: string
+  }) {
   const handleChange = (name: string, value: string) => {
     setParamsValues(prev => ({ ...prev, [name]: value }));
   };
+
+  // console.log("tokens in ArgList:", tokens, serviceName);
 
   return (
     <View className="mt-6 px-5">
@@ -45,7 +51,7 @@ function ArgList({args, paramsValues, setParamsValues}: {args: {name: string, ty
             </Text>
             <TextInput
               className="bg-white border border-gray-200 rounded-xl px-4 py-3 text-gray-800 shadow-sm"
-              value={paramsValues[arg.name] || ""}
+              value={paramsValues[arg.name] || tokens[serviceName.toLowerCase()]?.[arg.name] || ''}
               onChangeText={text => handleChange(arg.name, text)}
               placeholder={arg.type}
               placeholderTextColor="#9CA3AF"
@@ -87,6 +93,7 @@ function MultiSelect({
   const [newServices, setServices] = useState<{ label: string; value: string; icon: (() => React.JSX.Element) | undefined }[]>(services ?? []);
   const [params, setParams] = useState<{name: string, type: string, required: boolean}[]>([]);
   const [authCode, setAuthCode] = useState<string | null>(null);
+  const [tokens, setTokens] = useState<{[key: string]: {[key: string]: string | null}}>({});
 
   useEffect(() => {
     if (initialService) {
@@ -147,8 +154,15 @@ function MultiSelect({
         if (valueService === "spotify") {
           const res = await api.post('/spotify/exchange_token', { code: authCode });
           if (res.status === 200 || res.status === 201) {
-            console.log("Spotify connected successfully");
-            console.log(res.data);
+            console.log(res.data.tokens.access_token);
+            // setSpotToken(res.data.access_token);
+            setTokens(prev => ({
+              ...prev,
+              spotify: {
+                access_token: res.data.tokens.access_token,
+                refresh_token: res.data.tokens.refresh_token,
+              }
+            }));
           }
         }
         // For GitHub
@@ -157,6 +171,13 @@ function MultiSelect({
           if (res.status === 200 || res.status === 201) {
             console.log("GitHub connected successfully");
             console.log(res.data);
+            // setGitToken(res.data.access_token);
+            setTokens(prev => ({
+              ...prev,
+              github: {
+                access_token: res.data.tokens.access_token,
+              }
+            }));
           }
         }
       } catch (error) {
@@ -171,7 +192,6 @@ function MultiSelect({
       const handleDeepLink = (event: Linking.EventType) => {
         const { queryParams } = Linking.parse(event.url);
         if (queryParams?.code) {
-          console.log("Received auth code:", queryParams.code);
           setAuthCode(queryParams.code as string);
         }
       };
@@ -195,12 +215,14 @@ function MultiSelect({
 
   useEffect(() => {
     const fetchActions = async () => {
-      const res = await api.get(`/services/${valueService}/${type}/${valueAction}/params`).catch((error: any) => {
+      try {
+        const res = await api.get(`/services/${valueService}/${type}/${valueAction}/params`);
+        console.log("Fetched params:", res.data);
+          if (res.data.params) {
+            setParams(res.data.params.map((param: { name: string; type: string; required: boolean }) => ({ name: param.name, type: param.type, required: param.required })));
+          }
+      } catch (error) {
         console.log(`/services/${valueService}/${type}/${valueAction}/params`, error);
-      });
-      if (res && res.data) {
-        const data = await res.data;
-        setParams(data.params.map((param: { name: string; type: string; required: boolean }) => ({ name: param.name, type: param.type, required: param.required })));
       }
     }
     fetchActions();
@@ -240,9 +262,9 @@ function MultiSelect({
     if (valueService != initialService)
       setValueAction("");
     console.log("valueService changed:", valueService);
-    if (valueService == "spotify") {
+    if (valueService == "spotify" && valueAction !== "") {
       callSpotify();
-    } else if (valueService == "github") {
+    } else if (valueService == "github" && valueAction !== "") {
       openGithub();
     }
     fetchOutputs();
@@ -264,9 +286,9 @@ function MultiSelect({
     onParamsChange(params);
   }, [params]);
 
-  const handleParamsChange = (values: any) => {
-    onParamsChange(values);
-  };
+  // const handleParamsChange = (values: any) => {
+  //   onParamsChange(values);
+  // };
 
   return (
     <View className="bg-white rounded-2xl shadow-md mx-4 my-3 p-5">
@@ -350,7 +372,7 @@ function MultiSelect({
         </View>
       </View>
 
-      <ArgList args={params} paramsValues={paramsValues} setParamsValues={setParamsValues} />
+      <ArgList args={params} paramsValues={paramsValues} setParamsValues={setParamsValues} serviceName={valueService} tokens={tokens}/>
 
       {type === "actions" && outputs.length > 0 && (
         <View className="mt-6 pt-4 border-t border-gray-100">
@@ -386,9 +408,9 @@ export default function Workflow({type = "new"}: {type: "new" | "edit"}) {
   const [hour, setHour] = useState<number>(1);
   const [isPub, setIsPub] = useState(false);
 
-  const addWorkflow = (type: "actions" | "reactions") => {
-    setWorkflows([...workflows, { type, service: null, action: null, params: {} }]);
-  };
+  // const addWorkflow = (type: "actions" | "reactions") => {
+  //   setWorkflows([...workflows, { type, service: null, action: null, params: {} }]);
+  // };
 
   const removeWorkflow = (index: number) => {
     setWorkflows(workflows.filter((_, i) => i !== index));

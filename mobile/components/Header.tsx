@@ -18,7 +18,6 @@ export default function Header() {
   useEffect(() => {
     const isDark = theme === "dark";
     switchValue.value = isDark;
-    console.log("Header - Current theme:", theme, "Switch value:", isDark);
   }, [theme]);
 
   const handleGoBack = () => {

@@ -4,7 +4,6 @@ import { Link } from 'expo-router'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import api from '@/utils/api';
 import showToast from '@/utils/showToast';
-import * as Network from 'expo-network';
 
 function Card({name, path, id}: {name:string, path:any, id:number} ) {
   return (
@@ -52,9 +51,6 @@ export default function Home() {
   useEffect(() => {
     const fetchServices = async () => {
       try {
-        const ip = await Network.getIpAddressAsync();
-        console.log("Device IP Address:", ip);
-
         const res = await api.get(`/services`);
         const resJson = await res.data;
         setData(resJson);
