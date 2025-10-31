@@ -31,7 +31,7 @@ def seed_services():
             "name": "Spotify",
             "description": "Spotify is a digital music platform where you can stream millions of songs and podcasts. It lets you create and share playlists for any mood or moment. Discover new artists and listen to your favorite albums anytime, anywhere. You can connect with friends and see what they’re listening to. Perfect for anyone who loves music and wants instant access to it.",
             "image": image_to_binary("spotify"),
-            "auth_url": "http://127.0.0.1:8080/spotify/callback"
+            "auth_url": "http://127.0.0.1:8080/spotify/login"
         },
         {
             "name": "OpenWeather",
@@ -42,7 +42,7 @@ def seed_services():
             "name": "GitHub",
             "description": "GitHub is a platform where developers store and share their code online. It allows teams to collaborate on software projects from anywhere. You can track changes, review contributions, and manage updates easily. Developers use it to build, test, and improve their applications together. It’s the world’s largest community for open-source and coding projects.",
             "image": image_to_binary("github"),
-            "auth_url": "https://github.com/login/oauth/authorize?client_id=Ov23liHHgFODT3eZrD2N&scope=repo+user",
+            "auth_url": "http://127.0.0.1:8080/git/login",
         },
         {
             "name": "NASA",
