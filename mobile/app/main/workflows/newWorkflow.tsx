@@ -8,7 +8,8 @@ import WheelPicker from '@quidone/react-native-wheel-picker';
 import showToast from "@/utils/showToast";
 import * as Linking from 'expo-linking';
 import { callSpotify, openGithub} from "../home/[id]";
-
+import { useTheme } from '../../../providers/ThemeProvider';
+import { colorScheme } from "nativewind";
 
 export interface workflowProps {
     "action": string,
@@ -39,12 +40,12 @@ function ArgList({args, paramsValues, setParamsValues}: {args: {name: string, ty
       <View className="flex flex-row flex-wrap justify-between">
         {args.map((arg) => (
           <View key={arg.name} style={{ width: "48%" }} className="mb-4">
-            <Text className="text-sm font-medium text-gray-700 mb-2">
+            <Text className="text-sm font-medium text-text mb-2">
               {arg.name}
               {arg.required && <Text className="text-red-500 ml-1">*</Text>}
             </Text>
             <TextInput
-              className="bg-white border border-gray-200 rounded-xl px-4 py-3 text-gray-800 shadow-sm"
+              className="bg-secondary border border-gray-300 rounded-xl px-4 py-3 text-text shadow-sm"
               value={paramsValues[arg.name] || ""}
               onChangeText={text => handleChange(arg.name, text)}
               placeholder={arg.type}
@@ -87,6 +88,8 @@ function MultiSelect({
   const [newServices, setServices] = useState<{ label: string; value: string; icon: (() => React.JSX.Element) | undefined }[]>(services ?? []);
   const [params, setParams] = useState<{name: string, type: string, required: boolean}[]>([]);
   const [authCode, setAuthCode] = useState<string | null>(null);
+  const { theme } = useTheme();
+
 
   useEffect(() => {
     if (initialService) {
@@ -269,7 +272,7 @@ function MultiSelect({
   };
 
   return (
-    <View className="bg-white rounded-2xl shadow-md mx-4 my-3 p-5">
+    <View className="bg-card rounded-2xl shadow-md mx-4 my-3 p-5">
       <View className="flex flex-row items-center mb-4">
         <View className={`w-12 h-12 rounded-full items-center justify-center ${type === "actions" ? "bg-blue-100" : "bg-purple-100"}`}>
           <Text className={`text-base font-bold ${type === "actions" ? "text-blue-600" : "text-purple-600"}`}>
@@ -283,7 +286,7 @@ function MultiSelect({
 
       <View className="flex flex-row justify-between items-center mb-4">
         <View style={{ zIndex: 4000, flex: 1, marginRight: 8 }}>
-          <Text className="text-xs font-medium text-gray-500 mb-2 ml-1">SERVICE</Text>
+          <Text className="text-xs font-medium text-text mb-2 ml-1">SERVICE</Text>
           <DropDownPicker
             open={servicesOpen}
             value={valueService}
@@ -296,18 +299,19 @@ function MultiSelect({
               value: "value",
               icon: "icon"
             }}
-            labelStyle={{ marginLeft: 8, fontSize: 14, fontWeight: "500" }}
+            labelStyle={{ marginLeft: 8, fontSize: 14, fontWeight: "500", color: theme == 'dark' ? '#FFF' : '#OOO' }}
             listItemLabelStyle={{ marginLeft: 8 }}
             autoScroll={true}
             placeholder="Select service"
             showArrowIcon={true}
             style={{ 
-              borderColor: "#E5E7EB",
+              borderColor: theme == 'dark' ? '#5c636f' : '#E5E7EB',
               borderRadius: 12,
               paddingVertical: 12,
-              backgroundColor: "#F9FAFB"
+              backgroundColor: theme == 'dark' ? '#1E293B' : '#FFF'
             }}
             dropDownContainerStyle={{ 
+              backgroundColor: theme == 'dark' ? '#1E293B' : '#222',
               borderColor: "#E5E7EB",
               borderRadius: 12,
               marginTop: 4
@@ -317,7 +321,7 @@ function MultiSelect({
         </View>
 
         <View style={{ zIndex: 3000, flex: 1, marginLeft: 8 }}>
-          <Text className="text-xs font-medium text-gray-500 mb-2 ml-1">
+          <Text className="text-xs font-medium text-text mb-2 ml-1">
             {type === "actions" ? "EVENT" : "TASK"}
           </Text>
           <DropDownPicker
@@ -332,17 +336,18 @@ function MultiSelect({
               value: "value",
             }}
             style={{ 
-              borderColor: "#E5E7EB",
+              borderColor: theme == 'dark' ? '#5c636f' : '#E5E7EB',
               borderRadius: 12,
               paddingVertical: 12,
-              backgroundColor: "#F9FAFB"
+              backgroundColor: theme == 'dark' ? '#1E293B' : '#FFF'
             }}
-            dropDownContainerStyle={{ 
-              borderColor: "#E5E7EB",
+            dropDownContainerStyle={{
+              backgroundColor: theme == 'dark' ? '#1E293B' : '#222',
+              borderColor: theme == 'dark' ? '#5c636f' : '#E5E7EB',
               borderRadius: 12,
               marginTop: 4
             }}
-            labelStyle={{ marginLeft: 8, fontSize: 14, fontWeight: "500" }}
+            labelStyle={{ marginLeft: 8, fontSize: 14, fontWeight: "500", color: theme == 'dark' ? '#FFF' : '#OOO' }}
             placeholder={type === "actions" ? "Select event" : "Select task"}
             showArrowIcon={true}
             listMode="MODAL"
@@ -353,13 +358,13 @@ function MultiSelect({
       <ArgList args={params} paramsValues={paramsValues} setParamsValues={setParamsValues} />
 
       {type === "actions" && outputs.length > 0 && (
-        <View className="mt-6 pt-4 border-t border-gray-100">
-          <Text className="text-sm font-semibold text-gray-700 mb-3">Available Outputs</Text>
+        <View className="mt-6 pt-4 border-t border-gray-700">
+          <Text className="text-sm font-semibold text-text mb-3">Available Outputs</Text>
           <View className="flex flex-row flex-wrap">
             {outputs.map((out) => (
-              <View key={out.name} className="bg-gray-50 rounded-lg px-3 py-2 mr-2 mb-2">
-                <Text className="text-sm">
-                  <Text className="font-medium text-gray-800">{out.name}</Text>
+              <View key={out.name} className="bg-secondary rounded-lg px-3 py-2 mr-2 mb-2">
+                <Text className="text-sm text-text">
+                  <Text className="font-medium text-text">{out.name}</Text>
                   <Text className="text-gray-500"> • {out.type}</Text>
                 </Text>
               </View>
@@ -521,13 +526,13 @@ export default function Workflow({type = "new"}: {type: "new" | "edit"}) {
       console.log("error posting areas", err);
     }
   };
-
+  const { theme } = useTheme();
   return (
-    <ScrollView className="bg-gray-50" contentContainerStyle={{ paddingBottom: 100 }}>
+    <ScrollView className="bg-background" contentContainerStyle={{ paddingBottom: 100 }}>
       {/* Header Section */}
       <View className="px-5 pt-2">
         <TextInput 
-          className="text-3xl font-bold text-gray-900 mb-4" 
+          className="text-3xl font-bold text-text mb-4" 
           onChangeText={setTitle} 
           value={title} 
           placeholder="Workflow Name"
@@ -535,10 +540,10 @@ export default function Workflow({type = "new"}: {type: "new" | "edit"}) {
         />
         
         {/* Frequency Picker */}
-        <View className="bg-white rounded-xl shadow-md p-4 items-center">
-          <Text className="text-sm font-medium text-gray-600">Run Every</Text>
+        <View className="bg-[var(--color-card)] rounded-xl shadow-md p-4 items-center">
+          <Text className="text-sm font-medium text-text">Run Every</Text>
           <View className="flex flex-row items-center justify-center">
-            <View className="items-center mr-2">
+            <View className="items-center mr-2 text-text">
               <WheelPicker
                 data={minutes}
                 value={hour}
@@ -547,11 +552,12 @@ export default function Workflow({type = "new"}: {type: "new" | "edit"}) {
                 width={60}
                 itemHeight={25}
                 style={{ alignSelf: "center" }}
+                itemTextStyle={{color:theme == 'dark' ? '#FFF' : '#000'}}
               />
-              <Text className="text-sm font-semibold text-gray-700">hours</Text>
+              <Text className="text-sm font-semibold text-text">hours</Text>
             </View>
             
-            <Text className="text-xl font-bold text-gray-400 mx-2">:</Text>
+            <Text className="text-xl font-bold text-text mx-2">:</Text>
             
             <View className="items-center ml-2">
               <WheelPicker
@@ -562,8 +568,9 @@ export default function Workflow({type = "new"}: {type: "new" | "edit"}) {
                 width={60}
                 itemHeight={25}
                 style={{ alignSelf: "center" }}
+                itemTextStyle={{color:theme == 'dark' ? '#FFF' : '#000'}}
               />
-              <Text className="text-sm font-semibold text-gray-700">minutes</Text>
+              <Text className="text-sm font-semibold text-text">minutes</Text>
             </View>
           </View>
         </View>
@@ -590,7 +597,7 @@ export default function Workflow({type = "new"}: {type: "new" | "edit"}) {
                 className="absolute right-6 top-5 bg-red-500 rounded-full w-8 h-8 items-center justify-center shadow-md"
                 onPress={() => removeWorkflow(index)}
               >
-                <Text className="text-white text-xl font-bold">×</Text>
+                <Text className="text-text text-xl font-bold">×</Text>
               </Pressable>
             )}
           </View>
@@ -599,11 +606,11 @@ export default function Workflow({type = "new"}: {type: "new" | "edit"}) {
 
       {/* Bottom Actions */}
       <View className="px-4 mt-6">
-        <View className="bg-white rounded-2xl shadow-md p-5 mb-4">
+        <View className="bg-card rounded-2xl shadow-md p-5 mb-4">
           <View className="flex-row items-center justify-between">
             <View className="flex-1">
-              <Text className="text-base font-semibold text-gray-800">Public Workflow</Text>
-              <Text className="text-sm text-gray-500 mt-1">Share with community</Text>
+              <Text className="text-base font-semibold text-text">Public Workflow</Text>
+              <Text className="text-sm text-text mt-1">Share with community</Text>
             </View>
             <Switch 
               onValueChange={() => setIsPub(!isPub)} 
@@ -616,7 +623,7 @@ export default function Workflow({type = "new"}: {type: "new" | "edit"}) {
         </View>
 
         <Pressable
-          className="rounded-2xl py-4 shadow-lg active:opacity-80 bg-blue-900"
+          className="rounded-2xl py-4 shadow-lg active:opacity-80 bg-primary"
           onPress={save}
         >
           <Text className="text-white text-center text-lg font-bold">

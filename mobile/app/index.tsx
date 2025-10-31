@@ -134,7 +134,7 @@ async function registerForPushNotificationsAsync() {
 
   if (isLoading) {
     return (
-      <View className="flex-1 justify-center items-center bg-blue-900">
+      <View className="flex-1 justify-center items-center bg-primary">
         <Text className="text-white text-2xl mb-4">Area</Text>
         <ActivityIndicator size="large" color="white" />
         <Text className="text-white mt-4">Loading...</Text>

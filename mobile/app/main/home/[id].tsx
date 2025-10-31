@@ -128,7 +128,7 @@ export default function ServiceScreen() {
 
   return (
     <View className="bg-background flex h-full w-full">
-          <Text className="text-black text-4xl font-bold ml-4 mt-5 justify-start">{data?.name}</Text>
+          <Text className="text-text text-4xl font-bold ml-4 mt-5 justify-start">{data?.name}</Text>
            <View className='items-center'>
                   <Image
                     source={{uri: `data:image/png;base64,${icon}`}}
@@ -136,13 +136,13 @@ export default function ServiceScreen() {
                     resizeMode="contain"
                   />
                 </View>
-          <Text className="text-black text-2xl font-bold ml-4 mt-2 justify-start"> {data?.description}</Text>
-          <Pressable className="absolute bottom-40 right-14 bg-blue-900 w-16 h-16 rounded-full" onPress={() => router.push('/main/workflows/newWorkflow')} style={{shadowColor: '#000', shadowOpacity: 0.8, elevation: 6,}}>
+          <Text className="text-text text-2xl font-bold ml-4 mt-2 justify-start"> {data?.description}</Text>
+          <Pressable className="absolute bottom-40 right-14 bg-primary w-16 h-16 rounded-full" onPress={() => router.push('/main/workflows/newWorkflow')} style={{shadowColor: '#000', shadowOpacity: 0.8, elevation: 6,}}>
             <Feather name="plus" size={48} color="white" style={{ margin: 'auto' }} className="fg-background"/>
           </Pressable>
           {data?.auth_url != null && (
           <Pressable
-            className="absolute bottom-40 left-9 bg-blue-900 w-36 h-16 rounded-full items-center justify-center" style={{shadowColor: '#000', shadowOpacity: 0.8, elevation: 6,}}
+            className="absolute bottom-40 left-9 bg-primary w-36 h-16 rounded-full items-center justify-center" style={{shadowColor: '#000', shadowOpacity: 0.8, elevation: 6,}}
             onPress={handlePress}
           >
           <Text className="text-white text-sm">Connexion</Text>

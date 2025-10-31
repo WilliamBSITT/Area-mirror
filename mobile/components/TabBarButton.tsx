@@ -63,16 +63,18 @@ export default function TabBarButton({
       <Pressable
         onPress={onPress}
         onLongPress={onLongPress}
-        className="flex justify-center items-center"
+        className="flex justify-center items-center "
       >
         <AnimatedView style={animatedIconStyle}>
           {icons[routeName] ? icons[routeName]({ color }) : null}
         </AnimatedView>
         <Animated.Text
-          style={[
-            { color: isFocused ? "#FFF" : "#222", fontSize: 12 },
-            animatedTextStyle,
-          ]}
+           style={[
+             { color: isFocused ? "FFF" : "#222", fontSize: 12 },
+             animatedTextStyle,
+           ]}
+          className={"text-text"}
+          
         >
           {label}
         </Animated.Text>
