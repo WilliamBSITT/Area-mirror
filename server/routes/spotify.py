@@ -20,6 +20,7 @@ TOKEN_URL = "https://accounts.spotify.com/api/token"
 def spotify_login():
     frontend = request.args.get("frontend", "web")
     encoded_ip = request.args.get("ip", None)
+    port = request.args.get("port", "8081")
     
     if encoded_ip:
         ip = decode_ip(encoded_ip)
@@ -28,7 +29,8 @@ def spotify_login():
     scope = "user-read-currently-playing user-read-playback-state"
     state = json.dumps({
         "frontend": frontend,
-        "ip": ip
+        "ip": ip,
+        "port": port
     })
 
     params = {
@@ -54,12 +56,13 @@ def spotify_callback():
     
     frontend = data.get("frontend")
     ip = data.get("ip")
+    port = data.get("port")
 
     if not code:
         return jsonify({"error": "Missing authorization code"}), 400
 
     if frontend == "mobile":
-        mobile_redirect_uri = f"exp://{ip}:8081?code={code}"
+        mobile_redirect_uri = f"exp://{ip}:{port}?code={code}"
         print(f"Redirecting to mobile app: {mobile_redirect_uri}")
         return redirect(mobile_redirect_uri)
 
