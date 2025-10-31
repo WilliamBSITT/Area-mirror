@@ -295,7 +295,7 @@ function MultiSelect({
   // };
 
   return (
-    <View className="bg-card rounded-2xl shadow-md mx-4 my-3 p-5">
+    <View className="bg-[var(--color-card)] rounded-2xl shadow-md mx-4 my-3 p-5">
       <View className="flex flex-row items-center mb-4">
         <View className={`w-12 h-12 rounded-full items-center justify-center ${type === "actions" ? "bg-blue-100" : "bg-purple-100"}`}>
           <Text className={`text-base font-bold ${type === "actions" ? "text-blue-600" : "text-purple-600"}`}>
@@ -629,7 +629,7 @@ export default function Workflow({type = "new"}: {type: "new" | "edit"}) {
 
       {/* Bottom Actions */}
       <View className="px-4 mt-6">
-        <View className="bg-card rounded-2xl shadow-md p-5 mb-4">
+        <View className="bg-[var(--color-card)] rounded-2xl shadow-md p-5 mb-4">
           <View className="flex-row items-center justify-between">
             <View className="flex-1">
               <Text className="text-base font-semibold text-text">Public Workflow</Text>
