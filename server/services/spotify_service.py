@@ -38,11 +38,11 @@ class SpotifyService(BaseService):
         if reaction_name == "play":
             return [
                 {"name": "citrack_uri", "type": "String", "required": False, "description": "URI de la piste à jouer (optionnel)"},
-                {"name": "access_tokens", "type": "Object", "required": True, "description": "Tokens d'authentification Spotify"},
+                {"name": "access_token", "type": "Object", "required": True, "description": "Tokens d'authentification Spotify"},
                 {"name": "refresh_token", "type": "String", "required": True, "description": "Refresh token Spotify"}
             ]
         return [
-            {"name": "access_tokens", "type": "Object", "required": True, "description": "Tokens d'authentification Spotify"},
+            {"name": "access_token", "type": "Object", "required": True, "description": "Tokens d'authentification Spotify"},
             {"name": "refresh_token", "type": "String", "required": True, "description": "Refresh token Spotify"}
         ]
     
