@@ -16,6 +16,7 @@ import { useServices } from "@/hooks/services/useServices";
 import { useServiceDetails } from "@/hooks/services/useServicesName";
 import { useServiceActionParams } from "@/hooks/services/useServicesActions";
 import { SelectItemWithIcon } from "@/components/areas/create/selectItemWithIcon";
+import { getSpotifyToken, getGitHubToken } from '@/hooks/services/useQAuthTokens';
 
 export type AreasActionSelectProps = {
     leftValue?: string;
@@ -25,8 +26,13 @@ export type AreasActionSelectProps = {
     onParamsChange?: (params: Record<string, string>) => void;
 };
 
-
-export default function AreasActionSelect({ leftValue, onLeftChange, rightValue, onRightChange, onParamsChange }: AreasActionSelectProps) {
+export default function AreasActionSelect({
+                                              leftValue,
+                                              onLeftChange,
+                                              rightValue,
+                                              onRightChange,
+                                              onParamsChange
+                                          }: AreasActionSelectProps) {
     const { data, loading, error } = useServices();
     const {
         data: details,
@@ -46,19 +52,46 @@ export default function AreasActionSelect({ leftValue, onLeftChange, rightValue,
         if (paramsData?.params) {
             setFormValues((prev) => {
                 const updatedValues: Record<string, string> = {};
-                let changed = false;
 
                 paramsData.params.forEach((p) => {
-                    updatedValues[p.name] = prev[p.name] ?? "";
-                    if (!(p.name in prev)) changed = true;
+                    if (leftValue && rightValue) {
+                        const serviceLower = leftValue.toLowerCase();
+
+                        if (serviceLower === "spotify") {
+                            if (p.name === "access_token") {
+                                const spotifyToken = getSpotifyToken();
+                                updatedValues[p.name] = spotifyToken || prev[p.name] || "";
+                            } else if (p.name === "refresh_token") {
+                                const spotifyRefreshToken = sessionStorage.getItem('spotify_refresh_token');
+                                updatedValues[p.name] = spotifyRefreshToken || prev[p.name] || "";
+                            } else {
+                                updatedValues[p.name] = prev[p.name] ?? "";
+                            }
+                        } else if (serviceLower === "github") {
+                            if (p.name === "access_token") {
+                                const githubToken = getGitHubToken();
+                                updatedValues[p.name] = githubToken || prev[p.name] || "";
+                            } else if (p.name === "refresh_token") {
+                                const githubRefreshToken = sessionStorage.getItem('github_refresh_token');
+                                updatedValues[p.name] = githubRefreshToken || prev[p.name] || "";
+                            } else {
+                                updatedValues[p.name] = prev[p.name] ?? "";
+                            }
+                        } else {
+                            updatedValues[p.name] = prev[p.name] ?? "";
+                        }
+                    } else {
+                        updatedValues[p.name] = prev[p.name] ?? "";
+                    }
                 });
 
-                return changed ? updatedValues : prev;
+                return updatedValues;
             });
         } else {
             setFormValues({});
         }
-    }, [paramsData]);
+    }, [paramsData, leftValue, rightValue]);
+
 
     const handleInputChange = (name: string, value: string) => {
         setFormValues((prev) => ({ ...prev, [name]: value }));
