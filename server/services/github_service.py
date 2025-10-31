@@ -36,13 +36,13 @@ class GithubService(BaseService):
         if action_name == "new_commit":
             return [
                 {"name": "repo", "type": "string", "description": "Dépôt à surveiller au format 'owner/repo'"},
-                {"name": "token", "type": "string", "description": "Token d'accès GitHub avec les permissions nécessaires"},
+                {"name": "access_token", "type": "string", "description": "Token d'accès GitHub avec les permissions nécessaires"},
                 {"name": "last_commit", "type": "string", "description": "SHA du dernier commit vu (utilisé pour le suivi)"}
             ]
         elif action_name == "new_issue":
             return [
                 {"name": "repo", "type": "string", "description": "Dépôt à surveiller au format 'owner/repo'"},
-                {"name": "token", "type": "string", "description": "Token d'accès GitHub avec les permissions nécessaires"},
+                {"name": "access_token", "type": "string", "description": "Token d'accès GitHub avec les permissions nécessaires"},
                 {"name": "last_issue", "type": "integer", "description": "ID de la dernière issue vue (utilisé pour le suivi)"}
             ]
         else:
