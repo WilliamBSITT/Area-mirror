@@ -20,16 +20,19 @@ def github_login():
 
     frontend = request.args.get("frontend", "web")
     encoded_ip = request.args.get("ip", None)
+    port = request.args.get("port", None)
 
-    if not encoded_ip:
-        return jsonify({"error": "Missing 'ip' parameter"}), 400
-    
-    ip = decode_ip(encoded_ip)
+    if encoded_ip:    
+        ip = decode_ip(encoded_ip)
+        if not ip:
+            return jsonify({"error": "Invalid or tampered 'ip' parameter"}), 400
+
 
     scope = "repo user"
     state = json.dumps({
         "frontend": frontend,
-        "ip": ip
+        "ip": ip,
+        "port": port
     })
 
     params = {
@@ -57,13 +60,14 @@ def github_callback():
     
     frontend = data.get("frontend")
     ip = data.get("ip")
+    port = data.get("port")
 
     if not code:
         return jsonify({"error": "Missing authorization code"}), 400
 
 
     if frontend == "mobile":
-        mobile_redirect_uri = f"exp://{ip}:8081"
+        mobile_redirect_uri = f"exp://{ip}:{port}"
         return redirect(f"{mobile_redirect_uri}?code={code}")
 
     data = {
