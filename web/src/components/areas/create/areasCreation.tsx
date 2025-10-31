@@ -14,6 +14,7 @@ import AreasActionSelect from "@/components/areas/create/areasActionSelect";
 import AreasReactionSelect from "@/components/areas/create/areasReactionSelect";
 import { Checkbox } from "@/components/ui/checkbox"
 import { usePostArea } from "@/hooks/areas/useCreateAreas";
+import { getSpotifyToken, getGitHubToken } from '@/hooks/services/useQAuthTokens';
 
 type ActionItem = { id: number; left: string | null; right: string | null };
 type ReactionItem = { id: number; left: string | null; right: string | null };
@@ -25,6 +26,9 @@ export default function AreasCreationDialog({ onCreated }: { onCreated?: () => v
     const { postArea, loading, error, data } = usePostArea();
     const router = useRouter();
     const [isPublic, setIsPublic] = React.useState(false);
+
+    const spotifyToken = getSpotifyToken();
+    const githubToken = getGitHubToken();
 
     const [actions, setActions] = React.useState<ActionItem[]>([
         { id: 1, left: null, right: null },
