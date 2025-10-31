@@ -3,18 +3,22 @@ import { NextRequest, NextResponse } from "next/server";
 const COOKIE_NAME = process.env.SESSION_COOKIE_NAME || "session";
 
 export const config = {
-    matcher: ["/workflows", "/workflows/:path*", "/profile", "/profile/:path*", "/settings", "/settings/:path*", "/templates", "/templates/:path*"]
+    matcher: ["/workflows", "/workflows/:path*", "/profile", "/profile/:path*", "/settings", "/settings/:path*", "/templates", "/templates/:path*", "/services/:path*"]
 };
 
 export default async function middleware(req: NextRequest) {
     const { pathname } = req.nextUrl;
+
+    const servicesIdPattern = /^\/services\/[^/]+$/;
+    const isServicesWithId = servicesIdPattern.test(pathname);
 
     if (
         !(
             pathname.startsWith("/workflows") ||
             pathname.startsWith("/profile") ||
             pathname.startsWith("/settings") ||
-            pathname.startsWith("/templates")
+            pathname.startsWith("/templates") ||
+            isServicesWithId
         )
     ) {
         return NextResponse.next();
