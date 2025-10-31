@@ -49,8 +49,6 @@ def spotify_callback():
     code = request.args.get("code")
     state_str = request.args.get("state", '{"frontend":"web"}')
 
-    with open("fouffe.txt", "w") as f:
-        print(f"Spotify callback state: {state_str}", file=f)
     clean = state_str.replace('+', '')
     data = json.loads(clean)
     
@@ -61,7 +59,7 @@ def spotify_callback():
         return jsonify({"error": "Missing authorization code"}), 400
 
     if frontend == "mobile":
-        mobile_redirect_uri = f"exp://{ip}:8083?code={code}"
+        mobile_redirect_uri = f"exp://{ip}:8081?code={code}"
         print(f"Redirecting to mobile app: {mobile_redirect_uri}")
         return redirect(mobile_redirect_uri)
 

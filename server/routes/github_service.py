@@ -52,8 +52,6 @@ def github_callback():
     code = request.args.get("code")
     state_str = request.args.get("state", '{"frontend":"web"}')
 
-    with open("bite.txt", "w") as f:
-        print(f"GitHub callback state: {state_str}", file=f)
     clean = state_str.replace('+', '')
     data = json.loads(clean)
     
@@ -65,7 +63,7 @@ def github_callback():
 
 
     if frontend == "mobile":
-        mobile_redirect_uri = f"exp://{ip}:8083"
+        mobile_redirect_uri = f"exp://{ip}:8081"
         return redirect(f"{mobile_redirect_uri}?code={code}")
 
     data = {
