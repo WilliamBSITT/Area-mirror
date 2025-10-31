@@ -84,7 +84,7 @@ export default function Publics() {
             {publicAreas.map(area => (
                 <Pressable
                     key={area.id}
-                    className="bg-blue-900 w-3/4 h-50 ml-10 mr-10 m-4 rounded-2xl p-3"
+                    className="bg-primary w-3/4 h-50 ml-10 mr-10 m-4 rounded-2xl p-3"
                     onPress={() => save(area)}
                 >
                 <Text className='text-white'>{area.name}</Text>

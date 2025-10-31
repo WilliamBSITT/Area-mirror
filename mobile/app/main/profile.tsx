@@ -143,31 +143,31 @@ export default function Profile() {
                         <MaterialIcons name="camera-alt" size={20} color="white" />
                     </View>
                 </Pressable>
-                <Text className="text-sm text-gray-500 mt-3">Tap to change photo</Text>
+                <Text className="text-sm text-text mt-3">Tap to change photo</Text>
             </View>
 
             <Pressable 
                 onPress={() => setEdit(!Edit)}
-                className="flex-row items-center justify-center bg-blue-50 rounded-xl py-3 px-4"
+                className="flex-row items-center justify-center bg-secondary rounded-xl py-3 px-4"
             >
                 <MaterialIcons name="edit" size={20} color="#2563EB" />
-                <Text className="text-blue-600 font-semibold ml-2">
+                <Text className="text-text font-semibold ml-2">
                     {Edit ? "Cancel Editing" : "Edit Profile"}
                 </Text>
             </Pressable>
         </View>
 
         {/* Email Section */}
-        <View className="bg-white mx-4 mt-4 rounded-2xl shadow-md p-5">
+        <View className="bg-secondary mx-4 mt-4 rounded-2xl shadow-md p-5">
             <View className="flex-row items-center mb-3">
                 <MaterialIcons name="email" size={24} color="#6B7280" />
-                <Text className="text-xl font-bold text-gray-800 ml-2">Email Address</Text>
+                <Text className="text-xl font-bold text-text ml-2">Email Address</Text>
             </View>
             
             {Edit ? (
                 <View>
                     <TextInput 
-                        className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-800 mb-3"
+                        className="bg-[var(--color-card)] border border-[var(--color-card)] rounded-xl px-4 py-3 text-text mb-3"
                         value={newEmail} 
                         placeholder="Enter new email" 
                         placeholderTextColor="#9CA3AF"
@@ -177,30 +177,30 @@ export default function Profile() {
                         autoCapitalize="none"
                     />
                     <Pressable 
-                        className="rounded-xl py-3 shadow-sm bg-blue-900"
+                        className="rounded-xl py-3 shadow-sm bg-primary"
                         onPress={sendMail}
                     >
-                        <Text className="text-white text-center font-semibold">Update Email</Text>
+                        <Text className="text-text text-center font-semibold">Update Email</Text>
                     </Pressable>
                 </View>
             ) : (
-                <View className="bg-gray-50 rounded-xl px-4 py-3">
-                    <Text className="text-base text-gray-700">{Mail}</Text>
+                <View className="bg-[var(--color-card)] rounded-xl px-4 py-3">
+                    <Text className="text-base text-text">{Mail}</Text>
                 </View>
             )}
         </View>
 
         {/* Password Section */}
-        <View className="bg-white mx-4 mt-4 rounded-2xl shadow-md p-5">
+        <View className="bg-secondary mx-4 mt-4 rounded-2xl shadow-md p-5">
             <View className="flex-row items-center mb-3">
                 <MaterialIcons name="lock" size={24} color="#6B7280" />
-                <Text className="text-xl font-bold text-gray-800 ml-2">Password</Text>
+                <Text className="text-xl font-bold text-text ml-2">Password</Text>
             </View>
             
             {Edit ? (
                 <View>
                     <TextInput 
-                        className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-800 mb-3"
+                        className="bg-[var(--color-card)] border border-gray-200 rounded-xl px-4 py-3 text-gray-800 mb-3"
                         value={oldPwd} 
                         placeholder="Current password" 
                         placeholderTextColor="#9CA3AF"
@@ -208,7 +208,7 @@ export default function Profile() {
                         secureTextEntry
                     />
                     <TextInput 
-                        className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-800 mb-3"
+                        className="bg-[var(--color-card)] border border-gray-200 rounded-xl px-4 py-3 text-gray-800 mb-3"
                         value={newPwd} 
                         placeholder="New password" 
                         placeholderTextColor="#9CA3AF"
@@ -216,26 +216,26 @@ export default function Profile() {
                         secureTextEntry
                     />
                     <Pressable 
-                        className="rounded-xl py-3 shadow-sm bg-blue-900"
+                        className="rounded-xl py-3 shadow-sm bg-primary"
                         onPress={verifyPwd}
                     >
-                        <Text className="text-white text-center font-semibold">Update Password</Text>
+                        <Text className="text-text text-center font-semibold">Update Password</Text>
                     </Pressable>
                 </View>
             ) : (
-                <View className="bg-gray-50 rounded-xl px-4 py-3">
-                    <Text className="text-base text-gray-700">••••••••</Text>
+                <View className="bg-[var(--color-card)] rounded-xl px-4 py-3">
+                    <Text className="text-base text-text">••••••••</Text>
                 </View>
             )}
         </View>
 
-        <View className="bg-white mx-4 mt-4 rounded-2xl shadow-md p-5">
+        <View className="bg-secondary mx-4 mt-4 rounded-2xl shadow-md p-5">
             <View className="flex-row items-center mb-3">
                 <MaterialIcons name="notifications" size={24} color="#6B7280" />
-                <Text className="text-xl font-bold text-gray-800 ml-2">Notifications</Text>
+                <Text className="text-xl font-bold text-text ml-2">Notifications</Text>
             </View>
             <View className="flex-row items-center justify-between">
-                <Text className="text-gray-700 text-base">When a workflow is running</Text>
+                <Text className="text-text text-base">When a workflow is running</Text>
                 <Switch value={isNotificationsEnabled} onPress={toggleNotifications} />
             </View>
         </View>
@@ -243,7 +243,7 @@ export default function Profile() {
         {/* Logout Section */}
         <View className="mx-4 mt-8">
             <Pressable 
-                className="bg-red-400 rounded-2xl py-4 shadow-lg flex-row items-center justify-center"
+                className="bg-primary rounded-2xl py-4 shadow-lg flex-row items-center justify-center"
                 onPress={logout}
             >
                 <MaterialIcons name="logout" size={22} color="white" />

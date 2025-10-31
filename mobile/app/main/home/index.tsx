@@ -13,9 +13,9 @@ function Card({name, path, id}: {name:string, path:any, id:number} ) {
         params: { id: name },
       }}
       asChild>
-      <Pressable className="bg-[#F4FBFB] w-70 h-70 rounded-2xl flex" style={{shadowColor: '#000', shadowOpacity: 0.8, elevation: 6,}}>
+      <Pressable className="bg-[var(--color-card)] w-70 h-70 rounded-2xl flex" style={{shadowColor: '#000', shadowOpacity: 0.8, elevation: 6,}}>
         <View className="items-start">
-          <Text className="text-black font-bold ml-4 mt-2 justify-start">
+          <Text className="text-text font-bold ml-4 mt-2 justify-start">
             {name}
           </Text>
         </View>
@@ -27,7 +27,7 @@ function Card({name, path, id}: {name:string, path:any, id:number} ) {
           />
         </View>
         <View className="items-end">
-          <Text className="bg-slate-400 rounded-2xl p-1 text-center mr-2 mb-2 text-white">
+          <Text className="bg-secondary rounded-2xl p-1 text-center mr-2 mb-2 text-white">
             Details
           </Text>
         </View>
