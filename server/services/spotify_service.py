@@ -38,20 +38,18 @@ class SpotifyService(BaseService):
         if reaction_name == "play":
             return [
                 {"name": "citrack_uri", "type": "String", "required": False, "description": "URI de la piste à jouer (optionnel)"},
-                {"name": "tokens", "type": "Object", "required": True, "description": "Tokens d'authentification Spotify"},
+                {"name": "access_tokens", "type": "Object", "required": True, "description": "Tokens d'authentification Spotify"},
                 {"name": "refresh_token", "type": "String", "required": True, "description": "Refresh token Spotify"}
             ]
         return [
-            {"name": "tokens", "type": "Object", "required": True, "description": "Tokens d'authentification Spotify"},
+            {"name": "access_tokens", "type": "Object", "required": True, "description": "Tokens d'authentification Spotify"},
             {"name": "refresh_token", "type": "String", "required": True, "description": "Refresh token Spotify"}
         ]
     
-    def get_action_params(self, action_name):
+    def get_actions_params(self, action_name):
         return [
             {"name": "access_token", "type": "String", "required": True, "description": "Access token Spotify"},
             {"name": "refresh_token", "type": "String", "required": True, "description": "Refresh token Spotify"},
-            {"name": "last_title", "type": "String", "required": False, "description": "Dernier titre détecté (pour new_title)"},
-            {"name": "last_updated", "type": "String", "required": False, "description": "Dernière mise à jour (ISO format)"}
         ]
     
     def get_reactions(self):
@@ -172,7 +170,4 @@ class SpotifyService(BaseService):
             return False
 
         return True
-
-    def get_actions_params(self, action_name):
-        pass
 

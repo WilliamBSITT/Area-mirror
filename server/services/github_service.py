@@ -54,12 +54,12 @@ class GithubService(BaseService):
                 {"name": "repo", "type": "string", "description": "Dépôt cible au format 'owner/repo'"},
                 {"name": "title", "type": "string", "description": "Titre de l’issue"},
                 {"name": "body", "type": "string", "description": "Corps de l’issue (peut inclure des placeholders pour les données d’action)"},
-                {"name": "token", "type": "string", "description": "Token d'accès GitHub avec les permissions nécessaires"}
+                {"name": "access_token", "type": "string", "description": "Token d'accès GitHub avec les permissions nécessaires"}
             ]
         elif reaction_name == "star_repo":
             return [
                 {"name": "repo", "type": "string", "description": "Dépôt à étoiler au format 'owner/repo'"},
-                {"name": "token", "type": "string", "description": "Token d'accès GitHub avec les permissions nécessaires"}
+                {"name": "access_token", "type": "string", "description": "Token d'accès GitHub avec les permissions nécessaires"}
             ]
         else:
             return []
