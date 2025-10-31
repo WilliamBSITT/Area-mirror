@@ -20,13 +20,11 @@ TOKEN_URL = "https://accounts.spotify.com/api/token"
 def spotify_login():
     frontend = request.args.get("frontend", "web")
     encoded_ip = request.args.get("ip", None)
-
-    if not encoded_ip:
-        return jsonify({"error": "Missing 'ip' parameter"}), 400
     
-    ip = decode_ip(encoded_ip)
-    if not ip:
-        return jsonify({"error": "Invalid or tampered 'ip' parameter"}), 400
+    if encoded_ip:
+        ip = decode_ip(encoded_ip)
+        if not ip:
+            return jsonify({"error": "Invalid or tampered 'ip' parameter"}), 400
     scope = "user-read-currently-playing user-read-playback-state"
     state = json.dumps({
         "frontend": frontend,
@@ -51,6 +49,8 @@ def spotify_callback():
     code = request.args.get("code")
     state_str = request.args.get("state", '{"frontend":"web"}')
 
+    with open("fouffe.txt", "w") as f:
+        print(f"Spotify callback state: {state_str}", file=f)
     clean = state_str.replace('+', '')
     data = json.loads(clean)
     

@@ -52,6 +52,8 @@ def github_callback():
     code = request.args.get("code")
     state_str = request.args.get("state", '{"frontend":"web"}')
 
+    with open("bite.txt", "w") as f:
+        print(f"GitHub callback state: {state_str}", file=f)
     clean = state_str.replace('+', '')
     data = json.loads(clean)
     
