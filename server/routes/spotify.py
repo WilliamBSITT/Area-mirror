@@ -19,18 +19,21 @@ TOKEN_URL = "https://accounts.spotify.com/api/token"
 @bp.route("/spotify/login", methods=["GET"])
 def spotify_login():
     frontend = request.args.get("frontend", "web")
-    encoded_ip = request.args.get("ip", None)
-    port = request.args.get("port", "8081")
+
+    if frontend == "mobile":
+        encoded_ip = request.args.get("ip", None)
+        port = request.args.get("port", "8081")
     
-    if encoded_ip:
-        ip = decode_ip(encoded_ip)
-        if not ip:
-            return jsonify({"error": "Invalid or tampered 'ip' parameter"}), 400
+        if encoded_ip:
+            ip = decode_ip(encoded_ip)
+            if not ip:
+                return jsonify({"error": "Invalid or tampered 'ip' parameter"}), 400
+
     scope = "user-read-currently-playing user-read-playback-state"
     state = json.dumps({
         "frontend": frontend,
-        "ip": ip,
-        "port": port
+        "ip": ip if frontend == "mobile" else None,
+        "port": port if frontend == "mobile" else None
     })
 
     params = {
