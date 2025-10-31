@@ -19,18 +19,21 @@ TOKEN_URL = "https://accounts.spotify.com/api/token"
 @bp.route("/spotify/login", methods=["GET"])
 def spotify_login():
     frontend = request.args.get("frontend", "web")
-    encoded_ip = request.args.get("ip", None)
 
-    if not encoded_ip:
-        return jsonify({"error": "Missing 'ip' parameter"}), 400
+    if frontend == "mobile":
+        encoded_ip = request.args.get("ip", None)
+        port = request.args.get("port", "8081")
     
-    ip = decode_ip(encoded_ip)
-    if not ip:
-        return jsonify({"error": "Invalid or tampered 'ip' parameter"}), 400
+        if encoded_ip:
+            ip = decode_ip(encoded_ip)
+            if not ip:
+                return jsonify({"error": "Invalid or tampered 'ip' parameter"}), 400
+
     scope = "user-read-currently-playing user-read-playback-state"
     state = json.dumps({
         "frontend": frontend,
-        "ip": ip
+        "ip": ip if frontend == "mobile" else None,
+        "port": port if frontend == "mobile" else None
     })
 
     params = {
@@ -56,12 +59,13 @@ def spotify_callback():
     
     frontend = data.get("frontend")
     ip = data.get("ip")
+    port = data.get("port")
 
     if not code:
         return jsonify({"error": "Missing authorization code"}), 400
 
     if frontend == "mobile":
-        mobile_redirect_uri = f"exp://{ip}:8083?code={code}"
+        mobile_redirect_uri = f"exp://{ip}:{port}?code={code}"
         print(f"Redirecting to mobile app: {mobile_redirect_uri}")
         return redirect(mobile_redirect_uri)
 

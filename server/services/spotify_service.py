@@ -34,6 +34,24 @@ class SpotifyService(BaseService):
             {"name": "currently_playing", "description": "recupere la musique actuellement jouée"}
         ]
 
+    def get_reactions_params(self, reaction_name):
+        if reaction_name == "play":
+            return [
+                {"name": "citrack_uri", "type": "String", "required": False, "description": "URI de la piste à jouer (optionnel)"},
+                {"name": "access_tokens", "type": "Object", "required": True, "description": "Tokens d'authentification Spotify"},
+                {"name": "refresh_token", "type": "String", "required": True, "description": "Refresh token Spotify"}
+            ]
+        return [
+            {"name": "access_tokens", "type": "Object", "required": True, "description": "Tokens d'authentification Spotify"},
+            {"name": "refresh_token", "type": "String", "required": True, "description": "Refresh token Spotify"}
+        ]
+    
+    def get_actions_params(self, action_name):
+        return [
+            {"name": "access_token", "type": "String", "required": True, "description": "Access token Spotify"},
+            {"name": "refresh_token", "type": "String", "required": True, "description": "Refresh token Spotify"},
+        ]
+    
     def get_reactions(self):
         return [
             {"name": "play", "description": "Joue une musique"},
@@ -152,7 +170,4 @@ class SpotifyService(BaseService):
             return False
 
         return True
-
-    def get_actions_params(self, action_name):
-        pass
 
