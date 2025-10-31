@@ -3,6 +3,10 @@ import requests
 import urllib.parse
 import os
 from datetime import datetime
+from .ip_manager import decode_ip
+import json
+import re
+
 
 bp = Blueprint("spotify_auth", __name__)
 
@@ -15,8 +19,22 @@ TOKEN_URL = "https://accounts.spotify.com/api/token"
 @bp.route("/spotify/login", methods=["GET"])
 def spotify_login():
     frontend = request.args.get("frontend", "web")
+
+    if frontend == "mobile":
+        encoded_ip = request.args.get("ip", None)
+        port = request.args.get("port", "8081")
+    
+        if encoded_ip:
+            ip = decode_ip(encoded_ip)
+            if not ip:
+                return jsonify({"error": "Invalid or tampered 'ip' parameter"}), 400
+
     scope = "user-read-currently-playing user-read-playback-state"
-    state = f"frontend:{frontend}"
+    state = json.dumps({
+        "frontend": frontend,
+        "ip": ip if frontend == "mobile" else None,
+        "port": port if frontend == "mobile" else None
+    })
 
     params = {
         "client_id": CLIENT_ID,
@@ -34,15 +52,20 @@ def spotify_login():
 @bp.route("/spotify/callback")
 def spotify_callback():
     code = request.args.get("code")
-    state = request.args.get("state", "frontend:web")
+    state_str = request.args.get("state", '{"frontend":"web"}')
 
-    frontend = state.split(":")[1]
+    clean = state_str.replace('+', '')
+    data = json.loads(clean)
+    
+    frontend = data.get("frontend")
+    ip = data.get("ip")
+    port = data.get("port")
 
     if not code:
         return jsonify({"error": "Missing authorization code"}), 400
 
     if frontend == "mobile":
-        mobile_redirect_uri = f"exp://10.18.208.5:8081?code={code}"
+        mobile_redirect_uri = f"exp://{ip}:{port}?code={code}"
         print(f"Redirecting to mobile app: {mobile_redirect_uri}")
         return redirect(mobile_redirect_uri)
 
@@ -59,6 +82,7 @@ def spotify_callback():
         return jsonify({"error": res.text}), 400
 
     tokens = res.json()
+    return redirect(f"http://localhost:8081/services?tokens={tokens}")
     return jsonify({
         "message": "Spotify connected successfully!",
         "tokens": tokens

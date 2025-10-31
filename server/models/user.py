@@ -8,6 +8,7 @@ class User(db.Model):
     password_hash = db.Column(db.Text, nullable=False)
     pictures = db.Column(db.LargeBinary(length=(2**24)-1), nullable=True)
     expo_push_token = db.Column(db.String(255), nullable=True)
+    allow_notifications = db.Column(db.Boolean, default=False)
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -16,4 +17,4 @@ class User(db.Model):
         return check_password_hash(self.password_hash, password)
     
     def to_dict(self):
-        return {"id": self.id, "email": self.email, "pictures": binascii.b2a_base64(self.pictures).decode('utf-8') if self.pictures else None}
+        return {"id": self.id, "email": self.email, "pictures": binascii.b2a_base64(self.pictures).decode('utf-8') if self.pictures else None, "allow_notifications": self.allow_notifications}
