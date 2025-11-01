@@ -4,7 +4,7 @@ import * as React from "react";
 import AreasTable from "@/components/areas/public/AreasTable";
 
 export default function Page() {
-    const [refreshKey, setRefreshKey] = React.useState(0);
+    const [refreshKey] = React.useState(0);
 
     return (
         <main className="py-8 px-20 space-y-6">

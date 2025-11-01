@@ -72,3 +72,47 @@ export async function DELETE(req: NextRequest) {
 
     return NextResponse.json({ message: "user deleted successfully" }, { status: 200 })
 }
+
+export async function PUT(req: NextRequest) {
+    const jwt = req.cookies.get(JWT)?.value
+    if (!jwt) {
+        return NextResponse.json({ error: "unauthorized" }, { status: 401 })
+    }
+
+    const id = req.cookies.get(USER_ID)?.value
+    if (!id) {
+        return NextResponse.json({ error: "unauthorized" }, { status: 401 })
+    }
+
+    const body = await req.json()
+
+    const be = await fetch(`${BACKEND_URL}/users/${id}`, {
+        method: "PUT",
+        headers: {
+            Authorization: `Bearer ${jwt}`,
+            "Content-Type": "application/json",
+            Accept: "application/json"
+        },
+        body: JSON.stringify(body),
+        cache: "no-store",
+    })
+
+    const text = await be.text()
+    const res = new NextResponse(text, {
+        status: be.status,
+        headers: {
+            "Content-Type": be.headers.get("content-type") ?? "application/json",
+            "Cache-Control": "no-store, private",
+            Vary: "Cookie",
+        },
+    })
+
+    const beSetCookie = be.headers.get("set-cookie")
+    if (beSetCookie) {
+        for (const c of beSetCookie.split(/,(?=[^;]+?=)/)) {
+            res.headers.append("set-cookie", c.trim())
+        }
+    }
+
+    return res
+}

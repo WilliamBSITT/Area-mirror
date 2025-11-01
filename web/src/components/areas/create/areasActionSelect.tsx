@@ -14,8 +14,10 @@ import { Input } from "@/components/ui/input";
 
 import { useServices } from "@/hooks/services/useServices";
 import { useServiceDetails } from "@/hooks/services/useServicesName";
-import { useServiceActionParams } from "@/hooks/services/useServicesActions";
+import { useServiceActionParams } from "@/hooks/services/useServicesActionsParams";
+import { useServiceActionOutputs } from "@/hooks/services/useServiceActionsOutputs";
 import { SelectItemWithIcon } from "@/components/areas/create/selectItemWithIcon";
+import { getSpotifyToken, getGitHubToken } from '@/hooks/services/useQAuthTokens';
 
 export type AreasActionSelectProps = {
     leftValue?: string;
@@ -24,7 +26,6 @@ export type AreasActionSelectProps = {
     onRightChange?: (v: string) => void;
     onParamsChange?: (params: Record<string, string>) => void;
 };
-
 
 export default function AreasActionSelect({ leftValue, onLeftChange, rightValue, onRightChange, onParamsChange }: AreasActionSelectProps) {
     const { data, loading, error } = useServices();
@@ -40,25 +41,56 @@ export default function AreasActionSelect({ leftValue, onLeftChange, rightValue,
         error: paramsError,
     } = useServiceActionParams(leftValue ?? undefined, rightValue ?? undefined);
 
+    const {
+        data: outputsData,
+    } = useServiceActionOutputs(leftValue ?? undefined, rightValue ?? undefined);
+
     const [formValues, setFormValues] = React.useState<Record<string, string>>({});
 
     React.useEffect(() => {
         if (paramsData?.params) {
             setFormValues((prev) => {
                 const updatedValues: Record<string, string> = {};
-                let changed = false;
 
                 paramsData.params.forEach((p) => {
-                    updatedValues[p.name] = prev[p.name] ?? "";
-                    if (!(p.name in prev)) changed = true;
+                    if (leftValue && rightValue) {
+                        const serviceLower = leftValue.toLowerCase();
+
+                        if (serviceLower === "spotify") {
+                            if (p.name === "access_token") {
+                                const spotifyToken = getSpotifyToken();
+                                updatedValues[p.name] = spotifyToken || prev[p.name] || "";
+                            } else if (p.name === "refresh_token") {
+                                const spotifyRefreshToken = sessionStorage.getItem('spotify_refresh_token');
+                                updatedValues[p.name] = spotifyRefreshToken || prev[p.name] || "";
+                            } else {
+                                updatedValues[p.name] = prev[p.name] ?? "";
+                            }
+                        } else if (serviceLower === "github") {
+                            if (p.name === "access_token") {
+                                const githubToken = getGitHubToken();
+                                updatedValues[p.name] = githubToken || prev[p.name] || "";
+                            } else if (p.name === "refresh_token") {
+                                const githubRefreshToken = sessionStorage.getItem('github_refresh_token');
+                                updatedValues[p.name] = githubRefreshToken || prev[p.name] || "";
+                            } else {
+                                updatedValues[p.name] = prev[p.name] ?? "";
+                            }
+                        } else {
+                            updatedValues[p.name] = prev[p.name] ?? "";
+                        }
+                    } else {
+                        updatedValues[p.name] = prev[p.name] ?? "";
+                    }
                 });
 
-                return changed ? updatedValues : prev;
+                return updatedValues;
             });
         } else {
             setFormValues({});
         }
-    }, [paramsData]);
+    }, [paramsData, leftValue, rightValue]);
+
 
     const handleInputChange = (name: string, value: string) => {
         setFormValues((prev) => ({ ...prev, [name]: value }));
@@ -89,6 +121,7 @@ export default function AreasActionSelect({ leftValue, onLeftChange, rightValue,
                     value={leftValue}
                     onValueChange={onLeftChange ?? (() => {})}
                     disabled={loading || !!error}
+                    data-test="service-select-action"
                 >
                     <SelectTrigger className="w-full md:w-[200px]">
                         <SelectValue
@@ -124,6 +157,7 @@ export default function AreasActionSelect({ leftValue, onLeftChange, rightValue,
                     value={rightValue}
                     onValueChange={onRightChange ?? (() => {})}
                     disabled={detailsLoading || !!detailsError || !details}
+                    data-test="action-select-action"
                 >
                     <SelectTrigger className="w-full md:w-[200px]">
                         <SelectValue
@@ -151,7 +185,6 @@ export default function AreasActionSelect({ leftValue, onLeftChange, rightValue,
                 </Select>
             </div>
 
-            {/* Liste dynamique des paramètres */}
             {leftValue && rightValue && (
                 <div className="col-span-1 md:col-span-3">
                     {paramsLoading && <p>Chargement des paramètres…</p>}
@@ -183,6 +216,17 @@ export default function AreasActionSelect({ leftValue, onLeftChange, rightValue,
                             </div>
                         ))}
                     </div>
+
+                    {outputsData?.outputs && outputsData.outputs.length > 0 && (
+                        <div className="mt-3 text-xs text-gray-500">
+                            How to write&nbsp;
+                            {outputsData.outputs.map((o, idx) =>
+                                    <span key={o.name}>
+                        {o.description} {o.name}{idx < outputsData.outputs.length - 1 ? ', ' : ''}
+                    </span>
+                            )}
+                        </div>
+                    )}
                 </div>
             )}
         </section>

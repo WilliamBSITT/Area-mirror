@@ -3,9 +3,10 @@
 import { useParams } from "next/navigation";
 import Image, { type StaticImageData } from "next/image";
 import { useServices } from "@/hooks/services/useServices";
+import { useServiceDetails } from "@/hooks/services/useServicesName";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, ExternalLink } from "lucide-react";
 import fallbackImg from "@/../public/landing.jpg";
 
 function toImageSrc(image?: string | null): string | StaticImageData {
@@ -30,10 +31,11 @@ export default function ServiceDetailPage() {
     const id = parseInt(params.id as string, 10);
 
     const { data: services, loading, error } = useServices();
-
     const service = services?.find(s => s.id === id);
 
-    if (loading) {
+    const { data: serviceDetails, loading: detailsLoading } = useServiceDetails(service?.name);
+
+    if (loading || detailsLoading) {
         return (
             <main className="container mx-auto px-4 py-8">
                 <div className="flex items-center justify-center min-h-[400px]">
@@ -80,7 +82,6 @@ export default function ServiceDetailPage() {
                     />
                 </div>
 
-
                 <div className="flex flex-col gap-6">
                     <div>
                         <h1 className="text-4xl font-bold mb-2">{service.name}</h1>
@@ -93,6 +94,27 @@ export default function ServiceDetailPage() {
                             {service.description || "Aucune description disponible pour ce service."}
                         </p>
                     </div>
+
+                    {serviceDetails?.auth_url && (
+                        <Button
+                            asChild
+                            size="lg"
+                            className="w-full md:w-auto"
+                        >
+                            <a
+                                href={
+                                    service.name.toLowerCase() === "Spotify" || service.name.toLowerCase() === "Github"
+                                        ? `${serviceDetails.auth_url}?frontend=web`
+                                        : serviceDetails.auth_url
+                                }
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                Authentification
+                                <ExternalLink className="ml-2 h-4 w-4" />
+                            </a>
+                        </Button>
+                    )}
                 </div>
             </div>
         </main>

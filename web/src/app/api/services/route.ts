@@ -2,7 +2,6 @@ import { NextResponse } from 'next/server';
 import type { Service } from '@/types/service';
 
 const BACKEND_URL = process.env.BACKEND_URL!
-
 export const dynamic = 'force-dynamic';
 
 export async function GET() {

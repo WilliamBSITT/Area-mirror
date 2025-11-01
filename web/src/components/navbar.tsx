@@ -173,6 +173,9 @@ export function Navbar() {
                                 <Link href="/services" className={commonClassName}>
                                     Services
                                 </Link>
+                                <Link href="/templates" className={commonClassName}>
+                                    Templates
+                                </Link>
                                 <Link href="/about" className={commonClassName}>
                                     About
                                 </Link>

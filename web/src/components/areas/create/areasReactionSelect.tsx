@@ -16,6 +16,7 @@ import { useServices } from "@/hooks/services/useServices";
 import { useServiceDetails } from "@/hooks/services/useServicesName";
 import { useServiceReactionParams } from "@/hooks/services/useServicesReactions";
 import { SelectItemWithIcon } from "@/components/areas/create/selectItemWithIcon";
+import { getSpotifyToken, getGitHubToken } from '@/hooks/services/useQAuthTokens';
 
 type AreasReactionSelectProps = {
     leftValue?: string;
@@ -25,7 +26,7 @@ type AreasReactionSelectProps = {
     onParamsChange?: (paramsValues: Record<string, string>) => void;
 };
 
-export default function AreasReactionSelect({ leftValue, onLeftChange, rightValue, onRightChange, onParamsChange}: AreasReactionSelectProps) {
+export default function AreasReactionSelect({ leftValue, onLeftChange, rightValue, onRightChange, onParamsChange }: AreasReactionSelectProps) {
 
     const { data, loading, error } = useServices();
     const {
@@ -46,20 +47,45 @@ export default function AreasReactionSelect({ leftValue, onLeftChange, rightValu
         if (paramsData?.params) {
             setFormValues((prev) => {
                 const updatedValues: Record<string, string> = {};
-                let changed = false;
 
                 paramsData.params.forEach((p) => {
-                    updatedValues[p.name] = prev[p.name] ?? "";
-                    if (!(p.name in prev)) changed = true;
+                    if (leftValue && rightValue) {
+                        const serviceLower = leftValue.toLowerCase();
+
+                        if (serviceLower === "spotify") {
+                            if (p.name === "access_token") {
+                                const spotifyToken = getSpotifyToken();
+                                updatedValues[p.name] = spotifyToken || prev[p.name] || "";
+                            } else if (p.name === "refresh_token") {
+                                const spotifyRefreshToken = sessionStorage.getItem('spotify_refresh_token');
+                                updatedValues[p.name] = spotifyRefreshToken || prev[p.name] || "";
+                            } else {
+                                updatedValues[p.name] = prev[p.name] ?? "";
+                            }
+                        } else if (serviceLower === "github") {
+                            if (p.name === "access_token") {
+                                const githubToken = getGitHubToken();
+                                updatedValues[p.name] = githubToken || prev[p.name] || "";
+                            } else if (p.name === "refresh_token") {
+                                const githubRefreshToken = sessionStorage.getItem('github_refresh_token');
+                                updatedValues[p.name] = githubRefreshToken || prev[p.name] || "";
+                            } else {
+                                updatedValues[p.name] = prev[p.name] ?? "";
+                            }
+                        } else {
+                            updatedValues[p.name] = prev[p.name] ?? "";
+                        }
+                    } else {
+                        updatedValues[p.name] = prev[p.name] ?? "";
+                    }
                 });
-                return changed ? updatedValues : prev;
+
+                return updatedValues;
             });
         } else {
             setFormValues({});
         }
-    }, [paramsData]);
-
-
+    }, [paramsData, leftValue, rightValue]);
 
     const handleInputChange = (name: string, value: string) =>
         setFormValues((prev) => ({ ...prev, [name]: value }));
@@ -73,7 +99,6 @@ export default function AreasReactionSelect({ leftValue, onLeftChange, rightValu
             onParamsChange?.(formValues);
         }
     }, [formValues, onParamsChange]);
-
 
     return (
         <section className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -90,6 +115,7 @@ export default function AreasReactionSelect({ leftValue, onLeftChange, rightValu
                     value={leftValue}
                     onValueChange={onLeftChange ?? (() => {})}
                     disabled={loading || !!error}
+                    data-test="service-select-reaction"
                 >
                     <SelectTrigger className="w-full md:w-[200px]">
                         <SelectValue
@@ -125,6 +151,7 @@ export default function AreasReactionSelect({ leftValue, onLeftChange, rightValu
                     value={rightValue}
                     onValueChange={onRightChange ?? (() => {})}
                     disabled={detailsLoading || !!detailsError || !details}
+                    data-test="action-select-reaction"
                 >
                     <SelectTrigger className="w-full md:w-[200px]">
                         <SelectValue

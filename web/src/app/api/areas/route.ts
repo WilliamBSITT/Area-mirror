@@ -51,16 +51,6 @@ export async function PUT(req: NextRequest, ctx: { params: { id: string } }) {
         body: JSON.stringify(body),
         cache: "no-store",
     });
-
-    // const text = await be.text();
-    // return new NextResponse(text, {
-    //     status: be.status,
-    //     headers: {
-    //         "Content-Type": be.headers.get("content-type") ?? "application/json",
-    //         "Cache-Control": "no-store, private",
-    //         Vary: "Cookie",
-    //     },
-    // });
 }
 
 export async function POST(req: NextRequest) {
@@ -72,7 +62,6 @@ export async function POST(req: NextRequest) {
     try {
         const body = await req.json();
 
-        // Validation de base
         if (!body.name || !body.action || !body.reaction) {
             return NextResponse.json(
                 { error: "Missing required fields." },
@@ -80,14 +69,12 @@ export async function POST(req: NextRequest) {
             );
         }
 
-        // Envoi vers ton backend
         const res = await fetch(`${BACKEND_URL}/areas`, {
             method: "POST",
             headers: { Authorization: `Bearer ${token}`, Accept: "application/json", "Content-Type": "application/json" },
             body: JSON.stringify(body),
         });
 
-        // Vérifie si le backend renvoie une erreur
         if (!res.ok) {
             const msg = await res.text();
             return NextResponse.json(

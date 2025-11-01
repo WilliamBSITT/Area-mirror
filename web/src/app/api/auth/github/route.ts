@@ -1,8 +1,8 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server"
 
-const BACKEND_URL = process.env.BACKEND_URL!;
-const COOKIE_NAME = "session";
-const isProd = process.env.NODE_ENV === "production";
+const BACKEND_URL = process.env.BACKEND_URL!
+const COOKIE_NAME = "session"
+const isProd = process.env.NODE_ENV === "production"
 
 function cookieFromToken(token: string, maxAgeSec = 7 * 24 * 3600) {
     const attrs = [
@@ -12,7 +12,7 @@ function cookieFromToken(token: string, maxAgeSec = 7 * 24 * 3600) {
         ...(isProd ? ["Secure"] : []),
         `Max-Age=${maxAgeSec}`,
     ].join("; ");
-    return `${COOKIE_NAME}=${token}; ${attrs}`;
+    return `${COOKIE_NAME}=${token}; ${attrs}`
 }
 
 export async function POST(req: NextRequest) {
@@ -42,9 +42,17 @@ export async function POST(req: NextRequest) {
     }
 
     try {
-        const payload = JSON.parse(text);
-        const token = payload?.token ?? payload?.access_token ?? payload?.jwt;
-        if (token) res.headers.append("set-cookie", cookieFromToken(token));
+        const payload = JSON.parse(text)
+        const token = payload?.token ?? payload?.access_token ?? payload?.jwt
+        const userId = payload?.id
+
+        if (token) {
+            res.headers.append("set-cookie", cookieFromToken(token))
+        }
+
+        if (userId) {
+            res.headers.append("set-cookie", `user_id=${userId}; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=604800`)
+        }
     } catch {
     }
 

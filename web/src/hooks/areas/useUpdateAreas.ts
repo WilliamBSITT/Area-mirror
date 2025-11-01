@@ -16,33 +16,34 @@ export function usePutArea() {
     const [error, setError] = useState<string | null>(null);
     const [data, setData] = useState<any>(null);
 
-    const postArea = useCallback(async (payload: AreaPayloadUpdate) => {
+    const putArea = useCallback(async (areaId: number | string, payload: AreaPayloadUpdate) => {
         setLoading(true);
         setError(null);
         try {
-            const res = await fetch("/api/areas", {
-                method: "Put",
+            const res = await fetch(`/api/areas/${areaId}`, {
+                method: "PUT",
                 credentials: "include",
                 headers: { "Content-Type": "application/json", Accept: "application/json" },
                 body: JSON.stringify(payload),
             });
 
-            const json = await res.json();
+            const text = await res.text();
+            const json = text ? JSON.parse(text) : null;
 
             if (!res.ok) {
-                throw new Error(json.error || "Erreur lors de la création de l'area");
+                throw new Error(json?.error || "Erreur lors de la mise à jour de l'area");
             }
 
             setData(json);
             return json;
         } catch (err: any) {
             setError(err.message);
-            console.error("Erreur POST /areas :", err);
+            console.error("Erreur PUT /areas :", err);
             throw err;
         } finally {
             setLoading(false);
         }
     }, []);
 
-    return { postArea, loading, error, data };
+    return { putArea, loading, error, data };
 }
