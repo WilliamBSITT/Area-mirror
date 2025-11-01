@@ -4,6 +4,9 @@ from .area import bp as area_bp
 from .auth import bp as auth_bp
 from .about_json import bp as json_bp
 from .service import bp as service_bp
+from .spotify import bp as spotify_bp
+from .github_service import bp as github_service_bp
+from .ip_manager import bp as ip_manager_bp
 
 def register_routes(app):
     app.register_blueprint(users_bp)
@@ -12,3 +15,6 @@ def register_routes(app):
     app.register_blueprint(service_bp)
     app.register_blueprint(area_bp)
     app.register_blueprint(json_bp)
+    app.register_blueprint(spotify_bp)
+    app.register_blueprint(github_service_bp)
+    app.register_blueprint(ip_manager_bp)

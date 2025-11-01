@@ -42,7 +42,7 @@ services:
       context: ./mobile
       dockerfile: Dockerfile
     container_name: client_mobile
-    restart: unless-stopped
+    # restart: unless-stopped
     volumes:
       - common:/shared
     environment:

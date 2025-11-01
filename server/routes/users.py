@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from extensions import db
 from models.user import User
+import base64
 
 bp = Blueprint("users", __name__, url_prefix="/users")
 
@@ -13,6 +14,12 @@ def get_users():
     ---
     tags:
       - Users
+    parameters:
+      - in: header
+        name: Authorization
+        type: string
+        required: true
+        description: "JWT token au format: Bearer <access_token>"
     responses:
       200:
         description: list all users
@@ -42,6 +49,11 @@ def get_user(user_id):
     tags:
       - Users
     parameters:
+      - in: header
+        name: Authorization
+        type: string
+        required: true
+        description: "JWT token au format: Bearer <access_token>"
       - name: user_id
         in: path
         type: integer
@@ -111,14 +123,20 @@ def create_user():
     data = request.get_json()
     email = data.get("email")
     password = data.get("password")
+    expo_push_token = data.get("expo_push_token")
+    notif = False
 
     if not email or not password:
         return jsonify({"error": "email or password required"}), 400
     if User.query.filter_by(email=email).first():
         return jsonify({"error": "user already exist"}), 400
+    if expo_push_token:
+      notif = True
 
     user = User(email=email)
     user.set_password(password)
+    user.expo_push_token = expo_push_token
+    user.allow_notifications = notif
     db.session.add(user)
     db.session.commit()
     
@@ -134,7 +152,7 @@ def create_user():
 
   
 @bp.route("/<int:user_id>", methods=["PUT"])
-@jwt_required()
+# @jwt_required()
 def update_user(user_id):
     """
     Met à jour un utilisateur
@@ -142,11 +160,30 @@ def update_user(user_id):
     tags:
       - Users
     parameters:
+      - in: header
+        name: Authorization
+        type: string
+        required: true
+        description: "JWT token au format: Bearer <access_token>"
       - name: user_id
         in: path
         type: integer
         required: true
         description: ID de l'utilisateur
+      - in: body
+        name: body
+        required: true
+        schema:
+          type: object
+          properties:
+            email:
+              type: string
+              example: "test@mail.com"
+            password:
+              type: string
+              example: "secret123"
+            picture:
+              type: string
     requestBody:
       required: true
       content:
@@ -156,7 +193,11 @@ def update_user(user_id):
             properties:
               email:
                 type: string
+                example: test@mail.com
               password:
+                type: string
+                example: secret123
+              picture:
                 type: string
     responses:
       200:
@@ -172,18 +213,31 @@ def update_user(user_id):
                 email:
                   type: string
                   example: test@mail.com
+                picture:
+                  type: string
+                  example: https://exemple.com/image.jpg
       404:
         description: Utilisateur non trouvé
     """
+
     user = User.query.get_or_404(user_id)
     data = request.get_json()
     email = data.get("email")
     password = data.get("password")
+    pictures = data.get("pictures")
+    allow_notifications = data.get("allow_notifications")
 
     if email:
         user.email = email
     if password:
         user.set_password(password)
+    if pictures:
+        if isinstance(pictures, str):
+          user.pictures = base64.b64decode(pictures)
+        else:
+          user.pictures = pictures
+    if allow_notifications is not None:
+      user.allow_notifications = allow_notifications
     
     db.session.commit()
     return jsonify(user.to_dict()), 200
@@ -197,6 +251,11 @@ def delete_user(user_id):
     tags:
       - Users
     parameters:
+      - in: header
+        name: Authorization
+        type: string
+        required: true
+        description: "JWT token au format: Bearer <access_token>"
       - name: user_id
         in: path
         type: integer

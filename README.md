@@ -47,6 +47,10 @@ You can find how to generate the required API keys here:
 - Nasa -> https://api.nasa.gov/
 - Discord -> https://discord.com/developers/applications 
 - OpenWheather -> https://home.openweathermap.org/api_keys
+- Spotify -> https://developer.spotify.com/dashboard
+- Github -> https://github.com/settings/apps
+- TMDB -> https://www.themoviedb.org/settings/api
+- Gmail -> https://support.google.com/mail/answer/185833?hl=fr
 
 ### 3 Start the Project
 To run locally:
@@ -64,5 +68,97 @@ To stop everything:
 docker compose down
 ```
 
+## Add a new services
+
+### 1 Add the service in the DB
+Go in /server/models/service.py and add the new services with his name, description and image
+
+### 2 Create the service
+Go in /server/services and add the service you want to add
+
+```python
+from .base_service import BaseService
+import requests
+import os
+
+class YOUR SERVICE(BaseService):
+    name = "YOUR SERIVIVCE"
+
+    def __init__(self):
+        # Fetch the api key ...
+
+    def get_actions(self):
+        return [
+        ]
+
+    def get_reactions(self):
+        return []
+
+    def check_action(self, user, action):
+        # Implement logic to check for new movie releases
+        available_actions = [action["name"] for action in self.get_actions()]
+        if action not in available_actions:
+            print(f"Action non disponible: {action}")
+            return None
+        
+        if action == "NAME OF THE ACTION":
+            # CODE OF THE ACTION
+
+        
+        response = requests.get(full_url)
+        if response.status_code != 200:
+            print(f"Erreur: {response.text}")
+            return None
+
+        return {
+        }
+
+    def get_actions_output(self, action_name):
+        return [
+        ]
+```
+
 ### API documentation
-Api documentation can be found on the http://localhost:8080
+Api documentation can be found on the http://localhost:8080 or if you want to use the online documentation https://avowedly-uncomputed-velvet.ngrok-free.dev/
+
+### Stack Documentation
+
+- **Front** :
+```mermaid
+graph LR
+A --> B
+A((AREA)) --> C
+B[App mobile] --> E{React native}
+C[App web] --> D{Next with expo}
+```
+
+- **Back** :
+```mermaid
+graph LR
+A --> B
+A((AREA)) --> C
+B[App mobile] --> E{React native}
+A --> F[Api]
+F --> G{Python Flask}
+C[App web] --> D{Next with expo}
+```
+
+### How work TriggerHub
+```mermaid
+graph LR
+A --> B
+A((Api)) --> C
+B[App mobile] --> A
+C[App web] --> A
+D{Data base} --> A
+```
+
+### Other kind of documentation
+You can find some other documentation in the github repository in the documentation directory. In this directory you can fin some information about the style guide used by TriggerHub, the user journey or why we use this techno.
+
+### Logs
+For the server part you can find a logs about what append on the server in the logs directory.
+
+
+### Test
+For the server, their is a test policy integrated you just have to navigate to server/app.py and edit the create_app function to replace **default** by **test**.
