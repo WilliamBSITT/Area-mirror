@@ -1,8 +1,8 @@
 "use client"
+
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { useSession } from "@/hooks/useSession"
-
 
 export function useLogin() {
     const router = useRouter()
@@ -30,7 +30,6 @@ export function useLogin() {
                 throw new Error(msg || "Identifiants invalides")
             } else {
                 const data = await res.json();
-                console.log("Réponse JSON:", data);
             }
 
             await refresh()

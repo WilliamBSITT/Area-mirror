@@ -1,4 +1,5 @@
 "use client";
+
 import { useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useSession } from "@/hooks/useSession";
@@ -20,7 +21,6 @@ export default function OAuthCodeHandler() {
             });
             if (res.ok) {
                 const data = await res.json();
-                console.log("Réponse JSON:", data);
                 router.replace("/");
                 await refresh();
             } else {
