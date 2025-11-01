@@ -2,7 +2,7 @@ from .base_service import BaseService
 import requests
 import re
 import os
-from datetime import datetime
+from datetime import datetime, timezone
 
 
 class SpotifyService(BaseService):
@@ -34,6 +34,24 @@ class SpotifyService(BaseService):
             {"name": "currently_playing", "description": "recupere la musique actuellement jouée"}
         ]
 
+    def get_reactions_params(self, reaction_name):
+        if reaction_name == "play":
+            return [
+                {"name": "citrack_uri", "type": "String", "required": False, "description": "URI de la piste à jouer (optionnel)"},
+                {"name": "access_token", "type": "Object", "required": True, "description": "Tokens d'authentification Spotify"},
+                {"name": "refresh_token", "type": "String", "required": True, "description": "Refresh token Spotify"}
+            ]
+        return [
+            {"name": "access_token", "type": "Object", "required": True, "description": "Tokens d'authentification Spotify"},
+            {"name": "refresh_token", "type": "String", "required": True, "description": "Refresh token Spotify"}
+        ]
+    
+    def get_actions_params(self, action_name):
+        return [
+            {"name": "access_token", "type": "String", "required": True, "description": "Access token Spotify"},
+            {"name": "refresh_token", "type": "String", "required": True, "description": "Refresh token Spotify"},
+        ]
+    
     def get_reactions(self):
         return [
             {"name": "play", "description": "Joue une musique"},
@@ -43,54 +61,65 @@ class SpotifyService(BaseService):
         ]
 
     def check_action(self, user, action, params=None):
-        tokens = params.get("tokens", {})
-        access_token = tokens.get("access_token")
-        refresh_token = tokens.get("refresh_token")
-        
-        if not access_token or not refresh_token:
-            return None
-        
-        headers = {"Authorization": f"Bearer {access_token}"}
-        url = f"{self.api_base}/me/player/currently-playing"
-        
-        res = requests.get(url, headers=headers)
-        
-        if res.status_code == 401:
-            refreshed = self.refresh_token(refresh_token)
-            if not refreshed:
+            params = params or {}
+            access_token = params.get("access_token")
+            refresh_token = params.get("refresh_token")
+
+            if not access_token or not refresh_token:
+                print("[Spotify] Tokens manquants")
                 return None
-            
-            access_token = refreshed.get("access_token")
-            headers["Authorization"] = f"Bearer {access_token}"
+
+            headers = {"Authorization": f"Bearer {access_token}"}
+            url = f"{self.api_base}/me/player/currently-playing"
+
             res = requests.get(url, headers=headers)
-            
-        if res.status_code != 200:
-            print(f"[Spotify] Erreur API ({res.status_code}): {res.text}")
-            return None
 
-        data = res.json()
-        item = data.get("item")
-        if not item:
-            return None
+            if res.status_code == 401:
+                refreshed = self.refresh_token(refresh_token)
+                if not refreshed:
+                    print("[Spotify] Refresh token échoué")
+                    return None
 
-        track_name = item.get("name")
-        artist_name = item["artists"][0]["name"] if item.get("artists") else "Inconnu"
-        album_name = item["album"]["name"]
-        url = item["external_urls"]["spotify"]
+                access_token = refreshed.get("access_token")
+                headers["Authorization"] = f"Bearer {access_token}"
+                res = requests.get(url, headers=headers)
 
-        if action == "new_title":
-            last_title = params.get("last_title")
-            if last_title == track_name:
+            if res.status_code != 200:
+                print(f"[Spotify] Erreur API ({res.status_code}): {res.text}")
                 return None
-            params["last_title"] = track_name
 
-        return {
-            "track": track_name,
-            "artist": artist_name,
-            "album": album_name,
-            "url": url
-        }
+            data = res.json()
+            item = data.get("item")
+            if not item:
+                return None
 
+            track_name = item.get("name")
+            artist_name = item["artists"][0]["name"] if item.get("artists") else "Inconnu"
+            album_name = item["album"]["name"]
+            track_url = item["external_urls"]["spotify"]
+
+            if action == "currently_playing":
+                return {
+                    "track": track_name,
+                    "artist": artist_name,
+                    "album": album_name,
+                    "url": track_url
+                }
+
+            elif action == "new_title":
+                last_title = params.get("last_title")
+                if last_title == track_name:
+                    return None
+                params["last_title"] = track_name
+                params["last_updated"] = datetime.now(timezone.utc).isoformat()
+                return {
+                    "track": track_name,
+                    "artist": artist_name,
+                    "album": album_name,
+                    "url": track_url
+                }
+
+            return None
     
     def execute_reaction(self, user, reaction, params=None, data=None):
         tokens = params.get("tokens", {})
@@ -141,6 +170,4 @@ class SpotifyService(BaseService):
             return False
 
         return True
-
-        
 

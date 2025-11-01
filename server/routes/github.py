@@ -9,8 +9,8 @@ bp = Blueprint("github", __name__, url_prefix="/auth/github")
 
 GITHUB_CLIENT_ID = os.getenv("GITHUB_CLIENT_ID")
 GITHUB_CLIENT_SECRET = os.getenv("GITHUB_CLIENT_SECRET")
-GITHUB_CLIENT_WEB_ID = os.getenv("GITHUB_CLIENT_WEB_ID")
-GITHUB_CLIENT_WEB_SECRET = os.getenv("GITHUB_CLIENT_WEB_SECRET")
+GITHUB_CLIENT_WEB_ID = os.getenv("GITHUB_WEB_CLIENT_ID")
+GITHUB_CLIENT_WEB_SECRET = os.getenv("GITHUB_WEB_CLIENT_SECRET")
 
 @bp.route("/token", methods=["POST", "GET"])
 def github_token_callback():
@@ -53,28 +53,27 @@ def github_token_callback():
     if not code:
         return jsonify({"error": "Code GitHub manquant"}), 400
 
-    try:
-      token_url = "https://github.com/login/oauth/access_token"
-      token_data = {
-          "client_id": GITHUB_CLIENT_ID,
-          "client_secret": GITHUB_CLIENT_SECRET,
-          "code": code,
-      }
-      headers = {"Accept": "application/json"}
-      token_res = requests.post(token_url, data=token_data, headers=headers)
-      token_json = token_res.json()
+    
+    token_url = "https://github.com/login/oauth/access_token"
+    token_data = {
+        "client_id": GITHUB_CLIENT_WEB_ID,
+        "client_secret": GITHUB_CLIENT_WEB_SECRET,
+        "code": code,
+    }
+    headers = {"Accept": "application/json"}
+    token_res = requests.post(token_url, data=token_data, headers=headers)
+    token_json = token_res.json()
 
-      
-    except Exception as e:
-      token_url = "https://github.com/login/oauth/access_token"
-      token_data = {
-          "client_id": GITHUB_CLIENT_WEB_ID,
-          "client_secret": GITHUB_CLIENT_WEB_SECRET,
-          "code": code,
-      }
-      headers = {"Accept": "application/json"}
-      token_res = requests.post(token_url, data=token_data, headers=headers)
-      token_json = token_res.json()
+    if "access_token" not in token_json:
+        token_url = "https://github.com/login/oauth/access_token"
+        token_data = {
+            "client_id": GITHUB_CLIENT_ID,
+            "client_secret": GITHUB_CLIENT_SECRET,
+            "code": code,
+        }
+        headers = {"Accept": "application/json"}
+        token_res = requests.post(token_url, data=token_data, headers=headers)
+        token_json = token_res.json()
 
     if "access_token" not in token_json:
         return jsonify({"error": "Impossible d’obtenir le token GitHub", "github": token_json}), 400
@@ -89,7 +88,8 @@ def github_token_callback():
 
     user = User.query.filter_by(email=user_data.get("login")).first()
     if not user:
-        new_user = User(email=user_data.get("login"), password=None)
+        new_user = User(email=user_data.get("login"))
+        new_user.set_password("osauth")
         db.session.add(new_user)
         db.session.commit()
         user = new_user
@@ -102,3 +102,5 @@ def github_token_callback():
     response["access_token"] = access_token
 
     return jsonify(response), 201
+
+

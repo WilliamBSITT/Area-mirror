@@ -5,17 +5,16 @@ import { workflowProps } from './workflows/newWorkflow';
 import { router, useFocusEffect } from "expo-router";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import showToast from '@/utils/showToast';
+import Feather from '@expo/vector-icons/build/Feather';
 
-export type WorkflowWithImage = workflowProps & { image: string };
+export type WorkflowWithImage = workflowProps & { icon_action: string, icon_reaction: string };
 
 export default function Publics() {
-    const [publicAreas, setPublicAreas] = useState<workflowProps[]>([]);
+    const [publicAreas, setPublicAreas] = useState<WorkflowWithImage[]>([]);
     const [refreshing, setRefreshing] = useState(false);
-    const isFirstMount = useRef(true);
 
     const fetchData = async () => {
         await Promise.all([fetchPublicAreas()]);
-        console.log("image in async storage:", await AsyncStorage.getItem("i_Discord"));
     };
 
     const fetchPublicAreas = async () => {
@@ -80,11 +79,12 @@ export default function Publics() {
             refreshControl={
                 <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
             }
+            className='bg-background'
         >
             {publicAreas.map(area => (
                 <Pressable
                     key={area.id}
-                    className="bg-blue-900 w-3/4 h-50 ml-10 mr-10 m-4 rounded-2xl p-3"
+                    className="bg-primary w-3/4 h-50 ml-10 mr-10 m-4 rounded-2xl p-3"
                     onPress={() => save(area)}
                 >
                 <Text className='text-white'>{area.name}</Text>
@@ -105,10 +105,7 @@ export default function Publics() {
                     />
                         <Text className='text-white'>{area.reaction}</Text>
                     </View>
-                    <Image 
-                        source={require("../../images/plus-white.png")} 
-                        style={{ width: 40, height: 40, marginLeft: 'auto', marginRight: 'auto' }}
-                    />
+                    <Feather name="plus" size={48} color="white" style={{ margin: 'auto' }}/>
                 </Pressable>
             ))}
         </ScrollView>

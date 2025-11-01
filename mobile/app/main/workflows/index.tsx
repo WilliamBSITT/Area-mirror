@@ -8,11 +8,15 @@ import showToast from "@/utils/showToast";
 import { useSharedValue } from "react-native-reanimated";
 import Switch from "@/components/mySwitch";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { WorkflowWithImage } from "../publics";
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
+import Feather from '@expo/vector-icons/Feather';
+import { WorkflowWithImage } from "../publics";
+import { useTheme } from '../../../providers/ThemeProvider';
 
-function WorkflowTile({title, id, data, setData}: {title: string, id: number, data: workflowProps[] | null, setData: React.Dispatch<React.SetStateAction<workflowProps[] | null>>}) {
+
+function WorkflowTile({title, id, data, setData}: {title: string, id: number, data: WorkflowWithImage[] | null, setData: React.Dispatch<React.SetStateAction<WorkflowWithImage[] | null>>}) {
   const isOn = useSharedValue(data?.find((area) => area.id === id)?.enabled || false);
+  const { theme } = useTheme();
   // console.log("image from async storage:", data?.find((area) => area.id === id)?.icon);
   const toggleSwitch = async () => {
     isOn.value = !isOn.value;
@@ -42,9 +46,9 @@ function WorkflowTile({title, id, data, setData}: {title: string, id: number, da
   }
 
   return (
-    <Pressable className="bg-slate-400 w-3/4 h-32 ml-10 mr-10 m-4 rounded-2xl p-3 shadow-4xl" onPress={() => router.push(`/main/workflows/${id}`)}>
+    <Pressable className="bg-secondary w-3/4 h-32 ml-10 mr-10 m-4 rounded-2xl p-3 shadow-4xl" onPress={() => router.push(`/main/workflows/${id}`)}>
       <View className="flex-1 flex-col">
-        <Text className="text-xl text-white mb-2">{title}</Text>
+        <Text className="text-xl text-text mb-2">{title}</Text>
 
         <View className="flex-1 flex-row items-center justify-between">
           <View className="flex flex-row gap-2 items-center">
@@ -55,8 +59,8 @@ function WorkflowTile({title, id, data, setData}: {title: string, id: number, da
 
           <View className="flex flex-row items-center gap-2">
             <Switch onPress={toggleSwitch} value={isOn} />
-            <Pressable onPress={handleDelete}>
-              <Image source={require('../../../images/trash-white.png')} className="w-10 h-10 m-auto"/>
+            <Pressable onPress={handleDelete} className="ml-3">
+              <FontAwesome5 name="trash" size={24} style={{ margin: 'auto',  color: "#FFF" }}/>
             </Pressable>
           </View>
         </View>
@@ -66,8 +70,7 @@ function WorkflowTile({title, id, data, setData}: {title: string, id: number, da
 }
 
 export default function Index() {
-  const [data, setData] = useState<workflowProps[] | null>(null)
-  // const [refreshing, setRefreshing] = useState(false);
+  const [data, setData] = useState<WorkflowWithImage[] | null>(null)
 
   const fetchAREA = async () => {
     const res = await api.get(`/areas`).catch((error: any) => {
@@ -79,7 +82,7 @@ export default function Index() {
           try {
         const icon_action = await AsyncStorage.getItem(`icon_${area.action_service}`);
         const icon_reaction = await AsyncStorage.getItem(`icon_${area.reaction_service}`);
-        return { ...area, icon_action, icon_reaction }; // icon is a base64 string or null
+        return { ...area, icon_action, icon_reaction };
           } catch {
         return { ...area, icon_action: null, icon_reaction: null };
           }
@@ -102,12 +105,14 @@ export default function Index() {
     );
 
   return (
-    <View className="w-full h-full">
-      {data?.map((area: workflowProps) => (
-        <WorkflowTile title={area.name} id={area.id} key={area.id} data={data} setData={setData}/>
-      ))}
-      <Pressable className="absolute bottom-32 right-14 bg-blue-900 w-16 h-16 rounded-full" onPress={() => router.push('/main/workflows/newWorkflow')}>
-        <Image source={require("../../../images/plus-white.png")} className="w-10 h-10 m-auto"/>
+    <View className="w-full h-full bg-background">
+      <View className="items-center">
+        {data?.map((area: WorkflowWithImage) => (
+          <WorkflowTile title={area.name} id={area.id} key={area.id} data={data} setData={setData}/>
+        ))}
+      </View>
+      <Pressable className="absolute bottom-32 right-14 bg-primary w-16 h-16 rounded-full" onPress={() => router.push('/main/workflows/newWorkflow')}>
+        <Feather name="plus" size={48} style={{ margin: 'auto', color: "#FFF" }}/>
       </Pressable>
     </View>
   );

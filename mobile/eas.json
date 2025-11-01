@@ -2,23 +2,13 @@
   "build": {
     "preview": {
       "android": {
-        "buildType": "apk",
-        "env": {
-          "EXPO_PUBLIC_IP": "10.18.208.3"
-        }
+        "buildType": "apk"
       }
     },
-    "preview2": {
-      "android": {
-        "gradleCommand": ":app:assembleRelease"
-      }
-    },
-    "preview3": {
-      "developmentClient": true
-    },
-    "preview4": {
+    "production": {},
+    "development": {
+      "developmentClient": true,
       "distribution": "internal"
-    },
-    "production": {}
+    }
   }
 }

@@ -6,10 +6,12 @@ from flask import Response
 import json
 from collections import OrderedDict
 import binascii
+from flask_jwt_extended import jwt_required
 
 bp = Blueprint("services", __name__, url_prefix="/services")
 
 @bp.route("/<string:service_name>/reactions/<string:reaction_name>/params", methods=["GET"])
+# @jwt_required()
 def find_reactions(service_name, reaction_name):
     """
     Retourne les paramètres requis pour une réaction donnée
@@ -17,6 +19,11 @@ def find_reactions(service_name, reaction_name):
     tags:
       - Service
     parameters:
+      - in: header
+        name: Authorization
+        type: string
+        required: true
+        description: "JWT token au format: Bearer <access_token>"
       - name: service_name
         in: path
         type: string
@@ -51,6 +58,7 @@ def find_reactions(service_name, reaction_name):
         return jsonify({"error": str(e)}), 500
 
 @bp.route("/<string:service_name>/actions/<string:action_name>/params", methods=["GET"])
+# @jwt_required()
 def find_actions(service_name, action_name):
     """
     Retourne les paramètres requis pour une action donnée
@@ -58,6 +66,11 @@ def find_actions(service_name, action_name):
     tags:
       - Service
     parameters:
+      - in: header
+        name: Authorization
+        type: string
+        required: true
+        description: "JWT token au format: Bearer <access_token>"
       - name: service_name
         in: path
         type: string
@@ -93,6 +106,7 @@ def find_actions(service_name, action_name):
         return jsonify({"error": str(e)}), 500
     
 @bp.route("/<string:service_name>/actions/<string:action_name>/outputs", methods=["GET"])
+# @jwt_required()
 def find_actions_outputs(service_name, action_name):
     """
     Retourne les paramètres que renvoie le service pour une action donnée
@@ -100,6 +114,11 @@ def find_actions_outputs(service_name, action_name):
     tags:
       - Service
     parameters:
+      - in: header
+        name: Authorization
+        type: string
+        required: true
+        description: "JWT token au format: Bearer <access_token>"
       - name: service_name
         in: path
         type: string
@@ -201,3 +220,8 @@ def service_fetch_by_name(service_name):
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
+
+@bp.route("/db")
+def db():
+  return redirect("http://localhost:8082", code=302)

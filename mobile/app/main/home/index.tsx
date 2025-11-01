@@ -1,7 +1,6 @@
-
 import React, { useEffect, useState } from 'react';
-import { Text, Image, View, ScrollView, Pressable, StyleSheet } from 'react-native';
-import {Link} from 'expo-router'
+import { Text, Image, View, ScrollView, Pressable } from 'react-native';
+import { Link } from 'expo-router'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import api from '@/utils/api';
 import showToast from '@/utils/showToast';
@@ -13,10 +12,10 @@ function Card({name, path, id}: {name:string, path:any, id:number} ) {
         pathname: '/main/home/[id]',
         params: { id: name },
       }}
-    asChild>
-      <Pressable className="bg-[#F4FBFB] w-70 h-70 rounded-2xl flex" style={{shadowColor: '#000', shadowOpacity: 0.8, elevation: 6,}}>
+      asChild>
+      <Pressable className="bg-[var(--color-card)] w-70 h-70 rounded-2xl flex" style={{shadowColor: '#000', shadowOpacity: 0.8, elevation: 6,}}>
         <View className="items-start">
-          <Text className="text-black font-bold ml-4 mt-2 justify-start">
+          <Text className="text-text font-bold ml-4 mt-2 justify-start">
             {name}
           </Text>
         </View>
@@ -28,7 +27,7 @@ function Card({name, path, id}: {name:string, path:any, id:number} ) {
           />
         </View>
         <View className="items-end">
-          <Text className="bg-slate-400 rounded-2xl p-1 text-center mr-2 mb-2 text-white">
+          <Text className="bg-secondary rounded-2xl p-1 text-center mr-2 mb-2 text-white">
             Details
           </Text>
         </View>
@@ -56,7 +55,7 @@ export default function Home() {
         const resJson = await res.data;
         setData(resJson);
 
-        resJson.map( async (service: service) => {
+        resJson.map(async (service: service) => {
           try {
             await AsyncStorage.setItem(`icon_${(service.name).toLowerCase()}`, service.image);
           } catch (error) {
@@ -71,24 +70,25 @@ export default function Home() {
 
     fetchServices();
   }, []);
+
   return (
-  <View style={{ flex: 1 }}>
-    <ScrollView
-      className="flex-1"
-      contentContainerStyle={{ paddingBottom: 80 }}
-    >
-      <View className="flex flex-row flex-wrap ml-4">
-        {data.map((service: service) => (
-          <View className="w-1/2 p-5" key={service.name}>
-            <Card
-              name={service.name}
-              path={`data:image/png;base64,${service.image}`}
-              id={Number(service.id)}
-            />
-          </View>
-        ))}
-      </View>
-    </ScrollView>
-  </View>
-);
+    <View className='flex-1 bg-background'>
+      <ScrollView
+        contentContainerStyle={{ paddingBottom: 80 }}
+        className='bg-background'
+      >
+        <View className="flex flex-row flex-wrap ml-4 bg-background">
+          {data.map((service: service) => (
+            <View className="w-1/2 p-5" key={service.name}>
+              <Card
+                name={service.name}
+                path={`data:image/png;base64,${service.image}`}
+                id={Number(service.id)}
+              />
+            </View>
+          ))}
+        </View>
+      </ScrollView>
+    </View>
+  );
 }

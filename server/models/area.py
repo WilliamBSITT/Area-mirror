@@ -1,5 +1,6 @@
 from extensions import db
 from sqlalchemy.dialects.postgresql import JSON
+from sqlalchemy.ext.mutable import MutableDict
 from utils.crypto_manager import crypto
 
 class Area(db.Model):
@@ -14,8 +15,9 @@ class Area(db.Model):
     reaction = db.Column(db.String(80), nullable=False)
     frequency = db.Column(db.Integer, default=3600)
     last_run = db.Column(db.DateTime, default=None)
-    params = db.Column(db.JSON, nullable=True)
+    params = db.Column(MutableDict.as_mutable(db.JSON), nullable=True)
     enabled = db.Column(db.Boolean, default=True)
+    public = db.Column(db.Boolean, default=False)
 
     user = db.relationship("User", backref="areas")
 
@@ -24,11 +26,16 @@ class Area(db.Model):
 
         safe = {}
         for k, v in (params or {}).items():
-            if "password" in k.lower():
+            if isinstance(v, dict):
+                safe[k] = {sub_k: crypto.encrypt(sub_v) if "password" in sub_k.lower() else sub_v
+                        for sub_k, sub_v in v.items()}
+            elif "password" in k.lower():
                 safe[k] = crypto.encrypt(v)
             else:
                 safe[k] = v
+
         self.params = safe
+
 
     def get_params(self) -> dict:
 

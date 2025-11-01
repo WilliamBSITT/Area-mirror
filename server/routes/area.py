@@ -34,6 +34,9 @@ def create_area():
             name:
               type: string
               example: "Météo to Discord"
+            frequency:
+              type: integer
+              example: 3600
             action_service:
               type: string
               example: "openweather"
@@ -48,7 +51,7 @@ def create_area():
               example: "send_message"
             params:
               type: object
-              example: { "city": "Nancy", "message": "🌦️ Météo {city} : {temp}°C, {desc}" }
+              example: { "city": "Nancy", "message": "🌦️ Météo {city} : {temp}°C, {desc}", "channel_id": "1424684119471689759" }
     responses:
       201:
         description: AREA créé avec succès
@@ -66,7 +69,8 @@ def create_area():
         data.get("reaction"),
         params=data.get("params", {}),
         enabled=data.get("enabled", True),
-        name=data.get("name", "My AREA")
+        name=data.get("name", "My AREA"),
+        frequency=data.get("frequency", 3600),
     )
 
     if err:
@@ -80,7 +84,8 @@ def create_area():
         "reaction_service": area.reaction_service,
         "reaction": area.reaction,
         "params": area.params,
-        "enabled": area.enabled
+        "enabled": area.enabled,
+        "frequency": int(area.frequency),
     }), 201
 
 @bp.route("/<int:area_id>", methods=["GET"])
@@ -128,8 +133,43 @@ def get_area(area_id):
           "frequency": result[0].frequency,
           "params": result[0].params,
           "last_run": result[0].last_run.isoformat() if result[0].last_run else None,
-          "enabled": result[0].enabled
+          "enabled": result[0].enabled,
+          "public": result[0].public
         })
+
+@bp.route("/public", methods=["GET"])
+@jwt_required()
+def list_public_areas():
+    """
+    Liste les AREAs publics
+    ---
+    tags:
+      - Areas
+    security:
+      - BearerAuth: []
+    parameters:
+      - in: header
+        name: Authorization
+        type: string
+        required: true
+        description: "JWT token au format: Bearer <access_token>"
+    responses:
+      200:
+        description: Liste des AREAs publics
+    """
+    areas = area_manager.list_areas()
+
+    return jsonify([
+        {
+          "id": a.id,
+          "name": a.name,
+          "action_service": a.action_service,
+          "action": a.action,
+          "reaction_service": a.reaction_service,
+          "reaction": a.reaction,
+          "frequency": a.frequency
+        } for a in areas if a.public
+    ])
 
 @bp.route("", methods=["GET"])
 @jwt_required()
@@ -228,6 +268,9 @@ def update_area(area_id):
         schema:
           type: object
           properties:
+            frequency:
+              type: integer
+              example: 3600
             enabled:
               type: boolean
               example: true
@@ -249,6 +292,9 @@ def update_area(area_id):
             params:
               type: object
               example: { "city": "Nancy", "message": "🌦️ Météo" }
+            public:
+              type: boolean
+              example: false
     responses:
       200:
         description: AREA mis à jour
@@ -272,6 +318,10 @@ def update_area(area_id):
     area.reaction = data["reaction"]
   if "params" in data:
     area.params = data["params"]
+  if "frequency" in data:
+    area.frequency = data["frequency"]
+  if "public" in data:
+    area.public = data["public"]
 
   db.session.commit()
   return jsonify("success"), 200

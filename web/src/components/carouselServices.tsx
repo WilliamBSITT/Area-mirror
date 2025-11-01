@@ -1,5 +1,6 @@
-import * as React from "react"
+"use client"
 
+import Image from "next/image"
 import { Card, CardContent } from "@/components/ui/card"
 import {
     Carousel,
@@ -10,26 +11,37 @@ import {
 } from "@/components/ui/carousel"
 import Autoplay from "embla-carousel-autoplay"
 
+const logos = [
+    "/logo/discord.png",
+    "/logo/github.png",
+    "/logo/gmail.png",
+    "/logo/movie_db.png",
+    "/logo/nasa.png",
+    "/logo/open_weather.png",
+    "/logo/spotify.png",
+    "/logo/strava.png",
+]
+
 export function CarouselServices() {
     return (
         <Carousel
-            plugins={[
-                Autoplay({
-                    delay: 5000,
-                }),
-            ]}
-            opts={{
-                align: "start",
-            }}
+            plugins={[Autoplay({ delay: 5000 })]}
+            opts={{ align: "start" }}
             className="w-full"
         >
             <CarouselContent>
-                {Array.from({ length: 10 }).map((_, index) => (
+                {logos.map((src, index) => (
                     <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/5">
                         <div className="p-1">
                             <Card>
-                                <CardContent className="flex aspect-square items-center justify-center p-6">
-                                    <span className="text-3xl font-semibold">{index + 1}</span>
+                                <CardContent className="flex aspect-square items-center justify-center p-4">
+                                    <Image
+                                        src={src}
+                                        alt={`Logo ${index + 1}`}
+                                        width={100}
+                                        height={100}
+                                        className="object-contain"
+                                    />
                                 </CardContent>
                             </Card>
                         </div>

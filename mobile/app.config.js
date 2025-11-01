@@ -6,7 +6,7 @@ export default ({ config }) => {
     extra: {
       EXPO_PUBLIC_IP: process.env.EXPO_PUBLIC_IP,
       eas: {
-        projectId: "a66742f4-89db-4b58-a8af-ac792a364d1c"
+        projectId: "dc58b9ec-6bf9-410a-9428-ac56e1b95c4e"
       },
     },
   };
