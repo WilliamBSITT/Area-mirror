@@ -1,4 +1,5 @@
 "use client";
+
 import { useCallback, useMemo, useState } from "react";
 
 type ToggleResult =
@@ -18,7 +19,6 @@ export function useAreasActivateDeactivate(options: UseAreasToggleOptions = {}) 
         async (areaId: number, enabled: boolean): Promise<ToggleResult> => {
             setError(null);
             setLoadingId(areaId);
-            // Optimistic update si fourni
             options.onMutate?.(areaId, enabled);
 
             try {
