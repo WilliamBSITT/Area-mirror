@@ -84,20 +84,24 @@ function storeGitHubTokens(tokens: GitHubTokens) {
 }
 
 export function getSpotifyToken() {
+    if (typeof window === 'undefined') return null;
     return sessionStorage.getItem('spotify_access_token');
 }
 
 export function getGitHubToken() {
+    if (typeof window === 'undefined') return null;
     return sessionStorage.getItem('github_access_token');
 }
 
 export function isSpotifyTokenExpired(): boolean {
+    if (typeof window === 'undefined') return true;
     const expiresAt = sessionStorage.getItem('spotify_expires_at');
     if (!expiresAt) return true;
     return Date.now() > parseInt(expiresAt);
 }
 
 export function isGitHubAccessTokenExpired(): boolean {
+    if (typeof window === 'undefined') return true;
     const expiresAt = sessionStorage.getItem('github_access_token_expires_at');
     if (!expiresAt) return true;
     return Date.now() > parseInt(expiresAt);
