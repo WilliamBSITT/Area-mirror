@@ -95,9 +95,13 @@ export function AreasCpyDialog({ areaId, onCreated }: AreasUpdateDialogProps) {
                             const reactionItem = {
                                 id: 1,
                                 left: areaData.reaction_service,
-                                right: areaData.reaction
+                                right: areaData.reaction,
                             };
                             setReactions([reactionItem]);
+
+                            if (areaData.params && typeof areaData.params === 'object') {
+                                setReactionsParams({ 1: areaData.params });
+                            }
                         }
                     }, 100);
 
