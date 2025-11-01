@@ -43,11 +43,16 @@ export default function AreasReactionSelect({ leftValue, onLeftChange, rightValu
 
     const [formValues, setFormValues] = React.useState<Record<string, string>>(initialParams);
 
+    const hasInitialized = React.useRef(false);
+
     React.useEffect(() => {
-        if (initialParams && Object.keys(initialParams).length > 0) {
+        if (!hasInitialized.current && initialParams && Object.keys(initialParams).length > 0) {
             setFormValues(initialParams);
+            hasInitialized.current = true;
         }
     }, [initialParams]);
+
+
 
     React.useEffect(() => {
         if (paramsData?.params) {
@@ -56,18 +61,18 @@ export default function AreasReactionSelect({ leftValue, onLeftChange, rightValu
                 let changed = false;
 
                 paramsData.params.forEach((p) => {
-                    const value = prev[p.name] ?? initialParams?.[p.name] ?? "";
-                    updatedValues[p.name] = value;
-
-                    if (!(p.name in prev)) changed = true;
+                    if (p.name in prev) {
+                        updatedValues[p.name] = prev[p.name];
+                    } else {
+                        updatedValues[p.name] = initialParams?.[p.name] ?? "";
+                        changed = true;
+                    }
                 });
 
                 return changed ? updatedValues : prev;
             });
-        } else if (!leftValue || !rightValue) {
-            setFormValues(initialParams || {});
         }
-    }, [paramsData, initialParams, leftValue, rightValue]);
+    }, [paramsData]);
 
     const handleInputChange = (name: string, value: string) => {
         setFormValues((prev) => ({ ...prev, [name]: value }));
