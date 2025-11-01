@@ -9,9 +9,7 @@ import webDev from "@/../public/developers/web.png"
 import serverDev02 from "@/../public/developers/back02.png"
 import uxdesigner from "@/../public/developers/ux.png"
 
-import Link from 'next/link'
 import AuthCodeReader from "@/hooks/auth/useSearchParams";
-import PixelCard from '@/components/PixelCard';
 import PixelTransition from '@/components/PixelTransition';
 
 export default function Page() {

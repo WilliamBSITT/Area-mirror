@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
 import type { ServiceDetails } from '@/types/service';
 
-const BASE_URL = process.env.BACKEND_URL ?? 'http://localhost:8000';
-export const dynamic = 'force-dynamic';
+const BACKEND_URL = process.env.BACKEND_URL!
+export const dynamic = 'force-dynamic'
 
 export async function GET(
     _req: Request,
@@ -10,7 +10,7 @@ export async function GET(
 ) {
     try {
         const { service_name } = await context.params;
-        const url = `${BASE_URL}/services/${encodeURIComponent(service_name)}`;
+        const url = `${BACKEND_URL}/services/${encodeURIComponent(service_name)}`;
         const res = await fetch(url, { cache: 'no-store' });
         if (!res.ok) {
             return NextResponse.json(

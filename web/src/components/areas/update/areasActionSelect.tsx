@@ -43,8 +43,6 @@ export default function AreasActionSelect({ leftValue, onLeftChange, rightValue,
 
     const {
         data: outputsData,
-        loading: outputsLoading,
-        error: outputsError,
     } = useServiceActionOutputs(leftValue ?? undefined, rightValue ?? undefined);
 
     const hasInitialized = React.useRef(false);

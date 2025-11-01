@@ -1,12 +1,6 @@
 import Link from "next/link";
 import {Button} from "@/components/ui/button";
 
-const commonClassName = "sm:text-4xl md:text-4xl lg:text-4xl xl:text-4xl 2xl:text-4xl"
-
-// pc : lg:text-...
-// tv : 2xl:text-...
-// mobile :
-
 export default function Page() {
     return (
         <main className="flex flex-col justify-center items-center py-20 text-center">

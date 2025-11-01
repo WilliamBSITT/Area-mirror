@@ -27,13 +27,7 @@ export type AreasActionSelectProps = {
     onParamsChange?: (params: Record<string, string>) => void;
 };
 
-export default function AreasActionSelect({
-                                              leftValue,
-                                              onLeftChange,
-                                              rightValue,
-                                              onRightChange,
-                                              onParamsChange
-                                          }: AreasActionSelectProps) {
+export default function AreasActionSelect({ leftValue, onLeftChange, rightValue, onRightChange, onParamsChange }: AreasActionSelectProps) {
     const { data, loading, error } = useServices();
     const {
         data: details,
@@ -49,8 +43,6 @@ export default function AreasActionSelect({
 
     const {
         data: outputsData,
-        loading: outputsLoading,
-        error: outputsError,
     } = useServiceActionOutputs(leftValue ?? undefined, rightValue ?? undefined);
 
     const [formValues, setFormValues] = React.useState<Record<string, string>>({});

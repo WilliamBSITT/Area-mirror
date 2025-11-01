@@ -1,8 +1,8 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server"
 
-const BACKEND_URL = process.env.BACKEND_URL!;
-const COOKIE_NAME = "session";
-const isProd = process.env.NODE_ENV === "production";
+const BACKEND_URL = process.env.BACKEND_URL!
+const COOKIE_NAME = "session"
+const isProd = process.env.NODE_ENV === "production"
 
 function cookieFromToken(token: string, maxAgeSec = 7 * 24 * 3600) {
     const attrs = [
@@ -12,7 +12,7 @@ function cookieFromToken(token: string, maxAgeSec = 7 * 24 * 3600) {
         ...(isProd ? ["Secure"] : []),
         `Max-Age=${maxAgeSec}`,
     ].join("; ");
-    return `${COOKIE_NAME}=${token}; ${attrs}`;
+    return `${COOKIE_NAME}=${token}; ${attrs}`
 }
 
 export async function POST(req: NextRequest) {

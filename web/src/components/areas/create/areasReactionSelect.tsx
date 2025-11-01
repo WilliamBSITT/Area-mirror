@@ -26,13 +26,7 @@ type AreasReactionSelectProps = {
     onParamsChange?: (paramsValues: Record<string, string>) => void;
 };
 
-export default function AreasReactionSelect({
-                                                leftValue,
-                                                onLeftChange,
-                                                rightValue,
-                                                onRightChange,
-                                                onParamsChange
-                                            }: AreasReactionSelectProps) {
+export default function AreasReactionSelect({ leftValue, onLeftChange, rightValue, onRightChange, onParamsChange }: AreasReactionSelectProps) {
 
     const { data, loading, error } = useServices();
     const {

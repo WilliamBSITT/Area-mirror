@@ -35,7 +35,7 @@ export function AreasCpyDialog({ areaId, onCreated }: AreasUpdateDialogProps) {
     const [name, setName] = React.useState("");
     const [frequency, setFrequency] = React.useState("01:30");
     const [isPublic, setIsPublic] = React.useState(false);
-    const { postArea, loading, error, data } = usePostArea();
+    const { postArea } = usePostArea();
     const { fetchArea, loading: loadingArea } = useAreaDetails();
     const router = useRouter();
 
