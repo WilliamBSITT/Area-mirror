@@ -49,3 +49,15 @@ export type Params = {
     required: boolean;
     type: string;
 }
+
+export type ServicesActionsOutputs = {
+    action: string;
+    outputs: Outputs[];
+    service: string;
+}
+
+export type Outputs = {
+    description: string;
+    name: string;
+    type: string;
+}
