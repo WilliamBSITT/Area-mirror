@@ -14,7 +14,7 @@ import { Input } from "@/components/ui/input";
 
 import { useServices } from "@/hooks/services/useServices";
 import { useServiceDetails } from "@/hooks/services/useServicesName";
-import { useServiceActionParams } from "@/hooks/services/useServicesActions";
+import { useServiceActionParams } from "@/hooks/services/useServicesActionsParams";
 import { SelectItemWithIcon } from "@/components/areas/create/selectItemWithIcon";
 
 export type AreasActionSelectProps = {
