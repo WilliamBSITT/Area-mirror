@@ -15,6 +15,7 @@ import { Input } from "@/components/ui/input";
 import { useServices } from "@/hooks/services/useServices";
 import { useServiceDetails } from "@/hooks/services/useServicesName";
 import { useServiceActionParams } from "@/hooks/services/useServicesActionsParams";
+import { useServiceActionOutputs } from "@/hooks/services/useServiceActionsOutputs";
 import { SelectItemWithIcon } from "@/components/areas/create/selectItemWithIcon";
 import { getSpotifyToken, getGitHubToken } from '@/hooks/services/useQAuthTokens';
 
@@ -45,6 +46,12 @@ export default function AreasActionSelect({
         loading: paramsLoading,
         error: paramsError,
     } = useServiceActionParams(leftValue ?? undefined, rightValue ?? undefined);
+
+    const {
+        data: outputsData,
+        loading: outputsLoading,
+        error: outputsError,
+    } = useServiceActionOutputs(leftValue ?? undefined, rightValue ?? undefined);
 
     const [formValues, setFormValues] = React.useState<Record<string, string>>({});
 
@@ -186,7 +193,6 @@ export default function AreasActionSelect({
                 </Select>
             </div>
 
-            {/* Liste dynamique des paramètres */}
             {leftValue && rightValue && (
                 <div className="col-span-1 md:col-span-3">
                     {paramsLoading && <p>Chargement des paramètres…</p>}
@@ -218,6 +224,17 @@ export default function AreasActionSelect({
                             </div>
                         ))}
                     </div>
+
+                    {outputsData?.outputs && outputsData.outputs.length > 0 && (
+                        <div className="mt-3 text-xs text-gray-500">
+                            How to write&nbsp;
+                            {outputsData.outputs.map((o, idx) =>
+                                    <span key={o.name}>
+                        {o.description} {o.name}{idx < outputsData.outputs.length - 1 ? ', ' : ''}
+                    </span>
+                            )}
+                        </div>
+                    )}
                 </div>
             )}
         </section>

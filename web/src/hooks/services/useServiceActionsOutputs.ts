@@ -8,7 +8,7 @@ type UseServiceActionParams = {
     refetch: () => Promise<void>;
 };
 
-export function useServiceActionParams(
+export function useServiceActionOutputs(
     serviceName?: string | null,
     actionName?: string | null
 ): UseServiceActionParams {

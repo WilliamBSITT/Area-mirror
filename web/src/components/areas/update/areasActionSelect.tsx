@@ -15,6 +15,7 @@ import { Input } from "@/components/ui/input";
 import { useServices } from "@/hooks/services/useServices";
 import { useServiceDetails } from "@/hooks/services/useServicesName";
 import { useServiceActionParams } from "@/hooks/services/useServicesActionsParams";
+import { useServiceActionOutputs } from "@/hooks/services/useServiceActionsOutputs";
 import { SelectItemWithIcon } from "@/components/areas/create/selectItemWithIcon";
 
 export type AreasActionSelectProps = {
@@ -39,6 +40,12 @@ export default function AreasActionSelect({ leftValue, onLeftChange, rightValue,
         loading: paramsLoading,
         error: paramsError,
     } = useServiceActionParams(leftValue ?? undefined, rightValue ?? undefined);
+
+    const {
+        data: outputsData,
+        loading: outputsLoading,
+        error: outputsError,
+    } = useServiceActionOutputs(leftValue ?? undefined, rightValue ?? undefined);
 
     const hasInitialized = React.useRef(false);
 
@@ -190,6 +197,17 @@ export default function AreasActionSelect({ leftValue, onLeftChange, rightValue,
                             </div>
                         ))}
                     </div>
+
+                    {outputsData?.outputs && outputsData.outputs.length > 0 && (
+                        <div className="mt-3 text-xs text-gray-500">
+                            How to write&nbsp;
+                            {outputsData.outputs.map((o, idx) =>
+                                    <span key={o.name}>
+                        {o.description} {o.name}{idx < outputsData.outputs.length - 1 ? ', ' : ''}
+                    </span>
+                            )}
+                        </div>
+                    )}
                 </div>
             )}
         </section>
