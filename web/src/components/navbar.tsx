@@ -131,7 +131,7 @@ export function Navbar() {
                                 <DropdownMenuLabel className="text-xs">Signed in</DropdownMenuLabel>
                                 <DropdownMenuSeparator />
                                 <DropdownMenuItem asChild><Link href="/profile">Profile</Link></DropdownMenuItem>
-                                <DropdownMenuItem asChild><Link href="/settings">Settings</Link></DropdownMenuItem>
+                                {/*<DropdownMenuItem asChild><Link href="/settings">Settings</Link></DropdownMenuItem>*/}
                                 <DropdownMenuSeparator />
                                 <DropdownMenuItem onClick={logout} disabled={loggingOut}>
                                     {loggingOut ? "Logging out..." : "Log out"}
@@ -206,7 +206,7 @@ export function Navbar() {
                                             <DropdownMenuLabel className="text-xs">Signed in</DropdownMenuLabel>
                                             <DropdownMenuSeparator />
                                             <DropdownMenuItem asChild><Link href="/profile">Profile</Link></DropdownMenuItem>
-                                            <DropdownMenuItem asChild><Link href="/settings">Settings</Link></DropdownMenuItem>
+                                            {/*<DropdownMenuItem asChild><Link href="/settings">Settings</Link></DropdownMenuItem>*/}
                                             <DropdownMenuSeparator />
                                             <DropdownMenuItem onClick={logout} disabled={loggingOut}>
                                                 {loggingOut ? "Logging out..." : "Log out"}
