@@ -1,6 +1,6 @@
 import { View, Text, Pressable, TextInput, Image, ScrollView } from "react-native";
 import React, { useContext, useState, useEffect } from "react";
-import { AuthContext } from "../../utils/AuthProvider";
+import { AuthContext } from "../../providers/AuthProvider";
 import { deleteToken } from "@/utils/secureStore";
 import { router } from "expo-router";
 import * as SecureStore from "expo-secure-store";
@@ -9,6 +9,8 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import * as ImagePicker from 'expo-image-picker';
 import showToast from "@/utils/showToast";
+import Switch from "@/components/mySwitch";
+import { useSharedValue } from "react-native-reanimated";
 
 export default function Profile() {
     const auth = useContext(AuthContext);
@@ -17,6 +19,18 @@ export default function Profile() {
     const [oldPwd, setOldPwd] = useState("")
     const [Mail, setMail] = useState<string>('');
     const [Edit, setEdit] = useState(false);
+    const isNotificationsEnabled = useSharedValue(false);
+    const toggleNotifications = async () => {
+        const id = await SecureStore.getItemAsync("id")
+        isNotificationsEnabled.value = !isNotificationsEnabled.value;
+        api.put(`/users/${id}`, {
+            allow_notifications: isNotificationsEnabled.value
+        }).then(() => {
+            showToast("success", "Notification setting updated", `Notifications have been ${isNotificationsEnabled.value ? "enabled" : "disabled"}.`);
+        }).catch((error: any) => {
+            showToast("error", "Failed to update notification settings", "There was an error updating your notification settings.");
+        });
+    };
 
     const [image, setImage] = useState<string | null>(null);
 
@@ -101,6 +115,7 @@ export default function Profile() {
               setImage(`data:image/png;base64,${res.data.pictures}`);
           }
           setMail(res.data.email);
+          isNotificationsEnabled.value = res.data.allow_notifications;
         } catch (err) {
           console.error("Échec du chargement de l'utilisateur :", err);
         }
@@ -109,9 +124,9 @@ export default function Profile() {
     }, []);
 
     return (
-    <ScrollView className="bg-gray-50" contentContainerStyle={{ paddingBottom: 40 }}>
+    <ScrollView className="bg-background" contentContainerStyle={{ paddingBottom: 40 }}>
         {/* Header Section with Profile Picture */}
-        <View className="bg-white px-6 pt-8 pb-6 shadow-sm">
+        <View className="bg-background px-6 pt-8 pb-6 shadow-sm">
             <View className="items-center mb-6">
                 <Pressable onPress={pickImage} className="relative">
                     {image ? 
@@ -128,31 +143,31 @@ export default function Profile() {
                         <MaterialIcons name="camera-alt" size={20} color="white" />
                     </View>
                 </Pressable>
-                <Text className="text-sm text-gray-500 mt-3">Tap to change photo</Text>
+                <Text className="text-sm text-text mt-3">Tap to change photo</Text>
             </View>
 
             <Pressable 
                 onPress={() => setEdit(!Edit)}
-                className="flex-row items-center justify-center bg-blue-50 rounded-xl py-3 px-4"
+                className="flex-row items-center justify-center bg-secondary rounded-xl py-3 px-4"
             >
                 <MaterialIcons name="edit" size={20} color="#2563EB" />
-                <Text className="text-blue-600 font-semibold ml-2">
+                <Text className="text-text font-semibold ml-2">
                     {Edit ? "Cancel Editing" : "Edit Profile"}
                 </Text>
             </Pressable>
         </View>
 
         {/* Email Section */}
-        <View className="bg-white mx-4 mt-4 rounded-2xl shadow-md p-5">
+        <View className="bg-secondary mx-4 mt-4 rounded-2xl shadow-md p-5">
             <View className="flex-row items-center mb-3">
                 <MaterialIcons name="email" size={24} color="#6B7280" />
-                <Text className="text-xl font-bold text-gray-800 ml-2">Email Address</Text>
+                <Text className="text-xl font-bold text-text ml-2">Email Address</Text>
             </View>
             
             {Edit ? (
                 <View>
                     <TextInput 
-                        className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-800 mb-3"
+                        className="bg-[var(--color-card)] border border-[var(--color-card)] rounded-xl px-4 py-3 text-text mb-3"
                         value={newEmail} 
                         placeholder="Enter new email" 
                         placeholderTextColor="#9CA3AF"
@@ -162,30 +177,30 @@ export default function Profile() {
                         autoCapitalize="none"
                     />
                     <Pressable 
-                        className="rounded-xl py-3 shadow-sm bg-blue-900"
+                        className="rounded-xl py-3 shadow-sm bg-primary"
                         onPress={sendMail}
                     >
-                        <Text className="text-white text-center font-semibold">Update Email</Text>
+                        <Text className="text-text text-center font-semibold">Update Email</Text>
                     </Pressable>
                 </View>
             ) : (
-                <View className="bg-gray-50 rounded-xl px-4 py-3">
-                    <Text className="text-base text-gray-700">{Mail}</Text>
+                <View className="bg-[var(--color-card)] rounded-xl px-4 py-3">
+                    <Text className="text-base text-text">{Mail}</Text>
                 </View>
             )}
         </View>
 
         {/* Password Section */}
-        <View className="bg-white mx-4 mt-4 rounded-2xl shadow-md p-5">
+        <View className="bg-secondary mx-4 mt-4 rounded-2xl shadow-md p-5">
             <View className="flex-row items-center mb-3">
                 <MaterialIcons name="lock" size={24} color="#6B7280" />
-                <Text className="text-xl font-bold text-gray-800 ml-2">Password</Text>
+                <Text className="text-xl font-bold text-text ml-2">Password</Text>
             </View>
             
             {Edit ? (
                 <View>
                     <TextInput 
-                        className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-800 mb-3"
+                        className="bg-[var(--color-card)] border border-gray-200 rounded-xl px-4 py-3 text-gray-800 mb-3"
                         value={oldPwd} 
                         placeholder="Current password" 
                         placeholderTextColor="#9CA3AF"
@@ -193,7 +208,7 @@ export default function Profile() {
                         secureTextEntry
                     />
                     <TextInput 
-                        className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-800 mb-3"
+                        className="bg-[var(--color-card)] border border-gray-200 rounded-xl px-4 py-3 text-gray-800 mb-3"
                         value={newPwd} 
                         placeholder="New password" 
                         placeholderTextColor="#9CA3AF"
@@ -201,23 +216,34 @@ export default function Profile() {
                         secureTextEntry
                     />
                     <Pressable 
-                        className="rounded-xl py-3 shadow-sm bg-blue-900"
+                        className="rounded-xl py-3 shadow-sm bg-primary"
                         onPress={verifyPwd}
                     >
-                        <Text className="text-white text-center font-semibold">Update Password</Text>
+                        <Text className="text-text text-center font-semibold">Update Password</Text>
                     </Pressable>
                 </View>
             ) : (
-                <View className="bg-gray-50 rounded-xl px-4 py-3">
-                    <Text className="text-base text-gray-700">••••••••</Text>
+                <View className="bg-[var(--color-card)] rounded-xl px-4 py-3">
+                    <Text className="text-base text-text">••••••••</Text>
                 </View>
             )}
+        </View>
+
+        <View className="bg-secondary mx-4 mt-4 rounded-2xl shadow-md p-5">
+            <View className="flex-row items-center mb-3">
+                <MaterialIcons name="notifications" size={24} color="#6B7280" />
+                <Text className="text-xl font-bold text-text ml-2">Notifications</Text>
+            </View>
+            <View className="flex-row items-center justify-between">
+                <Text className="text-text text-base">When a workflow is running</Text>
+                <Switch value={isNotificationsEnabled} onPress={toggleNotifications} />
+            </View>
         </View>
 
         {/* Logout Section */}
         <View className="mx-4 mt-8">
             <Pressable 
-                className="bg-red-400 rounded-2xl py-4 shadow-lg flex-row items-center justify-center"
+                className="bg-primary rounded-2xl py-4 shadow-lg flex-row items-center justify-center"
                 onPress={logout}
             >
                 <MaterialIcons name="logout" size={22} color="white" />

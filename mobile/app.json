@@ -21,7 +21,8 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.muscularbird.area"
+      "package": "com.muscularbird.area",
+      "googleServicesFile": "./google-services.json"
     },
     "web": {
       "output": "static",
@@ -41,7 +42,14 @@
           }
         }
       ],
-      "expo-secure-store"
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "The app accesses your photos to let you change your profile picture."
+        }
+      ],
+      "expo-secure-store",
+      "expo-notifications"
     ],
     "experiments": {
       "typedRoutes": true,
@@ -49,10 +57,11 @@
     },
     "extra": {
       "router": {},
+      "EXPO_PUBLIC_IP": "10.18.207.161",
       "eas": {
-        "projectId": "a66742f4-89db-4b58-a8af-ac792a364d1c"
+        "projectId": "dc58b9ec-6bf9-410a-9428-ac56e1b95c4e"
       }
     },
-    "owner": "muscularbird"
+    "owner": "etienne687"
   }
 }

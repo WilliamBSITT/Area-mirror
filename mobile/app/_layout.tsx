@@ -1,11 +1,13 @@
 import React, { useContext } from "react";
 import { ActivityIndicator, View, Text } from "react-native";
 import { Stack } from "expo-router";
-import { AuthProvider, AuthContext } from "../utils/AuthProvider";
+import { AuthProvider, AuthContext } from "../providers/AuthProvider";
 import { ErrorBoundary } from 'react-error-boundary';
 import '../global.css';
 import Header from "@/components/Header";
 import { Toast } from "react-native-toast-message/lib/src/Toast";
+import { ThemeProvider } from "@/providers/ThemeProvider";
+import { useTheme } from "@/providers/ThemeProvider";
 
 function ErrorFallback({error}: {error: Error}) {
   return (
@@ -18,6 +20,7 @@ function ErrorFallback({error}: {error: Error}) {
 
 function RootLayoutNav() {
   const auth = useContext(AuthContext);
+  const { theme } = useTheme();
 
   if (!auth) return null;
 
@@ -34,12 +37,16 @@ function RootLayoutNav() {
       <Stack >
         <Stack.Protected guard={auth.isAuthenticated}>
           <Stack.Screen name="main" options={{headerTitle: (props) => <Header />,
+            headerStyle: { backgroundColor: theme === "dark" ? "rgb(24, 28, 32)" : "rgb(255, 255, 255)" },
+            // headerShadowVisible: false,
+            // headerTransparent: true,
           }}/>
         </Stack.Protected>
         <Stack.Protected guard={!auth.isAuthenticated}>
           <Stack.Screen name="auth" options={{headerShown: false}}/>
         </Stack.Protected>
-        <Stack.Screen name="index" options={{headerTitle: (props) => <Header />}}/>
+        <Stack.Screen name="index" options={{headerTitle: (props) => <Header />
+        }}/>
       </Stack>
       <Toast />
     </>
@@ -51,7 +58,9 @@ export default function RootLayout() {
   return (
     <ErrorBoundary FallbackComponent={ErrorFallback}>
       <AuthProvider>
+        <ThemeProvider>
         <RootLayoutNav />
+        </ThemeProvider>
       </AuthProvider>
     </ErrorBoundary>
   );

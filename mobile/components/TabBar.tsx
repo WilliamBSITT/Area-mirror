@@ -3,10 +3,14 @@ import { View, LayoutChangeEvent } from 'react-native';
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import TabBarButton from './TabBarButton';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming, Easing } from 'react-native-reanimated';
+import { useTheme } from '../providers/ThemeProvider';
 
 export function MyTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
   const [dimensions, setDimensions] = useState({ width: 320, height: 56 });
   const tabPositionX = useSharedValue(0);
+  const { theme } = useTheme();
+
+  console.log("theme : ", theme);
 
   const onTabBarLayout = (e: LayoutChangeEvent) => {
     const { width, height } = e.nativeEvent.layout;
@@ -48,7 +52,7 @@ export function MyTabBar({ state, descriptors, navigation }: BottomTabBarProps) 
         alignSelf: 'center',
         width: '75%',
         flexDirection: 'row',
-        backgroundColor: 'white',
+        //backgroundColor: 'white',
         borderRadius: 999,
         padding: 12,
         paddingLeft: 20,
@@ -61,12 +65,14 @@ export function MyTabBar({ state, descriptors, navigation }: BottomTabBarProps) 
         justifyContent: 'space-between',
         alignItems: 'center',
       }}
+      className='bg-secondary'
     >
       <Animated.View
         style={[
           animatedStyle,
-          { bottom: 8, backgroundColor: '#0b3b82', borderRadius: 999 },
+          { bottom: 8, borderRadius: 999 },
         ]}
+        className={"bg-primary"}
       />
 
       {state.routes.map((route, index) => {
@@ -101,7 +107,7 @@ export function MyTabBar({ state, descriptors, navigation }: BottomTabBarProps) 
             onLongPress={() => navigation.emit({ type: 'tabLongPress', target: route.key })}
             isFocused={isFocused}
             routeName={route.name}
-            color={isFocused ? '#FFF' : '#222'}
+            color= {theme == 'dark' ? '#FFF' : '#222'}
             label={label}
           />
         );

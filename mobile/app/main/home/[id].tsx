@@ -7,25 +7,8 @@ import { router } from "expo-router";
 import api from "@/utils/api";
 import * as Linking from 'expo-linking';
 import * as WebBrowser from 'expo-web-browser';
-
-export const callSpotify = async () => {
-    try {
-      // Always open the Spotify auth URL
-      await Linking.openURL(`https://avowedly-uncomputed-velvet.ngrok-free.dev/spotify/login?frontend=mobile`);
-      console.log("Opened Spotify auth URL");
-    } catch (error) {
-      console.error("Failed to open Spotify auth:", error);
-    }
-  };
-
-export const openGithub = async () => {
-    try {
-      // Use your backend GitHub auth URL instead of AuthSession
-      await Linking.openURL(`https://avowedly-uncomputed-velvet.ngrok-free.dev/git/login?frontend=mobile`);
-    } catch (error) {
-      console.error("Failed to open GitHub auth:", error);
-    }
-  };
+import Feather from '@expo/vector-icons/Feather';
+import { callSpotify, openGithub } from "@/utils/auth2handler";
 
 export default function ServiceScreen() {
   const { id } = useLocalSearchParams();
@@ -37,7 +20,6 @@ export default function ServiceScreen() {
     const handleDeepLink = (event: Linking.EventType) => {
       const { queryParams } = Linking.parse(event.url);
       if (queryParams?.code) {
-        console.log("Received auth code:", queryParams.code);
         setAuthCode(queryParams.code as string);
       }
     };
@@ -48,7 +30,6 @@ export default function ServiceScreen() {
       if (url) {
         const { queryParams } = Linking.parse(url);
         if (queryParams?.code) {
-          console.log("Initial URL auth code:", queryParams.code);
           setAuthCode(queryParams.code as string);
         }
       }
@@ -126,8 +107,8 @@ export default function ServiceScreen() {
   }, [id]);
 
   return (
-    <View className="bg-[#F4FBFB] flex h-full w-full">
-          <Text className="text-black text-4xl font-bold ml-4 mt-5 justify-start">{data?.name}</Text>
+    <View className="bg-background flex h-full w-full">
+          <Text className="text-text text-4xl font-bold ml-4 mt-5 justify-start">{data?.name}</Text>
            <View className='items-center'>
                   <Image
                     source={{uri: `data:image/png;base64,${icon}`}}
@@ -135,13 +116,13 @@ export default function ServiceScreen() {
                     resizeMode="contain"
                   />
                 </View>
-          <Text className="text-black text-2xl font-bold ml-4 mt-2 justify-start"> {data?.description}</Text>
-          <Pressable className="absolute bottom-40 right-14 bg-blue-900 w-16 h-16 rounded-full" onPress={() => router.push('/main/workflows/newWorkflow')} style={{shadowColor: '#000', shadowOpacity: 0.8, elevation: 6,}}>
-                  <Image source={require("../../../images/plus-white.png")} className="w-10 h-10 m-auto"/>
+          <Text className="text-text text-2xl font-bold ml-4 mt-2 justify-start"> {data?.description}</Text>
+          <Pressable className="absolute bottom-40 right-14 bg-primary w-16 h-16 rounded-full" onPress={() => router.push('/main/workflows/newWorkflow')} style={{shadowColor: '#000', shadowOpacity: 0.8, elevation: 6,}}>
+            <Feather name="plus" size={48} color="white" style={{ margin: 'auto' }} className="fg-background"/>
           </Pressable>
           {data?.auth_url != null && (
           <Pressable
-            className="absolute bottom-40 left-9 bg-blue-900 w-36 h-16 rounded-full items-center justify-center" style={{shadowColor: '#000', shadowOpacity: 0.8, elevation: 6,}}
+            className="absolute bottom-40 left-9 bg-primary w-36 h-16 rounded-full items-center justify-center" style={{shadowColor: '#000', shadowOpacity: 0.8, elevation: 6,}}
             onPress={handlePress}
           >
           <Text className="text-white text-sm">Connexion</Text>
