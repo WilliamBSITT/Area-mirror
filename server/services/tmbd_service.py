@@ -81,6 +81,6 @@ class TMDBService(BaseService):
     def get_actions_outputs(self, action_name):
         if action_name == "latest_movie":
             return [
-                {"name": "{movies}", "type": "String", "description": "Les derniers films les plus populaires"},
+                {"name": "{movies}", "type": "String", "description": "Latest movie title and release date"},
             ]
         return []

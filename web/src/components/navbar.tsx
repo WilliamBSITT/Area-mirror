@@ -36,6 +36,7 @@ import LogoTriggerHub from "@/../public/logo_trigger_hub.png"
 
 import { useLogout } from "@/hooks/auth/useLogout"
 import { useAuthLoading, useIsAuthenticated } from "@/hooks/auth/useAuth"
+import { useCheckJWT } from "@/hooks/auth/useCheckJWT"
 import { useEffect, useState } from 'react'
 import { Menu } from 'lucide-react'
 
@@ -46,7 +47,8 @@ export function Navbar() {
     const loading = useAuthLoading()
     const isLoggedIn = useIsAuthenticated()
     const { logout, loading: loggingOut } = useLogout()
-    const [darkTheme, setDarkTheme] = useState<boolean>(false);
+    const checkJWT = useCheckJWT()
+    const [darkTheme, setDarkTheme] = useState<boolean>(false)
 
     useEffect(() => {
         if (darkTheme) {
@@ -56,7 +58,19 @@ export function Navbar() {
         }
     }, [darkTheme])
 
-    //classname
+    // ✅ Vérification périodique du JWT
+    useEffect(() => {
+        const interval = setInterval(async () => {
+            const isValid = await checkJWT()
+            if (!isValid && isLoggedIn) {
+                await logout()
+            }
+        }, 30000) // Vérifie toutes les 30 secondes
+
+        return () => clearInterval(interval)
+    }, [checkJWT, isLoggedIn, logout])
+
+    // Classname
     const commonClassName = "lg:text-md xl:text-2xl"
 
     return (
