@@ -73,8 +73,8 @@ class OpenWeatherService(BaseService):
     def get_actions_outputs(self, action_name):
         if action_name == "get_weather":
             return [
-                {"name": "{temp}", "type": "String", "description": "Le temperature"},
-                {"name": "{desc}", "type": "String", "description": "Etat du temps"},
-                {"name": "{city}", "type": "String", "description": "La ville"},
+                {"name": "{temp}", "type": "String", "description": "The temperature in Celsius"},
+                {"name": "{desc}", "type": "String", "description": "Weather condition"},
+                {"name": "{city}", "type": "String", "description": "City name"},
             ]
         return []

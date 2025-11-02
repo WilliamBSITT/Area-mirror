@@ -172,17 +172,17 @@ class GithubService(BaseService):
     def get_actions_output(self, action_name):
         if action_name == "new_commit":
             return [
-                {"name": "repo", "type": "string", "description": "Nom du dépôt"},
-                {"name": "commit_msg", "type": "string", "description": "Message du commit"},
-                {"name": "author", "type": "string", "description": "Auteur du commit"},
-                {"name": "sha", "type": "string", "description": "SHA du commit"}
+                {"name": "repo", "type": "string", "description": "Name of the repository"},
+                {"name": "commit_msg", "type": "string", "description": "Message of the commit"},
+                {"name": "author", "type": "string", "description": "Author of the commit"},
+                {"name": "sha", "type": "string", "description": "SHA of the commit"}
             ]
         elif action_name == "new_issue":
             return [
-                {"name": "repo", "type": "string", "description": "Nom du dépôt"},
-                {"name": "title", "type": "string", "description": "Titre de l’issue"},
-                {"name": "url", "type": "string", "description": "Lien vers l’issue"},
-                {"name": "author", "type": "string", "description": "Auteur de l’issue"}
+                {"name": "repo", "type": "string", "description": "Name of the repository"},
+                {"name": "title", "type": "string", "description": "Title of the issue"},
+                {"name": "url", "type": "string", "description": "Link to the issue"},
+                {"name": "author", "type": "string", "description": "Author of the issue"}
             ]
         else:
             return []
