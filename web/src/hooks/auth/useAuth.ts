@@ -1,4 +1,5 @@
 "use client"
+
 import { useSession } from "@/hooks/useSession"
 
 export const useAuthLoading = () => useSession().loading
