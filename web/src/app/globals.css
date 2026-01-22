@@ -112,6 +112,53 @@
   --sidebar-ring: oklch(0.551 0.027 264.364);
 }
 
+.colorblind {
+  /* Palette avec contraste renforcé et réduction de la confusion rouge/vert
+     pour améliorer la lisibilité pour plusieurs formes de daltonisme. */
+  --background: oklch(0.98 0.01 250);
+  --foreground: oklch(0.18 0.04 250);
+  --card: oklch(0.97 0.015 240);
+  --card-foreground: oklch(0.18 0.04 250);
+  --popover: oklch(0.97 0.015 240);
+  --popover-foreground: oklch(0.18 0.04 250);
+  /* Couleurs principales basées sur des bleus et jaunes, mieux perçus
+     par de nombreuses personnes daltoniennes. */
+  --primary: oklch(0.45 0.18 240);
+  --primary-foreground: oklch(0.98 0.01 250);
+  --secondary: oklch(0.9 0.02 260);
+  --secondary-foreground: oklch(0.95 0.02 250);
+  --muted: oklch(0.95 0.01 240);
+  --muted-foreground: oklch(0.4 0.04 250);
+  --accent: oklch(0.9 0.06 110);
+  --accent-foreground: oklch(0.18 0.04 250);
+  --destructive: oklch(0.6 0.15 30);
+  --border: oklch(0.9 0.02 250);
+  --input: oklch(0.9 0.02 250);
+  --ring: oklch(0.45 0.18 240);
+  --chart-1: oklch(0.7 0.12 240);
+  --chart-2: oklch(0.8 0.1 110);
+  --chart-3: oklch(0.65 0.1 190);
+  --chart-4: oklch(0.85 0.08 60);
+  --chart-5: oklch(0.6 0.12 280);
+  --sidebar: oklch(0.97 0.015 240);
+  --sidebar-foreground: oklch(0.18 0.04 250);
+  --sidebar-primary: oklch(0.45 0.18 240);
+  --sidebar-primary-foreground: oklch(0.98 0.01 250);
+  --sidebar-accent: oklch(0.9 0.06 110);
+  --sidebar-accent-foreground: oklch(0.18 0.04 250);
+  --sidebar-border: oklch(0.9 0.02 250);
+  --sidebar-ring: oklch(0.45 0.18 240);
+}
+
+/* Titres de navigation en rouge foncé en mode daltonien */
+.colorblind nav a[href^="/workflows"],
+.colorblind nav a[href^="/services"],
+.colorblind nav a[href^="/templates"],
+.colorblind nav a[href^="/about"],
+.colorblind nav [role="menuitem"] a {
+  color: oklch(0.4 0.2 25) !important;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

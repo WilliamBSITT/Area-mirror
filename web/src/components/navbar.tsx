@@ -132,10 +132,10 @@ export function Navbar() {
                     ) : isLoggedIn ? (
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                                <Button className="h-9 px-2 gap-2 bg-secondary-foreground" aria-label="User menu">
+                                <Button className="h-9 px-2 gap-2 bg-primary text-primary-foreground" aria-label="User menu">
                                     <Avatar className="h-6 w-6">
                                         <AvatarImage src={undefined} alt="User" />
-                                        <AvatarFallback className='bg-primary'>U</AvatarFallback>
+                                        <AvatarFallback className='bg-primary-foreground text-primary'>U</AvatarFallback>
                                     </Avatar>
                                     <span className="hidden lg:inline">Account</span>
                                 </Button>
@@ -207,10 +207,10 @@ export function Navbar() {
                                 ) : isLoggedIn ? (
                                     <DropdownMenu>
                                         <DropdownMenuTrigger asChild>
-                                            <Button className="h-9 px-2 gap-2 bg-secondary-foreground" aria-label="User menu">
+                                            <Button className="h-9 px-2 gap-2 bg-primary text-primary-foreground" aria-label="User menu">
                                                 <Avatar className="h-6 w-6">
                                                     <AvatarImage src={undefined} alt="User" />
-                                                    <AvatarFallback className='bg-primary'>U</AvatarFallback>
+                                                    <AvatarFallback className='bg-primary-foreground text-primary'>U</AvatarFallback>
                                                 </Avatar>
                                                 <span className="hidden lg:inline">Account</span>
                                             </Button>
