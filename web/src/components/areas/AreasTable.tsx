@@ -17,14 +17,14 @@ export default function AreasTable() {
         setLoading(true);
         fetchAreas()
             .then(d => mounted && setData(d))
-            .catch(e => mounted && setError(e?.message ?? "Erreur de chargement"))
+            .catch(e => mounted && setError(e?.message ?? "Loading error"))
             .finally(() => mounted && setLoading(false));
         return () => { mounted = false; };
     }, [fetchAreas]);
 
     const columns = useMemo(() => createAreaColumns(setData), [setData]);
 
-    if (loading) return <div>Chargement...</div>;
+    if (loading) return <div>Loading...</div>;
     if (error) return <div className="text-red-600">{error}</div>;
 
     return <DataTable columns={columns} data={data} />;

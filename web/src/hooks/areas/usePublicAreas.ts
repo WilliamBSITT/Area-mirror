@@ -11,7 +11,7 @@ export function usePublicAreas(endpoint = "/api/areas/public") {
             headers: { Accept: "application/json" },
             cache: "no-store",
         })
-        if (!res.ok) throw new Error(`Erreur ${res.status}`)
+        if (!res.ok) throw new Error(`Error ${res.status}`)
         return res.json() as Promise<AreaPublic[]>
     }, [endpoint])
 }

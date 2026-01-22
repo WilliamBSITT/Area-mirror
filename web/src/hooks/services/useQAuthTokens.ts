@@ -44,7 +44,7 @@ export function useOAuthTokens() {
             }
             window.history.replaceState({}, document.title, '/services');
         } catch (error) {
-            console.error('Erreur lors du parsing des tokens:', error);
+            console.error('Error parsing tokens:', error);
         }
     }, [searchParams]);
 }

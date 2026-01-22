@@ -32,7 +32,7 @@ export default function Avatar({ currentImage, onUpload, isLoading = false }: Av
                 await onUpload(fileObject)
                 removeFile(files[0]?.id)
             } catch (error) {
-                console.error("Erreur lors de l'upload:", error)
+                console.error("Upload error:", error)
             }
         }
     }

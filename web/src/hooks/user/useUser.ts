@@ -11,7 +11,7 @@ export function useUser(endpoint = "/api/users") {
             headers: { Accept: "application/json" },
             cache: "no-store",
         })
-        if (!res.ok) throw new Error(`Erreur ${res.status}`)
+        if (!res.ok) throw new Error(`Error ${res.status}`)
         return res.json() as Promise<User>
     }, [endpoint])
 }

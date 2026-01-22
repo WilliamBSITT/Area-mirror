@@ -31,14 +31,14 @@ export function usePutArea() {
             const json = text ? JSON.parse(text) : null;
 
             if (!res.ok) {
-                throw new Error(json?.error || "Erreur lors de la mise à jour de l'area");
+                throw new Error(json?.error || "Error updating area");
             }
 
             setData(json);
             return json;
         } catch (err: any) {
             setError(err.message);
-            console.error("Erreur PUT /areas :", err);
+            console.error("Error PUT /areas:", err);
             throw err;
         } finally {
             setLoading(false);

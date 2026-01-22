@@ -46,35 +46,35 @@ export function createAreaColumns(
 
                 const onChange = async (checked: boolean) => {
                     const prev = Boolean(area.enabled);
-                    const tid = toast.loading(checked ? "Activation…" : "Désactivation…");
+                    const tid = toast.loading(checked ? "Activating…" : "Deactivating…");
                     try {
                         const r = await (checked ? activate : deactivate)(area.id);
                         if (!r.ok) throw new Error(r.body?.error ?? "Failed");
-                        toast.success(checked ? "Activé" : "Désactivé", {
+                        toast.success(checked ? "Activated" : "Deactivated", {
                             id: tid,
                             description: area.name,
                             action: {
                                 label: "Undo",
                                 onClick: async () => {
-                                    const undoId = toast.loading("Annulation…");
+                                    const undoId = toast.loading("Canceling…");
                                     try {
                                         const r2 = await (prev ? activate : deactivate)(area.id);
                                         if (!r2.ok) throw new Error(r2.body?.error ?? "Failed");
-                                        toast.success("Annulé", { id: undoId, description: area.name });
+                                        toast.success("Canceled", { id: undoId, description: area.name });
                                     } catch (e: any) {
-                                        toast.error(e?.message ?? "Échec de l’annulation", { id: undoId });
+                                        toast.error(e?.message ?? "Failed to cancel", { id: undoId });
                                     }
                                 },
                             },
                         });
                     } catch (e: any) {
                         setAreas(prevArr => prevArr.map(a => (a.id === area.id ? { ...a, enabled: prev } : a)));
-                        toast.error(e?.message ?? "Échec de la mise à jour", { id: tid });
+                        toast.error(e?.message ?? "Update failed", { id: tid });
                     }
                 };
 
                 const onDelete = async () => {
-                    const tid = toast.loading("Suppression…");
+                    const tid = toast.loading("Deleting…");
                     try {
                         const res = await fetch(`/api/areas/${area.id}`, {
                             method: "DELETE",
@@ -84,12 +84,12 @@ export function createAreaColumns(
                         });
                         if (!res.ok) {
                             const msg = await res.text();
-                            throw new Error(msg || `Erreur ${res.status}`);
+                            throw new Error(msg || `Error ${res.status}`);
                         }
                         setAreas(prev => prev.filter(a => a.id !== area.id));
-                        toast.success("Supprimé", { id: tid, description: area.name });
+                        toast.success("Deleted", { id: tid, description: area.name });
                     } catch (e: any) {
-                        toast.error(e?.message ?? "Échec de la suppression", { id: tid });
+                        toast.error(e?.message ?? "Deletion failed", { id: tid });
                         throw e;
                     }
                 };
@@ -107,7 +107,7 @@ export function createAreaColumns(
                             <Button
                                 variant="ghost"
                                 size="icon"
-                                aria-label={`Supprimer ${area.name}`}
+                                aria-label={`Delete ${area.name}`}
                                 className="text-destructive hover:text-destructive"
                                 id={`delete-area-button-${area.id}`}
                             >

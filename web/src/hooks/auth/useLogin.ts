@@ -14,7 +14,7 @@ export function useLogin() {
         if (loading) return false
         setLoading(true); setError(null)
         try {
-            if (!email || !password) throw new Error("Veuillez renseigner l'email et le mot de passe.")
+            if (!email || !password) throw new Error("Please enter your email and password.")
 
             const res = await fetch("/api/auth/auth", {
                 method: "POST",
@@ -25,9 +25,9 @@ export function useLogin() {
 
             if (!res.ok) {
                 const txt = await res.text().catch(() => "")
-                let msg = `Erreur ${res.status}`
+                let msg = `Error ${res.status}`
                 try { const j = JSON.parse(txt); msg = (j?.error ?? j?.message ?? txt) || msg } catch { msg = txt || msg }
-                throw new Error(msg || "Identifiants invalides")
+                throw new Error(msg || "Invalid credentials")
             } else {
                 const data = await res.json();
             }
@@ -36,7 +36,7 @@ export function useLogin() {
             router.push("/")
             return true
         } catch (e:any) {
-            setError(e?.message ?? "Une erreur est survenue")
+            setError(e?.message ?? "An error occurred")
             return false
         } finally {
             setLoading(false)

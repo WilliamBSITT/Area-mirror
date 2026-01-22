@@ -13,7 +13,7 @@ export function useDeleteUser(endpoint = "/api/users") {
 
         if (!res.ok) {
             const error = await res.json()
-            throw new Error(error.error || `Erreur ${res.status}`)
+            throw new Error(error.error || `Error ${res.status}`)
         }
 
         return res.json()

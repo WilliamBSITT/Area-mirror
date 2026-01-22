@@ -91,7 +91,7 @@ export default function AreasCreationDialog({ onCreated }: { onCreated?: () => v
         e.preventDefault();
 
         if (!name.trim()) {
-            setErrorMsg("Le nom est obligatoire.");
+            setErrorMsg("Name is required.");
             return;
         }
 
@@ -134,7 +134,7 @@ export default function AreasCreationDialog({ onCreated }: { onCreated?: () => v
             if (onCreated) onCreated();
             setTimeout(() => router.refresh(), 300);
         } catch (err: any) {
-            setErrorMsg(err.message || "Une erreur s'est produite lors de la création.");
+            setErrorMsg(err.message || "An error occurred while creating.");
         }
     };
 

@@ -21,6 +21,7 @@ import { User } from "@/types/user";
 import { useRouter } from "next/navigation";
 import { useLogout } from "@/hooks/auth/useLogout";
 import * as React from "react";
+import { Switch } from "@/components/ui/switch";
 
 export default function Page() {
     const [user, setUser] = useState<User | null>(null);
@@ -36,6 +37,7 @@ export default function Page() {
     const deleteUser = useDeleteUser();
     const { putUser, loading: updating } = usePutUser();
     const router = useRouter();
+    const [colorblindMode, setColorblindMode] = useState(false);
 
     useEffect(() => {
         const fetchUserProfile = async () => {
@@ -45,7 +47,7 @@ export default function Page() {
                 setUser(userData);
                 setNewEmail(userData.email);
             } catch (error) {
-                toast.error("Impossible de charger le profil");
+                toast.error("Unable to load profile");
             } finally {
                 setIsLoading(false);
             }
@@ -53,9 +55,19 @@ export default function Page() {
         fetchUserProfile();
     }, [fetchUser]);
 
+    // Enable or disable colorblind theme on the entire site
+    useEffect(() => {
+        const root = document.documentElement;
+        if (colorblindMode) {
+            root.classList.add("colorblind");
+        } else {
+            root.classList.remove("colorblind");
+        }
+    }, [colorblindMode]);
+
     const modifPwd = async () => {
         if (!newPassword || !password) {
-            toast.error("Veuillez remplir tous les champs");
+            toast.error("Please fill in all fields");
             return;
         }
 
@@ -73,7 +85,7 @@ export default function Page() {
 
     const modifEmail = async () => {
         if (!newEmail) {
-            toast.error("Veuillez entrer un email");
+            toast.error("Please enter an email");
             return;
         }
 
@@ -192,6 +204,17 @@ export default function Page() {
                         >
                             {passwordEdit ? "Save" : "Edit"}
                         </Button>
+                    </div>
+                </div>
+
+                <div className="w-full mt-8">
+                    <div className="flex items-center justify-between gap-4">
+                        <p className="font-bold">Colorblindness mode</p>
+                        <Switch
+                            checked={colorblindMode}
+                            onCheckedChange={setColorblindMode}
+                            aria-label="Enable or disable color blindness mode"
+                        />
                     </div>
                 </div>
 

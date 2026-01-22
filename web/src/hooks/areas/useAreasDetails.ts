@@ -17,14 +17,14 @@ export function useAreaDetails() {
             });
 
             if (!res.ok) {
-                throw new Error(`Erreur ${res.status}`);
+                throw new Error(`Error ${res.status}`);
             }
 
             const areaData = await res.json();
             setData(areaData);
             return areaData;
         } catch (err) {
-            const error = err instanceof Error ? err : new Error("Erreur inconnue");
+            const error = err instanceof Error ? err : new Error("Unknown error");
             setError(error);
             throw error;
         } finally {

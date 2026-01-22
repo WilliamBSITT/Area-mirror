@@ -30,14 +30,14 @@ export function usePostArea() {
             const json = await res.json();
 
             if (!res.ok) {
-                throw new Error(json.error || "Erreur lors de la création de l'area");
+                throw new Error(json.error || "Error creating area");
             }
 
             setData(json);
             return json;
         } catch (err: any) {
             setError(err.message);
-            console.error("Erreur POST /areas :", err);
+            console.error("Error POST /areas:", err);
             throw err;
         } finally {
             setLoading(false);

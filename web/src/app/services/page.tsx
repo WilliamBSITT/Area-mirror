@@ -13,7 +13,7 @@ export default function Page() {
     if (loading) {
         return (
             <main className="py-8">
-                <div className="container mx-auto px-4">Chargement…</div>
+                <div className="container mx-auto px-4">Loading…</div>
             </main>
         );
     }
@@ -22,9 +22,9 @@ export default function Page() {
         return (
             <main className="py-8">
                 <div className="container mx-auto px-4">
-                    <p className="text-red-600">Erreur: {error.message}</p>
+                    <p className="text-red-600">Error: {error.message}</p>
                     <button onClick={refetch} className="underline">
-                        Réessayer
+                        Retry
                     </button>
                 </div>
             </main>
@@ -34,7 +34,7 @@ export default function Page() {
     if (!data?.length) {
         return (
             <main className="py-8">
-                <div className="container mx-auto px-4">Aucun service.</div>
+                <div className="container mx-auto px-4">No services.</div>
             </main>
         );
     }

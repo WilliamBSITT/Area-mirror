@@ -39,7 +39,7 @@ export default function ServiceDetailPage() {
         return (
             <main className="container mx-auto px-4 py-8">
                 <div className="flex items-center justify-center min-h-[400px]">
-                    <p className="text-lg">Chargement...</p>
+                    <p className="text-lg">Loading...</p>
                 </div>
             </main>
         );
@@ -52,7 +52,7 @@ export default function ServiceDetailPage() {
                     <Button asChild variant="outline">
                         <Link href="/services">
                             <ArrowLeft className="mr-2 h-4 w-4" />
-                            Retour aux services
+                            Back to services
                         </Link>
                     </Button>
                 </div>
@@ -91,7 +91,7 @@ export default function ServiceDetailPage() {
                     <div>
                         <h2 className="text-xl font-semibold mb-3">Description</h2>
                         <p className="text-lg leading-relaxed text-muted-foreground">
-                            {service.description || "Aucune description disponible pour ce service."}
+                            {service.description || "No description available for this service."}
                         </p>
                     </div>
 
@@ -110,7 +110,7 @@ export default function ServiceDetailPage() {
                                 target="_blank"
                                 rel="noopener noreferrer"
                             >
-                                Authentification
+                                Authentication
                                 <ExternalLink className="ml-2 h-4 w-4" />
                             </a>
                         </Button>

@@ -107,7 +107,7 @@ export function AreasUpdateDialog({ areaId, onCreated }: AreasUpdateDialogProps)
 
 
                 } catch (error) {
-                    console.error("Erreur:", error);
+                    console.error("Error:", error);
                 }
             };
             loadAreaData();
@@ -166,7 +166,7 @@ export function AreasUpdateDialog({ areaId, onCreated }: AreasUpdateDialogProps)
         e.preventDefault();
 
         if (!name.trim()) {
-            setErrorMsg("Le nom est obligatoire.");
+            setErrorMsg("Name is required.");
             return;
         }
 
@@ -202,9 +202,9 @@ export function AreasUpdateDialog({ areaId, onCreated }: AreasUpdateDialogProps)
             if (onCreated) onCreated();
             setTimeout(() => router.refresh(), 300);
         } catch (err: any) {
-            console.error("Erreur :", err);
+            console.error("Error:", err);
             setErrorMsg(err.message);
-            setErrorMsg(err.message || "Une erreur s'est produite lors de la mise à jour.");
+            setErrorMsg(err.message || "An error occurred while updating.");
         }
     };
 
@@ -226,7 +226,7 @@ export function AreasUpdateDialog({ areaId, onCreated }: AreasUpdateDialogProps)
 
                 {loadingArea ? (
                     <div className="flex items-center justify-center p-8">
-                        <p>Chargement...</p>
+                        <p>Loading...</p>
                     </div>
                 ) : (
                     <form onSubmit={handleSubmit}>

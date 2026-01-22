@@ -106,10 +106,10 @@ export default function AreasReactionSelect({ leftValue, onLeftChange, rightValu
                         <SelectValue
                             placeholder={
                                 loading
-                                    ? "Chargement…"
+                                    ? "Loading…"
                                     : error
-                                        ? "Erreur de chargement"
-                                        : "Sélectionner un service"
+                                        ? "Loading error"
+                                        : "Select a service"
                             }
                         />
                     </SelectTrigger>
@@ -140,18 +140,18 @@ export default function AreasReactionSelect({ leftValue, onLeftChange, rightValu
                         <SelectValue
                             placeholder={
                                 !leftValue
-                                    ? "Choisissez un service"
+                                    ? "Choose a service"
                                     : detailsLoading
-                                        ? "Chargement…"
+                                        ? "Loading…"
                                         : detailsError
-                                            ? "Erreur de chargement"
-                                            : "Sélectionner une réaction"
+                                            ? "Loading error"
+                                            : "Select a reaction"
                             }
                         />
                     </SelectTrigger>
                     <SelectContent>
                         <SelectGroup>
-                            <SelectLabel>Réactions</SelectLabel>
+                            <SelectLabel>Reactions</SelectLabel>
                             {details?.reactions.map((r) => (
                                 <SelectItem key={r.name} value={r.name}>
                                     {r.name}
@@ -164,10 +164,10 @@ export default function AreasReactionSelect({ leftValue, onLeftChange, rightValu
 
             {leftValue && rightValue && (
                 <div className="col-span-1 md:col-span-3">
-                    {paramsLoading && <p>Chargement des paramètres…</p>}
-                    {paramsError && <p>Erreur : {paramsError.message}</p>}
+                    {paramsLoading && <p>Loading parameters…</p>}
+                    {paramsError && <p>Error: {paramsError.message}</p>}
                     {!paramsLoading && !paramsError && paramsData?.params?.length === 0 && (
-                        <p>Aucun paramètre requis pour cette réaction.</p>
+                        <p>No parameters required for this reaction.</p>
                     )}
 
                     <div className="flex flex-col gap-3 px-4 md:px-20">

@@ -19,7 +19,7 @@ export function useSignup() {
 
         if (!email || !password) {
             setLoading(false)
-            setError("Veuillez renseigner l'email et le mot de passe.")
+            setError("Please enter your email and password.")
             return false
         }
 
@@ -49,9 +49,9 @@ export function useSignup() {
             }
 
 
-            throw new Error(serverMsg || `Impossible de créer le compte (HTTP ${res.status})`)
+            throw new Error(serverMsg || `Unable to create account (HTTP ${res.status})`)
         } catch (e: any) {
-            setError(e?.message ?? "Une erreur est survenue")
+            setError(e?.message ?? "An error occurred")
             return false
         } finally {
             setLoading(false)

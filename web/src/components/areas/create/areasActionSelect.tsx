@@ -127,10 +127,10 @@ export default function AreasActionSelect({ leftValue, onLeftChange, rightValue,
                         <SelectValue
                             placeholder={
                                 loading
-                                    ? "Chargement…"
+                                    ? "Loading…"
                                     : error
-                                        ? "Erreur de chargement"
-                                        : "Sélectionner un service"
+                                        ? "Loading error"
+                                        : "Select a service"
                             }
                         />
                     </SelectTrigger>
@@ -163,12 +163,12 @@ export default function AreasActionSelect({ leftValue, onLeftChange, rightValue,
                         <SelectValue
                             placeholder={
                                 !leftValue
-                                    ? "Choisissez un service"
+                                    ? "Choose a service"
                                     : detailsLoading
-                                        ? "Chargement…"
+                                        ? "Loading…"
                                         : detailsError
-                                            ? "Erreur de chargement"
-                                            : "Sélectionner une action"
+                                            ? "Loading error"
+                                            : "Select an action"
                             }
                         />
                     </SelectTrigger>
@@ -187,10 +187,10 @@ export default function AreasActionSelect({ leftValue, onLeftChange, rightValue,
 
             {leftValue && rightValue && (
                 <div className="col-span-1 md:col-span-3">
-                    {paramsLoading && <p>Chargement des paramètres…</p>}
-                    {paramsError && <p>Erreur : {paramsError.message}</p>}
+                    {paramsLoading && <p>Loading parameters…</p>}
+                    {paramsError && <p>Error: {paramsError.message}</p>}
                     {!paramsLoading && !paramsError && paramsData?.params?.length === 0 && (
-                        <p>Aucun paramètre requis pour cette action.</p>
+                        <p>No parameters required for this action.</p>
                     )}
 
                     <div className="flex flex-col gap-3 px-4 md:px-20">

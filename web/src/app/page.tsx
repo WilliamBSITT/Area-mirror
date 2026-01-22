@@ -40,12 +40,6 @@ export default function Home() {
                     </h1>
                 </div>
                 <br />
-                <div className="px-14">
-                    <h1 className="text-4xl">
-                        They trust us
-                    </h1>
-                </div>
-                <br />
             </div>
 
             <div className="py-5">
