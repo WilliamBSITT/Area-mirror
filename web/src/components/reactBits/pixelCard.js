@@ -1,5 +1,5 @@
-import { useEffect, useRef } from 'react';
-import './PixelCard.css';
+second fetchimport { useEffect, useRef } from 'react';
+import './pixelCard.css';
 
 class Pixel {
     constructor(canvas, context, x, y, color, speed, delay) {

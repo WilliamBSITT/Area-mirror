@@ -1,7 +1,7 @@
 "use client"
 
-import StarBorder from '@/components/StarBorder'
-import CircularGallery from '@/components/CircularGallery'
+import StarBorder from '@/components/reactBits/starBorder'
+import CircularGallery from '@/components/reactBits/circularGallery'
 import { useRouter } from 'next/navigation'
 
 export default function Page() {

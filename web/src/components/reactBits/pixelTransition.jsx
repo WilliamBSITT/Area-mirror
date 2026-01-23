@@ -1,6 +1,6 @@
 import { useRef, useEffect, useState } from 'react';
 import { gsap } from 'gsap';
-import './PixelTransition.css';
+import './pixelTransition.css';
 
 function PixelTransition({
   firstContent,

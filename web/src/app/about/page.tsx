@@ -10,7 +10,7 @@ import serverDev02 from "@/../public/developers/back02.png"
 import uxdesigner from "@/../public/developers/ux.png"
 
 import AuthCodeReader from "@/hooks/auth/useSearchParams";
-import PixelTransition from '@/components/PixelTransition';
+import PixelTransition from '@/components/reactBits/pixelTransition';
 
 export default function Page() {
     return (

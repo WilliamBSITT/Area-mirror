@@ -1,7 +1,7 @@
 'use client'
 
 import * as React from "react";
-import AreasTable from "@/components/areas/AreasTable";
+import AreasTable from "@/components/areas/areasTable";
 import AreasCreationDialog from "@/components/areas/create/areasCreation";
 
 export default function Page() {

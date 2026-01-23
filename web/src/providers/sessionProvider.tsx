@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { SessionContext, type SessionUser } from "@/context/session-contexte"
+import { SessionContext, type SessionUser } from "@/context/sessionContexte"
 
 export default function SessionProvider({ children, initialUser = null, autoRefresh = true }: { children: React.ReactNode; initialUser?: SessionUser; autoRefresh?: boolean }) {
 

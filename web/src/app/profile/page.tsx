@@ -12,7 +12,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
-import Avatar from "@/components/Avatar";
+import Avatar from "@/components/avatar";
 import { toast } from "sonner";
 import { useUser } from "@/hooks/user/useUser";
 import { useDeleteUser } from "@/hooks/user/useDeleteUser";

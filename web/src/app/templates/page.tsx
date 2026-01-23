@@ -1,7 +1,7 @@
 'use client'
 
 import * as React from "react";
-import AreasTable from "@/components/areas/public/AreasTable";
+import AreasTable from "@/components/areas/public/areasTable";
 
 export default function Page() {
     const [refreshKey] = React.useState(0);

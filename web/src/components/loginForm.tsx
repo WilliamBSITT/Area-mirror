@@ -22,7 +22,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useLogin } from "@/hooks/auth/useLogin"
 
-export function Login_form({
+export function LoginForm({
                               className,
                               ...props
                           }: React.ComponentProps<"div">) {
